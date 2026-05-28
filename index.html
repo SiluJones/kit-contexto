@@ -1772,7 +1772,7 @@ NICHES.client = {
    NICHO 4 — NARRATIVA & FICÇÃO
    ============================================================ */
 NICHES.narrative = {
-  id:"narrative", label:"Narrativa & Ficção", icon:"✍", group:"literary", category:"creative",
+  id:"narrative", label:"Narrativa & Ficção", icon:"✍", group:"literary", category:"core",
   cardColor:"#7aa2f7", cardTags:["romance","roteiro","conto","worldbuilding"],
   cardDesc:"Ficção longa, worldbuilding, roteiro — sem perder o fio",
   intro:{
@@ -2359,7 +2359,7 @@ Formato: identificador curto + referência completa + nota.
 […]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Fase, prazos, pendências.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Fase atual
 [Exploração / Revisão de literatura / Redação / Revisão final]
@@ -2589,7 +2589,7 @@ NICHES.product = {
 […]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Iniciativas em curso, métricas, próximos passos.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Estado geral
 [Frase curta — onde o produto está agora.]
@@ -2816,7 +2816,7 @@ NICHES.business = {
 [Iniciativas que dependem de algo + de que dependem.]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Onde estamos agora.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Frase do momento
 [O quadro atual em 1-3 frases honestas.]
@@ -3103,7 +3103,7 @@ NICHES.game = {
 - [Risco — mitigação atual]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Estado atual do desenvolvimento.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Onde estamos
 [Em 1-3 frases honestas, com humor se quiser.]
@@ -3341,7 +3341,7 @@ NICHES.pixel = {
 - AAAA-MM-DD — [O que foi quebrado, por que, em qual asset.]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Em produção agora.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Em produção
 - [Asset/personagem/cena + estado]
@@ -3546,7 +3546,7 @@ NICHES.brainstorm = {
 - [Critério X — por que decidimos não usar como filtro]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Fase atual e próximas decisões.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Fase atual
 [Divergir / Mapear / Filtrar / Sintetizar]
@@ -3776,7 +3776,7 @@ NICHES.music = {
 […]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Onde estamos.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Estado geral do projeto
 [Frase honesta — quantas faixas em demo, em mix, prontas?]
@@ -4059,7 +4059,7 @@ NICHES.rpg = {
 - [Coisas que dependem do que eles decidirem fazer.]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Estado da campanha agora.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Sessão atual: [N]
 [Resumo curto do que se construiu até agora.]
@@ -4298,7 +4298,7 @@ NICHES.cuisine = {
 […]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Onde estamos.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Estado do menu
 - Pratos vivos: [N]
@@ -4569,7 +4569,7 @@ NICHES.animation = {
 - [Risco — mitigação atual]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Estado atual.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Em produção
 - Episódio(s): […]
@@ -4804,7 +4804,7 @@ NICHES.comics = {
 - [Eventos canônicos que pesam.]
 ` },
     { name:"STATUS.md", cat:"rolante", role:"Estado atual.",
-      content:`# STATUS — ${today()}
+      content:`# STATUS — ${today}
 
 ## Em produção
 - Capítulo: […]
@@ -4916,39 +4916,133 @@ NICHES.custom = {
 
 /* =========================================================
    LOGIC — state, rendering, custom builder, downloads
+   (versão tolerante: aceita formato antigo do nicho dev
+    e formato novo dos 17 nichos restantes)
    ========================================================= */
+
+/* ---------- Adapter / Normalizer ----------
+   Os dados dos nichos vieram em dois formatos. Esta camada
+   converte tudo para um shape único antes de o resto do
+   código tocar nos dados. */
+
+function normBehaviors(arr){
+  // Aceita arrays ["id","label","def"] ou objetos {id,label,def}
+  return (arr||[]).map(b => {
+    if(Array.isArray(b)) return { id:b[0], label:b[1], def:b[2] };
+    return b;
+  });
+}
+function normFiles(arr){
+  // Mapa de categorias: ctx/hist/ref ↔ essencial/rolante/opcional
+  const map = { ctx:"essencial", hist:"opcional", ref:"rolante" };
+  return (arr||[]).map(f => ({
+    name:    f.name,
+    cat:     map[f.cat] || f.cat || "essencial",
+    role:    f.role,
+    content: f.content
+  }));
+}
+function normOutputs(arr){
+  // Aceita {key,name,role,active} ou {id,label}
+  return (arr||[]).map(o => {
+    if(o.id && o.label) return o;
+    return {
+      id:    o.key || o.id,
+      label: o.name ? (o.role ? `${o.name} — ${o.role}` : o.name) : (o.label || ""),
+      defaultOn: (o.active !== false)
+    };
+  });
+}
+function normTopbar(arr){
+  // Aceita {id,label,placeholder} (vira text) ou {id,label,type,opts}
+  return (arr||[]).map(t => {
+    if(!t.type) return { ...t, type:"text" };
+    return t;
+  });
+}
+function normBuilderSection(sec){
+  // Aceita o formato antigo (groups:[{label,items:[str]}]) ou o novo
+  if(!sec) return null;
+  if(Array.isArray(sec.items)) return sec; // já está no formato novo
+  if(Array.isArray(sec.groups)){
+    // Converte groups → items (kind:"chips")
+    const items = sec.groups.map(g => ({
+      kind: sec.type === "radios" ? "radios" : "chips",
+      label: g.label,
+      name: g.label.toLowerCase().replace(/[^a-z0-9]+/g,"_"),
+      opts: g.items.map(it => [it, it])
+    }));
+    return { title: sec.title, hint: sec.hint, items };
+  }
+  return null;
+}
+function normConventions(c){
+  // booleano (true) = mostrar bloco de naming/idioma com itens default
+  if(c === true){
+    return [
+      "Nomes de arquivos, funções e variáveis em inglês; comentários em PT-BR (a menos que o projeto seja em outro idioma).",
+      "Mensagens de commit em PT-BR, no imperativo curto.",
+      "Estilo de código: legibilidade primeiro, performance só se medido."
+    ];
+  }
+  if(c === false || c == null) return [];
+  return c; // já é array
+}
+
+/* Normaliza um nicho inteiro e cacheia. */
+const _normCache = {};
+function normNiche(n){
+  if(!n) return null;
+  if(_normCache[n.id]) return _normCache[n.id];
+  const norm = {
+    ...n,
+    behaviors:      normBehaviors(n.behaviors),
+    contextFiles:   normFiles(n.contextFiles),
+    outputs:        normOutputs(n.outputs),
+    topbar:         normTopbar(n.topbar),
+    builderSection: normBuilderSection(n.builderSection),
+    conventions:    normConventions(n.conventions),
+    promptsExtra:   n.promptsExtra || []
+  };
+  _normCache[n.id] = norm;
+  return norm;
+}
 
 /* ---------- State ---------- */
 const STATE = {
-  niche: null,            // current niche id
-  topbar: {},             // values from topbar fields
-  behaviors: {},          // { behaviorId: true|false }
-  builder: {},            // values from builder section (radios/chips per niche)
-  outputs: {},            // { outputId: true|false }
-  extra: "",              // textarea content
-  fillValues: {},         // values typed in prompt fill-boxes
-  customPreset: null,     // active custom preset object (when niche === 'custom')
+  niche: null,
+  topbar: {},
+  behaviors: {},
+  builder: {},
+  outputs: {},
+  extra: "",
+  fillValues: {},
+  customPreset: null,
 };
 
 /* ---------- LocalStorage keys ---------- */
 const LS_NICHE       = "kit-niche";
-const LS_STATE       = "kit-state-";        // + niche id
-const LS_PRESETS     = "kit-custom-presets"; // JSON array of preset objects
-const LS_PRESET_CURR = "kit-custom-current"; // name of currently-loaded preset
+const LS_STATE       = "kit-state-";
+const LS_PRESETS     = "kit-custom-presets";
+const LS_PRESET_CURR = "kit-custom-current";
+
+/* ---------- Language map fix ---------- */
+/* LANGS é [["pt","..."], ["en","..."], ["es","..."], ["other","..."]]
+   mas alguns nichos setam default "pt-BR". Reconciliamos aqui. */
+const LANG_LABEL = { pt:"pt-BR", "pt-BR":"pt-BR", en:"inglês", es:"espanhol", other:"o idioma escolhido" };
+function langText(key){ return LANG_LABEL[key] || (LANG_TXT && LANG_TXT[key]) || "pt-BR"; }
 
 /* ---------- Helpers ---------- */
 function getCurrentNiche(){
-  const n = NICHES[STATE.niche];
-  if(!n) return null;
-  // If custom and a preset is loaded, return a merged object
-  if(n.id === "custom" && STATE.customPreset){
-    return mergeCustom(n, STATE.customPreset);
+  const raw = NICHES[STATE.niche];
+  if(!raw) return null;
+  if(raw.id === "custom" && STATE.customPreset){
+    return mergeCustom(raw, STATE.customPreset);
   }
-  return n;
+  return normNiche(raw);
 }
 function mergeCustom(base, preset){
-  // Combine the empty custom shell with the user's preset
-  return {
+  const merged = {
     ...base,
     label: preset.label || base.label,
     icon:  preset.icon  || base.icon,
@@ -4957,36 +5051,40 @@ function mergeCustom(base, preset){
     intro: {
       ...base.intro,
       headline: preset.headline || base.intro.headline,
-      lede:     preset.lede || base.intro.lede,
+      lede:     preset.lede     || base.intro.lede,
       ctxBlurb: preset.ctxBlurb || base.intro.ctxBlurb,
     },
-    behaviors: preset.behaviors || [],
-    conventions: preset.conventions || [],
+    behaviors:    preset.behaviors    || [],
+    conventions:  preset.conventions  || [],
     contextFiles: preset.contextFiles || [],
-    outputs: preset.outputs && preset.outputs.length ? preset.outputs : base.outputs,
+    outputs:      preset.outputs && preset.outputs.length ? preset.outputs : base.outputs,
     promptsExtra: preset.promptsExtra || [],
+  };
+  // Normaliza o resultado também
+  return {
+    ...merged,
+    behaviors:    normBehaviors(merged.behaviors),
+    contextFiles: normFiles(merged.contextFiles),
+    outputs:      normOutputs(merged.outputs),
+    topbar:       normTopbar(merged.topbar),
+    builderSection: normBuilderSection(merged.builderSection),
+    conventions:  normConventions(merged.conventions)
   };
 }
 function persistState(){
   if(STATE.niche){
-    localStorage.setItem(LS_NICHE, STATE.niche);
-    const snap = {
-      topbar: STATE.topbar,
-      behaviors: STATE.behaviors,
-      builder: STATE.builder,
-      outputs: STATE.outputs,
-      extra: STATE.extra,
-    };
-    try{ localStorage.setItem(LS_STATE + STATE.niche, JSON.stringify(snap)); }catch(_){ }
+    try{
+      localStorage.setItem(LS_NICHE, STATE.niche);
+      localStorage.setItem(LS_STATE + STATE.niche, JSON.stringify({
+        topbar: STATE.topbar, behaviors: STATE.behaviors,
+        builder: STATE.builder, outputs: STATE.outputs, extra: STATE.extra
+      }));
+    }catch(_){}
   }
 }
 function restoreStateFor(nicheId){
-  STATE.topbar = {};
-  STATE.behaviors = {};
-  STATE.builder = {};
-  STATE.outputs = {};
-  STATE.extra = "";
-  STATE.fillValues = {};
+  STATE.topbar = {}; STATE.behaviors = {}; STATE.builder = {};
+  STATE.outputs = {}; STATE.extra = ""; STATE.fillValues = {};
   try{
     const raw = localStorage.getItem(LS_STATE + nicheId);
     if(raw){
@@ -4999,21 +5097,29 @@ function restoreStateFor(nicheId){
     }
   }catch(_){}
 }
+function escAttr(s){ return String(s==null?"":s).replace(/"/g,"&quot;"); }
+function escapeHTML(s){
+  return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
 
 /* =========================================================
    1. NICHE CARDS (overlay)
    ========================================================= */
 function renderNicheCards(){
-  const groups = { core:[], creative:[], special:[] };
-  Object.values(NICHES).forEach(n => groups[n.category].push(n));
+  const groups = { core:[], creative:[], special:[], custom:[] };
+  Object.values(NICHES).forEach(n => {
+    const cat = n.category === "custom" ? "special" : n.category;
+    (groups[cat] || groups.core).push(n);
+  });
 
   const fillGrid = (el, list) => {
+    if(!el) return;
     el.innerHTML = list.map(n => `
       <div class="ncard${STATE.niche===n.id?" active":""}" data-id="${n.id}" style="--cardc:${n.cardColor}">
-        <div class="icn">${n.icon}</div>
+        <div class="icn">${n.icon||"•"}</div>
         <div class="name">${n.label}</div>
-        <div class="desc">${n.cardDesc}</div>
-        <div class="tags">${n.cardTags.map(t=>`<span>${t}</span>`).join("")}</div>
+        <div class="desc">${n.cardDesc||""}</div>
+        <div class="tags">${(n.cardTags||[]).map(t=>`<span>${t}</span>`).join("")}</div>
       </div>
     `).join("");
   };
@@ -5022,30 +5128,26 @@ function renderNicheCards(){
   fillGrid($("#ng-creative"), groups.creative);
   fillGrid($("#ng-custom"), groups.special);
 
-  // Wire clicks
   $$(".ncard").forEach(card => {
     card.addEventListener("click", () => {
-      const id = card.dataset.id;
-      setNiche(id);
+      setNiche(card.dataset.id);
       closeOverlay();
     });
   });
 }
 
 /* =========================================================
-   2. SET NICHE — apply theme + render everything
+   2. SET NICHE
    ========================================================= */
 function setNiche(id){
   if(!NICHES[id]) return;
 
-  // If switching to custom, restore last-used preset if any
   if(id === "custom"){
     const presetName = localStorage.getItem(LS_PRESET_CURR);
     if(presetName){
-      const presets = listPresets();
-      const found = presets.find(p => p.name === presetName);
+      const found = listPresets().find(p => p.name === presetName);
       STATE.customPreset = found || null;
-    }else{
+    } else {
       STATE.customPreset = null;
     }
   } else {
@@ -5058,24 +5160,22 @@ function setNiche(id){
   const niche = getCurrentNiche();
   if(!niche) return;
 
-  // Theme: data-niche + data-group
   document.documentElement.setAttribute("data-niche", id);
-  document.documentElement.setAttribute("data-group", niche.group);
+  document.documentElement.setAttribute("data-group", niche.group || "serif");
 
-  // Rail: niche pill, brand-sub, foot
-  $("#np-icn").textContent = niche.icon;
-  $("#np-lbl").textContent = niche.label;
+  $("#np-icn").textContent  = niche.icon  || "•";
+  $("#np-lbl").textContent  = niche.label || "—";
   $("#brand-sub").textContent = niche.group === "digital" ? "Sistemas com Claude"
-                            : niche.group === "literary" ? "Obras com Claude"
-                            : "Projetos com Claude";
+                              : niche.group === "literary" ? "Obras com Claude"
+                              : "Projetos com Claude";
 
-  // Defaults for behaviors / outputs if no saved state
+  // Defaults para behaviors / outputs
   if(Object.keys(STATE.behaviors).length === 0){
-    BEHAVIORS_BASE.forEach(b => STATE.behaviors[b.id] = true);
+    normBehaviors(BEHAVIORS_BASE).forEach(b => STATE.behaviors[b.id] = true);
     (niche.behaviors||[]).forEach(b => STATE.behaviors[b.id] = true);
   }
   if(Object.keys(STATE.outputs).length === 0){
-    (niche.outputs||[]).forEach(o => STATE.outputs[o.id] = true);
+    (niche.outputs||[]).forEach(o => STATE.outputs[o.id] = (o.defaultOn !== false));
   }
 
   renderHero(niche);
@@ -5088,7 +5188,6 @@ function setNiche(id){
 
   $("#foot-niche").textContent = `${niche.label} · v1`;
 
-  // Mark active card in overlay if open
   $$(".ncard").forEach(c => c.classList.toggle("active", c.dataset.id === id));
 
   persistState();
@@ -5096,10 +5195,11 @@ function setNiche(id){
 }
 
 /* =========================================================
-   3. HERO — distinct visual block per niche
+   3. HERO
    ========================================================= */
 function renderHero(niche){
   const host = $("#hero");
+  if(!host) return;
   host.className = "hero hero-" + niche.id;
   host.innerHTML = heroHTML(niche.id);
 }
@@ -5186,7 +5286,7 @@ function heroHTML(id){
         <div class="stat"><div class="l">XP</div><div class="v">7,420</div><div class="bar"><i style="width:72%"></i></div></div>
         <div class="stat"><div class="l">FAVOR</div><div class="v">14</div><div class="bar"><i style="width:35%;background:#a78bfa"></i></div></div>
       </div>`;
-    case "pixel": (() => {})(); return pixelHero();
+    case "pixel": return pixelHero();
     case "brainstorm": return `
       <div class="pi" style="background:#fde047">conexão entre arquivos rolantes e arquivos canônicos = chave</div>
       <div class="pi" style="background:#67e8f9">17 nichos profundos + 1 custom</div>
@@ -5229,20 +5329,14 @@ function heroHTML(id){
 }
 
 function pixelHero(){
-  // 16x16 grid with some 'on' / 'b' / 'c' cells forming a tiny landscape
   const grid = [];
   for(let r=0;r<10;r++){
     for(let c=0;c<16;c++){
       let cls = "";
-      // sky pattern
       if(r<3 && (c+r)%5===0) cls = "on";
-      // horizon
       if(r===5) cls = "b";
-      // ground
       if(r>=6) cls = "b";
-      // grass tufts
       if(r===6 && [2,7,12].includes(c)) cls = "c";
-      // sun
       if(r===1 && c>=11 && c<=13) cls = "on";
       if(r===2 && c===12) cls = "on";
       grid.push(`<i class="${cls}"></i>`);
@@ -5258,34 +5352,24 @@ function pixelHero(){
     </div>`;
 }
 
-function waveformSVG(){
-  // pseudo-random but stable waveform
-  const bars = [];
-  for(let i=0;i<60;i++){
-    const x = 5 + i*10;
-    const h = 8 + Math.abs(Math.sin(i*0.7)*30) + Math.abs(Math.cos(i*1.3)*18);
-    bars.push(`<rect x="${x}" y="${40-h/2}" width="6" height="${h}" rx="2" fill="currentColor"/>`);
-  }
-  return bars.join("");
-}
-
 /* =========================================================
-   4. INTRO — headline, lede, ctx blurb, files table
+   4. INTRO
    ========================================================= */
 function renderIntro(niche){
-  $("#i-kicker").textContent = `${niche.label} · Início`;
-  $("#i-headline").textContent = niche.intro.headline;
-  $("#i-lede").innerHTML = niche.intro.lede;
-  $("#i-ctx-list").innerHTML = niche.intro.ctxBlurb;
+  const k = $("#i-kicker"); if(k) k.textContent = `${niche.label} · Início`;
+  const h = $("#i-headline"); if(h) h.textContent = niche.intro?.headline || "";
+  const l = $("#i-lede"); if(l) l.innerHTML = niche.intro?.lede || "";
+  const c = $("#i-ctx-list"); if(c) c.innerHTML = niche.intro?.ctxBlurb || "";
 
   const tbl = $("#i-files-table");
+  if(!tbl) return;
   if(niche.contextFiles && niche.contextFiles.length){
     let rows = `<tr><th>arquivo</th><th>onde mora</th><th>papel</th></tr>`;
     niche.contextFiles.forEach(f => {
       const tag = f.cat === "essencial" ? `<span class="tag ctx">contexto</span>`
                 : f.cat === "rolante" ? (f.name.includes("LOG") ? `<span class="tag ref">referência</span>` : `<span class="tag ctx">contexto</span>`)
                 : `<span class="tag hist">opcional</span>`;
-      rows += `<tr><td><code>${f.name}</code></td><td>${tag}</td><td>${f.role}</td></tr>`;
+      rows += `<tr><td><code>${escapeHTML(f.name)}</code></td><td>${tag}</td><td>${escapeHTML(f.role||"")}</td></tr>`;
     });
     tbl.innerHTML = rows;
   } else {
@@ -5297,10 +5381,11 @@ function renderIntro(niche){
 }
 
 /* =========================================================
-   5. TOPBAR — dynamic fields per niche
+   5. TOPBAR
    ========================================================= */
 function renderTopbar(niche){
   const host = $("#topbar");
+  if(!host) return;
   const fields = niche.topbar || [];
   if(fields.length === 0){
     host.innerHTML = `<div class="sync-note"><i class="dot"></i> ${niche.label}</div>`;
@@ -5309,45 +5394,45 @@ function renderTopbar(niche){
   host.innerHTML = fields.map(f => {
     const val = STATE.topbar[f.id] ?? f.default ?? "";
     if(f.type === "select"){
-      const opts = (f.opts||[]).map(([v,l]) => `<option value="${v}"${v===val?" selected":""}>${l}</option>`).join("");
-      return `<div class="field"><span class="tlabel">${f.label}</span><select data-tb="${f.id}">${opts}</select></div>`;
-    } else {
-      return `<div class="field"><span class="tlabel">${f.label}</span><input type="text" data-tb="${f.id}" value="${escAttr(val)}" placeholder="${escAttr(f.placeholder||"")}"/></div>`;
+      const opts = (f.opts||[]).map(([v,l]) => `<option value="${escAttr(v)}"${v===val?" selected":""}>${escapeHTML(l)}</option>`).join("");
+      return `<div class="field"><span class="tlabel">${escapeHTML(f.label)}</span><select data-tb="${f.id}">${opts}</select></div>`;
     }
+    return `<div class="field"><span class="tlabel">${escapeHTML(f.label)}</span><input type="text" data-tb="${f.id}" value="${escAttr(val)}" placeholder="${escAttr(f.placeholder||"")}"/></div>`;
   }).join("") + `<div class="sync-note"><i class="dot"></i> ${niche.label}</div>`;
 
   host.querySelectorAll("[data-tb]").forEach(el => {
-    el.addEventListener("input",  () => { STATE.topbar[el.dataset.tb] = el.value; persistState(); updatePreview(); renderPrompts(getCurrentNiche()); });
-    el.addEventListener("change", () => { STATE.topbar[el.dataset.tb] = el.value; persistState(); updatePreview(); renderPrompts(getCurrentNiche()); });
+    const handler = () => { STATE.topbar[el.dataset.tb] = el.value; persistState(); updatePreview(); renderPrompts(getCurrentNiche()); };
+    el.addEventListener("input", handler);
+    el.addEventListener("change", handler);
   });
 }
-function escAttr(s){ return String(s).replace(/"/g,"&quot;"); }
 
 /* =========================================================
-   6. BUILDER — behaviors, builderSection, outputs
-       + special case for Custom (form to define niche)
+   6. BUILDER
    ========================================================= */
 function renderBuilder(niche){
-  // CUSTOM with no preset → render the custom builder form
   if(niche.isBuilder && !STATE.customPreset){
     renderCustomForm();
     return;
   }
-  // Normal builder
   renderBehaviors(niche);
   renderBuilderSection(niche);
   renderOutputs(niche);
-  $("#g-extra").value = STATE.extra || "";
-  $("#g-extra").oninput = (e) => { STATE.extra = e.target.value; persistState(); updatePreview(); };
+  const ex = $("#g-extra");
+  if(ex){
+    ex.value = STATE.extra || "";
+    ex.oninput = (e) => { STATE.extra = e.target.value; persistState(); updatePreview(); };
+  }
 }
 
 function renderBehaviors(niche){
   const host = $("#g-behaviors");
-  const list = [...BEHAVIORS_BASE, ...(niche.behaviors||[])];
+  if(!host) return;
+  const list = [...normBehaviors(BEHAVIORS_BASE), ...(niche.behaviors||[])];
   host.innerHTML = list.map(b => {
     const checked = STATE.behaviors[b.id] !== false;
     return `<label class="check"><input type="checkbox" data-bh="${b.id}"${checked?" checked":""}/>
-      <span>${b.label}<small>${b.def}</small></span></label>`;
+      <span>${escapeHTML(b.label||"")}<small>${escapeHTML(b.def||"")}</small></span></label>`;
   }).join("");
   host.querySelectorAll("[data-bh]").forEach(el => {
     el.addEventListener("change", () => {
@@ -5359,6 +5444,7 @@ function renderBehaviors(niche){
 
 function renderBuilderSection(niche){
   const host = $("#g-builder-section");
+  if(!host) return;
   const sec = niche.builderSection;
   if(!sec){
     host.style.display = "none";
@@ -5366,25 +5452,26 @@ function renderBuilderSection(niche){
     return;
   }
   host.style.display = "";
-  let html = `<div class="glabel">${sec.title} <span class="gn">· específico do nicho</span></div>`;
+  let html = `<div class="glabel">${escapeHTML(sec.title||"")} <span class="gn">· específico do nicho</span></div>`;
+  if(sec.hint) html += `<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px;line-height:1.5">${escapeHTML(sec.hint)}</div>`;
   (sec.items||[]).forEach(item => {
     if(item.kind === "radios"){
-      const cur = STATE.builder[item.name] || (item.opts[0]?.[0] || "");
-      html += `<div class="subhead">${item.label}</div><div class="radio-row">`;
-      item.opts.forEach(([v,l]) => {
-        html += `<button type="button" class="chip ${cur===v?"on":""}" data-radio="${item.name}" data-val="${v}">${l}</button>`;
+      const cur = STATE.builder[item.name] || (item.opts && item.opts[0] && item.opts[0][0]) || "";
+      html += `<div class="subhead">${escapeHTML(item.label||"")}</div><div class="radio-row">`;
+      (item.opts||[]).forEach(([v,l]) => {
+        html += `<button type="button" class="chip ${cur===v?"on":""}" data-radio="${item.name}" data-val="${escAttr(v)}">${escapeHTML(l)}</button>`;
       });
       html += `</div>`;
     } else if(item.kind === "chips"){
       const cur = STATE.builder[item.name] || [];
-      html += `<div class="subhead">${item.label}</div><div class="chips">`;
-      item.opts.forEach(([v,l]) => {
-        html += `<button type="button" class="chip ${cur.includes(v)?"on":""}" data-chip="${item.name}" data-val="${v}">${l}</button>`;
+      html += `<div class="subhead">${escapeHTML(item.label||"")}</div><div class="chips">`;
+      (item.opts||[]).forEach(([v,l]) => {
+        html += `<button type="button" class="chip ${cur.includes(v)?"on":""}" data-chip="${item.name}" data-val="${escAttr(v)}">${escapeHTML(l)}</button>`;
       });
       html += `</div>`;
     } else if(item.kind === "text"){
       const cur = STATE.builder[item.name] || "";
-      html += `<div class="subhead">${item.label}</div><input class="txt" type="text" data-text="${item.name}" value="${escAttr(cur)}" placeholder="${escAttr(item.placeholder||"")}"/>`;
+      html += `<div class="subhead">${escapeHTML(item.label||"")}</div><input class="txt" type="text" data-text="${item.name}" value="${escAttr(cur)}" placeholder="${escAttr(item.placeholder||"")}"/>`;
     }
   });
   host.innerHTML = html;
@@ -5410,6 +5497,7 @@ function renderBuilderSection(niche){
 
 function renderConventionsBlock(niche){
   const host = $("#g-conventions");
+  if(!host) return;
   if(!niche.conventions || niche.conventions.length === 0){
     host.style.display = "none";
     host.innerHTML = "";
@@ -5417,15 +5505,16 @@ function renderConventionsBlock(niche){
   }
   host.style.display = "";
   host.innerHTML = `<div class="glabel">Convenções do nicho <span class="gn">· entram nas instruções</span></div>` +
-    niche.conventions.map(c => `<div style="color:var(--ink-dim);font-size:13px;padding:5px 0;line-height:1.55">· ${c}</div>`).join("");
+    niche.conventions.map(c => `<div style="color:var(--ink-dim);font-size:13px;padding:5px 0;line-height:1.55">· ${escapeHTML(c)}</div>`).join("");
 }
 
 function renderOutputs(niche){
   const host = $("#g-outputs");
+  if(!host) return;
   const list = niche.outputs || [];
   host.innerHTML = list.map(o => {
     const checked = STATE.outputs[o.id] !== false;
-    return `<label class="check"><input type="checkbox" data-out="${o.id}"${checked?" checked":""}/><span>${o.label}</span></label>`;
+    return `<label class="check"><input type="checkbox" data-out="${o.id}"${checked?" checked":""}/><span>${escapeHTML(o.label||"")}</span></label>`;
   }).join("");
   host.querySelectorAll("[data-out]").forEach(el => {
     el.addEventListener("change", () => {
@@ -5436,26 +5525,23 @@ function renderOutputs(niche){
 }
 
 /* =========================================================
-   7. BUILD INSTRUCTIONS (the preview)
+   7. INSTRUCTIONS PREVIEW
    ========================================================= */
 function buildInstr(niche){
   if(!niche) return "";
-
   const tb = STATE.topbar || {};
   const builder = STATE.builder || {};
-  const langKey = tb.langSel || "pt-BR";
-  const langTxt = LANG_TXT[langKey] || LANG_TXT["pt-BR"];
+  const langKey = tb.langSel || "pt";
+  const langTxt = langText(langKey);
 
   const lines = [];
-  // Header / identity
-  lines.push(`# Projeto: ${tb.projeto || tb.projetoNome || tb.peca || tb.tema || "[NOME]"}`);
+  lines.push(`# Projeto: ${tb.project || tb.projeto || tb.peca || tb.tema || "[NOME]"}`);
   lines.push(`Domínio: ${niche.label}.`);
-  if(tb.versaoNome || tb.versao || tb.fase){
-    lines.push(`Estágio: ${tb.versaoNome || tb.versao || tb.fase}.`);
+  if(tb.version || tb.versao || tb.fase){
+    lines.push(`Estágio: ${tb.version || tb.versao || tb.fase}.`);
   }
 
-  // Behaviors
-  const bhAll = [...BEHAVIORS_BASE, ...(niche.behaviors||[])];
+  const bhAll = [...normBehaviors(BEHAVIORS_BASE), ...(niche.behaviors||[])];
   const bhOn = bhAll.filter(b => STATE.behaviors[b.id] !== false);
   if(bhOn.length){
     lines.push("");
@@ -5463,17 +5549,16 @@ function buildInstr(niche){
     bhOn.forEach(b => lines.push(`- ${b.def}`));
   }
 
-  // Builder values (radios, chips)
   const sec = niche.builderSection;
   if(sec){
     const picked = [];
     (sec.items||[]).forEach(item => {
       const v = builder[item.name];
       if(item.kind === "radios" && v){
-        const lbl = (item.opts.find(o=>o[0]===v)||[])[1];
+        const lbl = ((item.opts||[]).find(o=>o[0]===v)||[])[1];
         if(lbl) picked.push(`- ${item.label}: **${lbl}**`);
       } else if(item.kind === "chips" && Array.isArray(v) && v.length){
-        const labels = v.map(val => (item.opts.find(o=>o[0]===val)||[])[1]).filter(Boolean);
+        const labels = v.map(val => ((item.opts||[]).find(o=>o[0]===val)||[])[1]).filter(Boolean);
         if(labels.length) picked.push(`- ${item.label}: ${labels.join(", ")}`);
       } else if(item.kind === "text" && v){
         picked.push(`- ${item.label}: ${v}`);
@@ -5486,14 +5571,12 @@ function buildInstr(niche){
     }
   }
 
-  // Conventions
   if(niche.conventions && niche.conventions.length){
     lines.push("");
     lines.push("## Convenções");
     niche.conventions.forEach(c => lines.push(`- ${c}`));
   }
 
-  // Outputs
   const outOn = (niche.outputs||[]).filter(o => STATE.outputs[o.id] !== false);
   if(outOn.length){
     lines.push("");
@@ -5503,7 +5586,6 @@ function buildInstr(niche){
     lines.push(`- Quando uma decisão importante for tomada, registre em **DECISOES.md** ou no arquivo equivalente do nicho.`);
   }
 
-  // Files reference
   if(niche.contextFiles && niche.contextFiles.length){
     lines.push("");
     lines.push("## Arquivos de contexto no Projeto");
@@ -5511,7 +5593,6 @@ function buildInstr(niche){
     lines.push(`- Logs detalhados de sessão NÃO ficam no Projeto: ficam em \`logs/\` no Git, e o Claude lê só sob demanda.`);
   }
 
-  // Language / extra
   lines.push("");
   lines.push(`## Idioma`);
   lines.push(`Respostas em ${langTxt}.`);
@@ -5521,21 +5602,22 @@ function buildInstr(niche){
     lines.push("## Regras adicionais");
     STATE.extra.split(/\r?\n/).filter(Boolean).forEach(r => lines.push(`- ${r.trim()}`));
   }
-
   return lines.join("\n");
 }
 
 function updatePreview(){
   const niche = getCurrentNiche();
   if(!niche) return;
-  if($("#preview-instr")) $("#preview-instr").textContent = buildInstr(niche);
+  const p = $("#preview-instr");
+  if(p) p.textContent = buildInstr(niche);
 }
 
 /* =========================================================
-   8. PROMPTS — A–F universal + G+ from niche
+   8. PROMPTS
    ========================================================= */
 function renderPrompts(niche){
   if(!niche) niche = getCurrentNiche();
+  if(!niche) return;
   const host = $("#prompt-cards");
   if(!host) return;
 
@@ -5543,20 +5625,25 @@ function renderPrompts(niche){
   const p = STATE.fillValues;
 
   host.innerHTML = all.map(pr => {
-    const body = (() => { try { return pr.body(p, niche); } catch(e){ return `[erro ao renderizar: ${e.message}]`; } })();
+    let body;
+    try {
+      body = typeof pr.body === "function" ? pr.body(p, niche) : String(pr.body||"");
+    } catch(e){
+      body = `[erro ao renderizar: ${e.message}]`;
+    }
     const fillBox = pr.fill ? `
       <div class="pfill">
-        <label>${pr.fillLabel || "Substitui o marcador no corpo:"}</label>
-        <textarea class="txt" data-fill="${pr.fill}" rows="2" placeholder="(opcional — deixar vazio mantém o marcador)">${escAttr(p[pr.fill]||"")}</textarea>
+        <label>${escapeHTML(pr.fillLabel || "Substitui o marcador no corpo:")}</label>
+        <textarea class="txt" data-fill="${pr.fill}" rows="2" placeholder="(opcional — deixar vazio mantém o marcador)">${escapeHTML(p[pr.fill]||"")}</textarea>
       </div>` : "";
     return `
       <div class="pcard">
         <div class="ph">
           <span class="ptag">${pr.id}</span>
-          <h3>${pr.title}</h3>
+          <h3>${escapeHTML(pr.title||"")}</h3>
           <button class="btn ghost sm" data-cp="${pr.id}" style="margin-left:auto">⧉ copiar</button>
         </div>
-        <p class="pwhen">${pr.when}</p>
+        <p class="pwhen">${escapeHTML(pr.when||"")}</p>
         ${fillBox}
         <pre data-body="${pr.id}">${escapeHTML(body)}</pre>
       </div>`;
@@ -5565,20 +5652,20 @@ function renderPrompts(niche){
   host.querySelectorAll("[data-fill]").forEach(t => {
     t.addEventListener("input", () => {
       STATE.fillValues[t.dataset.fill] = t.value;
-      // Re-render only the affected body
-      const card = t.closest(".prompt");
+      const card = t.closest(".pcard");
       const id = card.querySelector("[data-cp]").dataset.cp;
       const pr = all.find(x => x.id === id);
       if(pr){
-        const body = pr.body(STATE.fillValues, niche);
+        let body;
+        try { body = typeof pr.body === "function" ? pr.body(STATE.fillValues, niche) : String(pr.body||""); }
+        catch(e){ body = `[erro: ${e.message}]`; }
         card.querySelector("[data-body]").textContent = body;
       }
     });
   });
   host.querySelectorAll("[data-cp]").forEach(btn => {
     btn.addEventListener("click", () => {
-      const id = btn.dataset.cp;
-      const card = btn.closest(".prompt");
+      const card = btn.closest(".pcard");
       const text = card.querySelector("[data-body]").textContent;
       navigator.clipboard.writeText(text).then(() => {
         btn.classList.add("copied"); btn.textContent = "✓ copiado";
@@ -5587,12 +5674,9 @@ function renderPrompts(niche){
     });
   });
 }
-function escapeHTML(s){
-  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
 
 /* =========================================================
-   9. TEMPLATES — list + downloads
+   9. TEMPLATES
    ========================================================= */
 function renderTemplates(niche){
   const host = $("#tpl-list");
@@ -5608,17 +5692,16 @@ function renderTemplates(niche){
               : `<span class="tag hist">opcional</span>`;
     return `
       <div class="tpl">
-        <span class="fname">${f.name}</span>
+        <span class="fname">${escapeHTML(f.name)}</span>
         ${tag}
-        <span class="frole">${f.role}</span>
-        <button class="btn ghost sm" data-tpl="${f.name}">↓</button>
+        <span class="frole">${escapeHTML(f.role||"")}</span>
+        <button class="btn ghost sm" data-tpl="${escAttr(f.name)}">↓</button>
       </div>`;
   }).join("");
   host.querySelectorAll("[data-tpl]").forEach(b => {
     b.addEventListener("click", () => {
-      const name = b.dataset.tpl;
-      const f = files.find(x => x.name === name);
-      if(f) downloadFile(f.name, f.content);
+      const f = files.find(x => x.name === b.dataset.tpl);
+      if(f) downloadFile(f.name, f.content||"");
     });
   });
 }
@@ -5633,19 +5716,17 @@ function downloadFile(name, content){
 function downloadAllTemplates(){
   const niche = getCurrentNiche();
   if(!niche || !niche.contextFiles) return;
-  niche.contextFiles.forEach((f, i) => setTimeout(() => downloadFile(f.name, f.content), i*120));
+  niche.contextFiles.forEach((f, i) => setTimeout(() => downloadFile(f.name, f.content||""), i*120));
 }
 async function downloadZIP(){
   const niche = getCurrentNiche();
   if(!niche || !niche.contextFiles || !niche.contextFiles.length) return;
-  // Load JSZip lazily from CDN
   if(typeof JSZip === "undefined"){
     await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
   }
   const zip = new JSZip();
-  niche.contextFiles.forEach(f => zip.file(f.name, f.content));
-  // README inside the zip
-  zip.file("README.md", `# Templates — ${niche.label}\n\nNicho: ${niche.label}\nGerado por: Kit de Contexto Universal\nData: ${today()}\n\nArquivos:\n${niche.contextFiles.map(f=>`- **${f.name}** — ${f.role}`).join("\n")}\n\nSuba os arquivos como referência no seu Projeto do Claude.ai. \`LOG-TEMPLATE.md\` permanece como modelo; os outros são substituídos pelos preenchidos pelo Claude após o primeiro setup.\n`);
+  niche.contextFiles.forEach(f => zip.file(f.name, f.content||""));
+  zip.file("README.md", `# Templates — ${niche.label}\n\nNicho: ${niche.label}\nGerado por: Kit de Contexto Universal\nData: ${today}\n\nArquivos:\n${niche.contextFiles.map(f=>`- **${f.name}** — ${f.role}`).join("\n")}\n`);
   const blob = await zip.generateAsync({type:"blob"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -5662,34 +5743,38 @@ function loadScript(src){
 }
 
 /* =========================================================
-   10. CUSTOM PRESETS — form, save, load, delete, list
+   10. CUSTOM PRESETS
    ========================================================= */
 function listPresets(){
-  try{
-    const raw = localStorage.getItem(LS_PRESETS);
-    return raw ? JSON.parse(raw) : [];
-  }catch(_){ return []; }
+  try{ return JSON.parse(localStorage.getItem(LS_PRESETS) || "[]"); }
+  catch(_){ return []; }
 }
 function savePresets(arr){ localStorage.setItem(LS_PRESETS, JSON.stringify(arr)); }
 
 function renderCustomForm(){
   // Hide standard groups
-  const conv = $("#g-conventions"), bs = $("#g-builder-section");
-  if(conv) conv.style.display = "none";
-  if(bs) bs.style.display = "none";
+  ["#g-conventions","#g-builder-section"].forEach(sel => {
+    const el = $(sel); if(el){ el.style.display = "none"; el.innerHTML = ""; }
+  });
 
-  const ws = (key, fallback) => (STATE._cf && STATE._cf[key] !== undefined) ? STATE._cf[key] : fallback;
   if(!STATE._cf) STATE._cf = {
     label: "", icon: "⚙️", headline: "", lede: "", ctxBlurb: "",
     cardColor: "#e7a23f", group: "serif",
     files: [], behaviors: [], promptsExtra: [], conventions: [], outputs: []
   };
-
+  const ws = (key, fallback) => (STATE._cf[key] !== undefined && STATE._cf[key] !== null) ? STATE._cf[key] : fallback;
   const presets = listPresets();
 
-  const host = $("#g-behaviors").closest(".group").parentElement;
-  // Build form
-  host.innerHTML = `
+  // Replace the behaviors group with the whole custom builder UI
+  const behaviorsHost = $("#g-behaviors");
+  if(!behaviorsHost) return;
+  const parent = behaviorsHost.closest(".group");
+  if(!parent) return;
+  const container = parent.parentElement;
+  // Clear all groups before this one (except possibly preview side)
+  // Easier: rebuild the controls column completely
+  const controls = container; // .controls div
+  controls.innerHTML = `
     <div class="group">
       <div class="glabel">Custom Builder <span class="gn">· construa seu próprio nicho</span></div>
 
@@ -5727,8 +5812,8 @@ function renderCustomForm(){
 
       <div class="subhead">Textos da Home</div>
       <input class="txt" id="cf-headline" placeholder="Headline (1 linha)" value="${escAttr(ws("headline",""))}" style="margin-bottom:8px"/>
-      <textarea class="txt" id="cf-lede" rows="2" placeholder="Lede (parágrafo curto, aceita HTML simples como &lt;strong&gt;)" style="margin-bottom:8px">${escAttr(ws("lede",""))}</textarea>
-      <textarea class="txt" id="cf-ctx" rows="2" placeholder="Frase sobre os arquivos de contexto (aceita HTML)" >${escAttr(ws("ctxBlurb",""))}</textarea>
+      <textarea class="txt" id="cf-lede" rows="2" placeholder="Lede (parágrafo curto, aceita HTML simples como &lt;strong&gt;)" style="margin-bottom:8px">${escapeHTML(ws("lede",""))}</textarea>
+      <textarea class="txt" id="cf-ctx" rows="2" placeholder="Frase sobre os arquivos de contexto (aceita HTML)" >${escapeHTML(ws("ctxBlurb",""))}</textarea>
     </div>
 
     <div class="group">
@@ -5745,12 +5830,12 @@ function renderCustomForm(){
 
     <div class="group">
       <div class="glabel">Convenções do nicho <span class="gn">· uma por linha</span></div>
-      <textarea class="txt" id="cf-conv" rows="4" placeholder="Ex.:&#10;Decisões importantes vão em DECISOES.md.&#10;Termos técnicos têm definição na primeira ocorrência.">${escAttr((ws("conventions",[])||[]).join("\n"))}</textarea>
+      <textarea class="txt" id="cf-conv" rows="4" placeholder="Ex.:&#10;Decisões importantes vão em DECISOES.md.&#10;Termos técnicos têm definição na primeira ocorrência.">${escapeHTML((ws("conventions",[])||[]).join("\n"))}</textarea>
     </div>
 
     <div class="group">
       <div class="glabel">Saídas obrigatórias <span class="gn">· uma por linha</span></div>
-      <textarea class="txt" id="cf-out" rows="3" placeholder="Ex.:&#10;Relatórios em prosa enxuta&#10;Documentação técnica">${escAttr((ws("outputs",[])||[]).map(o=>o.label||"").join("\n"))}</textarea>
+      <textarea class="txt" id="cf-out" rows="3" placeholder="Ex.:&#10;Relatórios em prosa enxuta&#10;Documentação técnica">${escapeHTML((ws("outputs",[])||[]).map(o=>typeof o === "string" ? o : (o.label||"")).join("\n"))}</textarea>
     </div>
 
     <div class="group">
@@ -5760,24 +5845,23 @@ function renderCustomForm(){
     </div>
   `;
 
-  // Re-render dynamic lists
   renderCustomFiles();
   renderCustomBehaviors();
   renderCustomPrompts();
 
-  // Wire identity inputs
-  const sync = (sel, key, transform) => {
+  const sync = (sel, key) => {
     const el = $(sel); if(!el) return;
-    el.addEventListener("input", () => { STATE._cf[key] = transform ? transform(el.value) : el.value; });
+    el.addEventListener("input", () => { STATE._cf[key] = el.value; });
   };
   sync("#cf-label","label"); sync("#cf-icon","icon"); sync("#cf-color","cardColor");
   sync("#cf-headline","headline"); sync("#cf-lede","lede"); sync("#cf-ctx","ctxBlurb");
-  $("#cf-conv").addEventListener("input", e => { STATE._cf.conventions = e.target.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean); });
+  $("#cf-conv").addEventListener("input", e => {
+    STATE._cf.conventions = e.target.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  });
   $("#cf-out").addEventListener("input", e => {
     STATE._cf.outputs = e.target.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean).map((l,i)=>({id:"o"+i, label:l}));
   });
 
-  // Group buttons
   $$("[data-cfg]").forEach(b => {
     b.addEventListener("click", () => {
       STATE._cf.group = b.dataset.cfg;
@@ -5785,7 +5869,6 @@ function renderCustomForm(){
     });
   });
 
-  // Add buttons
   $("#cf-add-file").addEventListener("click", () => {
     STATE._cf.files.push({ name:"NOVO.md", cat:"essencial", role:"Papel deste arquivo", content:"# Arquivo novo\n\n[conteúdo]" });
     renderCustomFiles();
@@ -5796,19 +5879,18 @@ function renderCustomForm(){
   });
   $("#cf-add-prompt").addEventListener("click", () => {
     const idx = (STATE._cf.promptsExtra||[]).length;
-    const id = String.fromCharCode("G".charCodeAt(0) + idx); // G, H, I, ...
+    const id = String.fromCharCode("G".charCodeAt(0) + idx);
     STATE._cf.promptsExtra = STATE._cf.promptsExtra || [];
     STATE._cf.promptsExtra.push({ id, title:"Prompt novo", when:"Quando usar este prompt.", body:"Corpo do prompt." });
     renderCustomPrompts();
   });
 
-  // Load / save / apply / delete
   $("#cf-load").addEventListener("change", e => {
     const name = e.target.value;
-    if(!name){ STATE._cf = { label:"",icon:"⚙️",headline:"",lede:"",ctxBlurb:"",cardColor:"#e7a23f",group:"serif",files:[],behaviors:[],promptsExtra:[],conventions:[],outputs:[] }; }
-    else {
-      const ps = listPresets();
-      const found = ps.find(p => p.name === name);
+    if(!name){
+      STATE._cf = { label:"",icon:"⚙️",headline:"",lede:"",ctxBlurb:"",cardColor:"#e7a23f",group:"serif",files:[],behaviors:[],promptsExtra:[],conventions:[],outputs:[] };
+    } else {
+      const found = listPresets().find(p => p.name === name);
       if(found){ STATE._cf = fromPreset(found); $("#cf-name").value = name; }
     }
     renderCustomForm();
@@ -5830,13 +5912,13 @@ function renderCustomForm(){
     const preset = toPreset(STATE._cf, name);
     STATE.customPreset = preset;
     localStorage.setItem(LS_PRESET_CURR, name);
-    // Persist also to presets if a name was given
     if($("#cf-name").value.trim()){
       const ps = listPresets();
       const ix = ps.findIndex(p => p.name === name);
       if(ix >= 0) ps[ix] = preset; else ps.push(preset);
       savePresets(ps);
     }
+    delete _normCache["custom"]; // limpa cache
     setNiche("custom");
   });
   $("#cf-delete").addEventListener("click", () => {
@@ -5852,8 +5934,7 @@ function renderCustomForm(){
 }
 
 function renderCustomFiles(){
-  const host = $("#cf-files");
-  if(!host) return;
+  const host = $("#cf-files"); if(!host) return;
   if(!STATE._cf.files.length){
     host.innerHTML = `<div style="color:var(--ink-faint);font-size:12.5px;padding:8px 0">Nenhum arquivo. Adicione abaixo.</div>`;
     return;
@@ -5870,12 +5951,13 @@ function renderCustomFiles(){
         <button class="btn ghost sm" data-cffrm="${i}">×</button>
       </div>
       <input class="txt" data-cff="role" data-i="${i}" value="${escAttr(f.role)}" placeholder="O papel do arquivo (1 linha)" style="margin-bottom:6px"/>
-      <textarea class="txt" data-cff="content" data-i="${i}" rows="3" placeholder="Conteúdo / template (Markdown)">${escAttr(f.content)}</textarea>
+      <textarea class="txt" data-cff="content" data-i="${i}" rows="3" placeholder="Conteúdo / template (Markdown)">${escapeHTML(f.content)}</textarea>
     </div>
   `).join("");
   host.querySelectorAll("[data-cff]").forEach(el => {
-    el.addEventListener("input", () => { STATE._cf.files[+el.dataset.i][el.dataset.cff] = el.value; });
-    el.addEventListener("change", () => { STATE._cf.files[+el.dataset.i][el.dataset.cff] = el.value; });
+    const h = () => { STATE._cf.files[+el.dataset.i][el.dataset.cff] = el.value; };
+    el.addEventListener("input", h);
+    el.addEventListener("change", h);
   });
   host.querySelectorAll("[data-cffrm]").forEach(b => {
     b.addEventListener("click", () => { STATE._cf.files.splice(+b.dataset.cffrm,1); renderCustomFiles(); });
@@ -5883,10 +5965,9 @@ function renderCustomFiles(){
 }
 
 function renderCustomBehaviors(){
-  const host = $("#cf-bh");
-  if(!host) return;
+  const host = $("#cf-bh"); if(!host) return;
   if(!STATE._cf.behaviors.length){
-    host.innerHTML = `<div style="color:var(--ink-faint);font-size:12.5px;padding:8px 0">Nenhum comportamento extra. Os 4 universais (Direto, Incerteza, Trade-offs, Ideias) já estão ativos.</div>`;
+    host.innerHTML = `<div style="color:var(--ink-faint);font-size:12.5px;padding:8px 0">Nenhum comportamento extra. Os 4 universais já estão ativos.</div>`;
     return;
   }
   host.innerHTML = STATE._cf.behaviors.map((b,i) => `
@@ -5895,7 +5976,7 @@ function renderCustomBehaviors(){
         <input class="txt" data-cfb="label" data-i="${i}" value="${escAttr(b.label)}" placeholder="Rótulo curto"/>
         <button class="btn ghost sm" data-cfbrm="${i}">×</button>
       </div>
-      <textarea class="txt" data-cfb="def" data-i="${i}" rows="2" placeholder="Definição completa do comportamento">${escAttr(b.def)}</textarea>
+      <textarea class="txt" data-cfb="def" data-i="${i}" rows="2" placeholder="Definição completa do comportamento">${escapeHTML(b.def)}</textarea>
     </div>
   `).join("");
   host.querySelectorAll("[data-cfb]").forEach(el => {
@@ -5907,8 +5988,7 @@ function renderCustomBehaviors(){
 }
 
 function renderCustomPrompts(){
-  const host = $("#cf-prompts");
-  if(!host) return;
+  const host = $("#cf-prompts"); if(!host) return;
   const list = STATE._cf.promptsExtra || [];
   if(!list.length){
     host.innerHTML = `<div style="color:var(--ink-faint);font-size:12.5px;padding:8px 0">Nenhum prompt G+. Os 6 universais (A-F) já estão ativos.</div>`;
@@ -5922,7 +6002,7 @@ function renderCustomPrompts(){
         <button class="btn ghost sm" data-cfprm="${i}">×</button>
       </div>
       <input class="txt" data-cfp="when" data-i="${i}" value="${escAttr(p.when)}" placeholder="Quando usar este prompt" style="margin-bottom:6px"/>
-      <textarea class="txt" data-cfp="body" data-i="${i}" rows="3" placeholder="Corpo do prompt (texto)">${escAttr(p.body)}</textarea>
+      <textarea class="txt" data-cfp="body" data-i="${i}" rows="3" placeholder="Corpo do prompt (texto)">${escapeHTML(p.body)}</textarea>
     </div>
   `).join("");
   host.querySelectorAll("[data-cfp]").forEach(el => {
@@ -5960,8 +6040,7 @@ function fromPreset(p){
     headline: p.headline || "", lede: p.lede || "", ctxBlurb: p.ctxBlurb || "",
     files: p.contextFiles || [], behaviors: p.behaviors || [],
     conventions: p.conventions || [],
-    outputs: (p.outputs||[]).map(o => o.label || ""),
-    // Convert function bodies back to strings for editing
+    outputs: (p.outputs||[]).map(o => typeof o === "string" ? o : (o.label || "")),
     promptsExtra: (p.promptsExtra||[]).map(pr => ({
       id: pr.id, title: pr.title, when: pr.when,
       body: (typeof pr.body === "function") ? (function(){ try{return pr.body({},{});}catch(_){return "";} })() : (pr.body || "")
@@ -5970,70 +6049,75 @@ function fromPreset(p){
 }
 
 /* =========================================================
-   11. OVERLAY (niche selector) — show / hide
+   11. OVERLAY / NAV
    ========================================================= */
 function openOverlay(){
   $("#niche-overlay").classList.add("on");
-  $("#ov-close-btn").style.display = STATE.niche ? "" : "none";
+  const c = $("#ov-close-btn");
+  if(c) c.style.display = STATE.niche ? "" : "none";
 }
 function closeOverlay(){ $("#niche-overlay").classList.remove("on"); }
-
-/* =========================================================
-   12. NAVIGATION
-   ========================================================= */
 function setView(v){
   $$(".view").forEach(s => s.classList.toggle("on", s.id === "v-" + v));
   $$(".navbtn").forEach(b => b.classList.toggle("on", b.dataset.view === v));
 }
 
 /* =========================================================
-   13. BOOT
+   12. BOOT
    ========================================================= */
 function boot(){
-  renderNicheCards();
+  try {
+    renderNicheCards();
 
-  // Decide first niche
-  const saved = localStorage.getItem(LS_NICHE);
-  if(saved && NICHES[saved]){
-    setNiche(saved);
-  } else {
-    // First time — show overlay
-    openOverlay();
-  }
+    const saved = localStorage.getItem(LS_NICHE);
+    if(saved && NICHES[saved]){
+      setNiche(saved);
+    } else {
+      openOverlay();
+    }
 
-  // Wire up nav
-  $$(".navbtn").forEach(b => {
-    b.addEventListener("click", () => setView(b.dataset.view));
-  });
-
-  // Niche pill opens overlay
-  $("#niche-pill").addEventListener("click", openOverlay);
-  $("#ov-close-btn").addEventListener("click", closeOverlay);
-
-  // Escape closes overlay (only if niche set)
-  document.addEventListener("keydown", e => {
-    if(e.key === "Escape" && STATE.niche) closeOverlay();
-  });
-
-  // Instr copy / dl
-  $("#copy-instr").addEventListener("click", () => {
-    navigator.clipboard.writeText(buildInstr(getCurrentNiche())).then(() => {
-      const btn = $("#copy-instr");
-      btn.classList.add("copied"); btn.textContent = "✓ copiado";
-      setTimeout(() => { btn.classList.remove("copied"); btn.textContent = "⧉ Copiar"; }, 1400);
+    $$(".navbtn").forEach(b => {
+      b.addEventListener("click", () => setView(b.dataset.view));
     });
-  });
-  $("#dl-instr").addEventListener("click", () => {
-    const niche = getCurrentNiche();
-    downloadFile(`instrucoes-${niche.id}.txt`, buildInstr(niche));
-  });
 
-  // Templates: all + zip
-  $("#dl-all").addEventListener("click", downloadAllTemplates);
-  $("#dl-zip").addEventListener("click", downloadZIP);
+    const pill = $("#niche-pill");
+    if(pill) pill.addEventListener("click", openOverlay);
+    const closeBtn = $("#ov-close-btn");
+    if(closeBtn) closeBtn.addEventListener("click", closeOverlay);
+
+    document.addEventListener("keydown", e => {
+      if(e.key === "Escape" && STATE.niche) closeOverlay();
+    });
+
+    const copyBtn = $("#copy-instr");
+    if(copyBtn) copyBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(buildInstr(getCurrentNiche())).then(() => {
+        copyBtn.classList.add("copied"); copyBtn.textContent = "✓ copiado";
+        setTimeout(() => { copyBtn.classList.remove("copied"); copyBtn.textContent = "⧉ Copiar"; }, 1400);
+      });
+    });
+    const dlBtn = $("#dl-instr");
+    if(dlBtn) dlBtn.addEventListener("click", () => {
+      const niche = getCurrentNiche();
+      downloadFile(`instrucoes-${niche.id}.txt`, buildInstr(niche));
+    });
+    const dlAll = $("#dl-all");
+    if(dlAll) dlAll.addEventListener("click", downloadAllTemplates);
+    const dlZip = $("#dl-zip");
+    if(dlZip) dlZip.addEventListener("click", downloadZIP);
+  } catch(err){
+    console.error("Boot failed:", err);
+    // Show error on page so user sees something
+    const wrap = document.querySelector(".wrap");
+    if(wrap){
+      const banner = document.createElement("div");
+      banner.style.cssText = "position:fixed;top:0;left:0;right:0;background:#7a2424;color:#fff;padding:14px 20px;font-family:monospace;font-size:13px;z-index:9999";
+      banner.textContent = "Erro no boot: " + err.message + " — abra o console (F12) para detalhes.";
+      document.body.appendChild(banner);
+    }
+  }
 }
 
-/* Run after DOM is ready (script is at the end of body, so DOM exists) */
 boot();
 
 </script>
