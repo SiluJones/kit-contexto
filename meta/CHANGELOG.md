@@ -4,6 +4,26 @@
 
 ---
 
+## v1.1.1 — 2026-05-29 — Entrega de documentos como arquivos completos
+
+Ajuste de direção a partir de esclarecimento do usuário. O ponto de fricção no uso real não era "o Claude pediu pra atualizar os docs" — era **o Claude ter entregado blocos soltos de texto para o usuário costurar à mão dentro dos arquivos**. O usuário quer arquivos completos, prontos para baixar e substituir.
+
+### Definido
+- **Protocolo de entrega**: o assistente entrega sempre o ARQUIVO COMPLETO e atualizado (pronto para substituir o antigo), nunca trechos para colar/costurar. Se vários arquivos mudaram, entrega todos inteiros. As regras de higiene são aplicadas pelo assistente ao montar o arquivo — o usuário recebe o resultado já correto.
+- **Ressalva de ambiente**: dentro de um Projeto do Claude (pasta somente-leitura, sem criação de arquivo para download), e só nesse caso, o assistente entrega o conteúdo completo de cada arquivo no chat, um por bloco de código, pronto para salvar. Em ambientes com criação de arquivos, entrega para baixar. Princípio idêntico: arquivo inteiro, nunca pedaços.
+- **Aplicar continua sendo decisão do usuário** — mas o trabalho de montar o arquivo é do assistente, não do usuário.
+
+### Adicionado (mantido desta sessão)
+- **7º princípio universal: «Instruções sempre cuidadosas»** — qualquer instrução, guia ou passo a passo entregue ao usuário deve ser completo, detalhado e bem explicado; nunca leviano; não assume contexto que o usuário não tem.
+
+### Corrigido em relação à versão intermediária
+- Uma primeira tentativa desta sessão chegou a instruir "preparar blocos demarcados para o usuário colar" — exatamente o comportamento indesejado. Revertido: agora é arquivo completo.
+
+### Validação
+- Teste DOM (jsdom) dos 17 nichos: 0 erros; 7 princípios universais; seção «Como o assistente entrega as atualizações» presente e correta no CLAUDE.md.
+
+---
+
 ## v1.1.0 — 2026-05-29 — Fundação transversal
 
 Primeira etapa do refinamento pós-MVP. Não mexe nos nichos individualmente ainda — eleva a base que todos compartilham, a partir do feedback massivo recebido do Claude no projeto GameDataHub (nicho dev) e dos materiais reais de uso (design/cliente).

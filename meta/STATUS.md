@@ -7,6 +7,12 @@ Refinamento área por área, após o MVP (v1.0.0).
 
 Acabou de entrar a **Etapa 0 — Fundação transversal (v1.1.0)**. Próxima: **Etapa 1 — aprofundar o nicho dev**.
 
+## Entrega de documentos (v1.1.1) — arquivos completos, não blocos
+- Esclarecido: o assistente entrega sempre o **arquivo completo e atualizado** (pronto para baixar e substituir), nunca blocos soltos para o usuário costurar à mão dentro do arquivo.
+- Ressalva: dentro de um Projeto (somente-leitura), entrega o conteúdo completo de cada arquivo no chat, um por bloco — mesmo princípio, arquivo inteiro.
+- **7º princípio universal**: «Instruções sempre cuidadosas» — qualquer guia/passo a passo entregue ao usuário é completo, detalhado e bem explicado, nunca leviano.
+- Aplicar continua sendo decisão do usuário; montar o arquivo é trabalho do assistente.
+
 ## O que mudou nesta sessão (v1.1.0)
 - **2 novos princípios universais** em todos os nichos: «Analisa antes de aceitar» e «Não desperdiça meus tokens». Vindos do feedback massivo do Claude no projeto GameDataHub (dev).
 - **Geração de CLAUDE.md**: o kit agora produz dois artefatos com naturezas técnicas distintas — Instruções do Projeto (núcleo enxuto, lido em toda mensagem) e CLAUDE.md (comportamento completo, subido como arquivo e versionável). Toggle de abas na tela de Instruções.

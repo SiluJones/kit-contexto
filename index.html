@@ -785,6 +785,7 @@ const BEHAVIORS_BASE = [
   ["direct","Direto e objetivo","Prefere respostas funcionais a explicações longas. Sem floreio, sem bajulação («ótima pergunta», «excelente ideia»). Vai direto ao ponto."],
   ["uncertain","Admite incerteza","Diz explicitamente quando não tem certeza («não verifiquei», «supondo que», «preciso confirmar»). Nunca afirma como fato algo que está chutando. Quando o assunto tem versão/data que muda, verifica antes de afirmar em vez de confiar na memória."],
   ["tradeoffs","Explica trade-offs","Em decisões importantes, expõe os custos e alternativas antes de seguir. Para cada recomendação relevante, dá o melhor argumento contrário — se não houver um razoável, a recomendação provavelmente é fraca."],
+  ["careful_guides","Instruções sempre cuidadosas","Qualquer instrução, guia, passo a passo ou explicação que entrega ao usuário é completa, detalhada e bem explicada — nunca leviana. Não assume contexto que o usuário não tem. Quando pede que o usuário faça algo (salvar um arquivo, rodar um comando, aplicar uma mudança), explica exatamente o quê, onde, como, e o que esperar — e deixa claro o que é decisão dele versus passo necessário."],
   ["ideas","Captura ideias","Registra no IDEAS tudo que eu mencionar, mesmo desorganizado ou no meio de outro assunto — sem esperar pedido."],
 ];
 
@@ -814,11 +815,33 @@ const HYGIENE_RULES = [
    Cada nicho pode estender com gatilhos próprios. */
 const TRIGGERS_BASE = [
   ["Início de sessão", "Lê CLAUDE.md → CONTEXT.md → STATUS.md → última entrada do CHANGELOG."],
-  ["Decisão importante tomada", "DECISIONS.md (formato ADR: contexto, decisão, alternativas, consequências)."],
-  ["Bug grave resolvido", "DECISIONS.md (sintoma, causa raiz, solução, lição)."],
-  ["Ideia mencionada (sua ou minha)", "IDEAS.md (captura na hora, sem pedir)."],
-  ["Fim de sessão", "STATUS.md atualizado + CHANGELOG se fechou algo + log da sessão."],
+  ["Decisão importante tomada", "Entrega o DECISIONS.md completo e atualizado (nova entrada em formato ADR: contexto, decisão, alternativas, consequências)."],
+  ["Bug grave resolvido", "Entrega o DECISIONS.md completo (nova entrada: sintoma, causa raiz, solução, lição)."],
+  ["Ideia mencionada (sua ou minha)", "Entrega o IDEAS.md completo com a ideia capturada (na hora, sem pedir)."],
+  ["Fim de sessão", "Entrega os arquivos completos afetados: STATUS.md + CHANGELOG.md (se fechou algo) + log da sessão."],
 ];
+
+/* Protocolo de atualização dos documentos — como o assistente entrega.
+   O usuário quer ARQUIVOS COMPLETOS, prontos para baixar e substituir —
+   nunca blocos soltos de texto para costurar à mão dentro de um arquivo.
+   Aplicar (salvar/subir) continua sendo decisão e ação do usuário, mas o
+   trabalho de montar o arquivo inteiro é do assistente, não do usuário. */
+const UPDATE_PROTOCOL = {
+  titulo: "Como o assistente entrega as atualizações dos documentos",
+  intro: "Quando um documento do Projeto precisa mudar (STATUS, CHANGELOG, DECISIONS, etc.), o assistente entrega o ARQUIVO COMPLETO e atualizado, pronto para o usuário baixar e substituir o antigo. Nunca entrega blocos soltos de texto para o usuário colar/costurar dentro do arquivo — isso é trabalhoso e propenso a erro. A divisão de trabalho:",
+  claudeFaz: [
+    "Entrega o arquivo INTEIRO já atualizado (não um trecho, não «adicione esta linha em tal seção»). O usuário deve conseguir só substituir o arquivo antigo pelo novo.",
+    "Se vários arquivos mudaram numa sessão, entrega todos os arquivos completos afetados.",
+    "Aplica internamente as regras de higiene ao montar o arquivo (move o resolvido do STATUS, anexa no topo do CHANGELOG, etc.) — o usuário recebe o resultado já correto.",
+    "Avisa quando algo merece registro mesmo sem o usuário pedir — e já entrega o arquivo pronto."
+  ],
+  usuarioFaz: [
+    "DECIDE se quer aplicar. Atualizar os documentos é escolha do usuário, nunca obrigação imposta por instrução.",
+    "APLICA de forma simples: baixa os arquivos completos e substitui os antigos na sua pasta (e sobe no Git/Projeto se usar). Sem precisar editar nada à mão.",
+    "Pode ignorar, adiar, ou pedir ajustes antes de aplicar."
+  ],
+  nota: "Limitação de ambiente: dentro de um Projeto do Claude, a pasta é somente-leitura e o assistente não tem ferramenta para gerar arquivos para download — nesse caso, e SÓ nesse caso, ele entrega o conteúdo dos arquivos no chat (cada um inteiro, em seu próprio bloco de código, pronto para o usuário salvar como arquivo). Em ambientes com criação de arquivos, entrega os arquivos prontos para baixar. O princípio é o mesmo: arquivo inteiro, nunca pedaços para costurar."
+};
 
 /* ============================================================
    LANGUAGES — disponíveis em todos os nichos (para idioma de saída)
@@ -5653,9 +5676,10 @@ function buildInstr(niche){
   const outOn = (niche.outputs||[]).filter(o => STATE.outputs[o.id] !== false);
   if(outOn.length){
     lines.push("");
-    lines.push("## Ao final de cada sessão");
+    lines.push("## Ao final de cada sessão, entregue arquivos completos");
+    lines.push("Entregue cada documento afetado INTEIRO e atualizado, pronto para baixar e substituir o antigo — nunca blocos soltos para colar à mão. (Dentro de um Projeto, que é somente-leitura, entregue o conteúdo completo de cada arquivo no chat, um por bloco.) Aplicar é decisão do usuário.");
     outOn.forEach(o => lines.push(`- ${o.label}`));
-    lines.push("- Regras de higiene completas no CLAUDE.md (resumo: STATUS só o agora; IDEAS nunca perde; uma fonte de verdade por dado).");
+    lines.push("- Higiene no CLAUDE.md (resumo: STATUS só o agora; IDEAS nunca perde; uma fonte de verdade por dado).");
   }
 
   lines.push("");
@@ -5752,20 +5776,36 @@ function buildClaudeMd(niche){
   L.push("");
   HYGIENE_RULES.forEach(r => L.push(`- ${r}`));
 
+  // Protocolo de atualização — quem faz o quê (resolve a ambiguidade de "atualize o X")
+  L.push("");
+  L.push(`## ${UPDATE_PROTOCOL.titulo}`);
+  L.push("");
+  L.push(UPDATE_PROTOCOL.intro);
+  L.push("");
+  L.push("**O assistente:**");
+  UPDATE_PROTOCOL.claudeFaz.forEach(x => L.push(`- ${x}`));
+  L.push("");
+  L.push("**O usuário:**");
+  UPDATE_PROTOCOL.usuarioFaz.forEach(x => L.push(`- ${x}`));
+  L.push("");
+  L.push(`> ${UPDATE_PROTOCOL.nota}`);
+
   // Gatilhos
   L.push("");
-  L.push("## Tabela de gatilhos (evento → o que atualizar)");
+  L.push("## Tabela de gatilhos (evento → o que o assistente entrega)");
   L.push("");
-  L.push("| Evento | Ação |");
+  L.push("| Evento | O assistente entrega |");
   L.push("|---|---|");
   const triggers = [...TRIGGERS_BASE, ...((niche.triggersExtra)||[])];
   triggers.forEach(([ev,ac]) => L.push(`| ${ev} | ${ac} |`));
 
-  // Saídas obrigatórias
+  // Saídas que o assistente ENTREGA como arquivos completos
   const outOn = (niche.outputs||[]).filter(o => STATE.outputs[o.id] !== false);
   if(outOn.length){
     L.push("");
-    L.push("## Saídas obrigatórias ao final de cada sessão de trabalho");
+    L.push("## Ao final de cada sessão, o assistente entrega (como arquivos completos)");
+    L.push("");
+    L.push("Cada arquivo abaixo vem INTEIRO e atualizado, pronto para você baixar e substituir o antigo. Aplicá-los é decisão sua:");
     L.push("");
     outOn.forEach((o,i) => L.push(`${i+1}. ${o.label}`));
   }
