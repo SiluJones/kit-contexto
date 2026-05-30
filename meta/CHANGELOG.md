@@ -4,6 +4,34 @@
 
 ---
 
+## v1.1.0 — 2026-05-29 — Fundação transversal
+
+Primeira etapa do refinamento pós-MVP. Não mexe nos nichos individualmente ainda — eleva a base que todos compartilham, a partir do feedback massivo recebido do Claude no projeto GameDataHub (nicho dev) e dos materiais reais de uso (design/cliente).
+
+### Adicionado
+- **2 princípios comportamentais universais** (agora 6 no total, antes 4):
+  - **Analisa antes de aceitar** — o assistente não segue cegamente; avalia viabilidade de cada sugestão e se posiciona (a favor / refina / contra), sempre fundamentado. Nunca se limita às palavras do usuário.
+  - **Não desperdiça tokens** — não pergunta o que já foi decidido, não pede confirmação de plano aprovado, consolida perguntas.
+- **Geração de CLAUDE.md**: novo artefato gerado pelo kit, separado das Instruções do Projeto. Toggle de abas na tela de Instruções (Instruções do Projeto ↔ CLAUDE.md), cada um com seu copiar/baixar.
+- **Filosofia rolante/estável/cresce** como estrutura base (constante FILE_PHILOSOPHY).
+- **Regras de higiene anti-inchaço** (HYGIENE_RULES): referência cruzada em vez de duplicação; STATUS só o agora; IDEAS nunca perde; DECISIONS arquiva quando grande.
+- **Tabela de gatilhos** (evento -> arquivo a atualizar) gerada no CLAUDE.md, extensível por nicho via `triggersExtra`.
+- **Mapeador de comportamento temporal** por arquivo (`fileBehaviorLabel`) cobrindo os nomes de arquivo dos 17 nichos.
+
+### Mudou
+- `buildInstr()` agora produz um **núcleo denso** (ritual de início + princípios curtos + arquivos + idioma), em vez do bloco antigo. Inclui CLAUDE.md no ritual e na lista de arquivos.
+- Princípios nas Instruções aparecem encurtados (primeira frase); a versão completa vai no CLAUDE.md.
+
+### Fundamento técnico (ver DECISOES D-012)
+- Instruções do Projeto são lidas inteiras a cada mensagem (token-caras) -> núcleo enxuto.
+- Arquivos de conhecimento usam RAG nos planos pagos e são fáceis de atualizar -> CLAUDE.md completo.
+
+### Validação
+- Teste DOM (jsdom) dos 17 nichos: 0 erros de JS, todos renderizam Instruções + CLAUDE.md.
+- Toggle de abas, geração de ambos os artefatos, troca de nicho: sem erros.
+
+---
+
 ## v1.0.0 — 2026-05-27 (planejado)
 
 ### Adicionado

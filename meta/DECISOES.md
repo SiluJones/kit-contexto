@@ -162,3 +162,42 @@
 **Racional:** são territórios onde um template pronto pode ser confundido com conselho profissional. Prefiro não dar essa abertura. Quem precisa, constrói no Custom — assume autoria, assume responsabilidade.
 
 **Status:** ativa.
+
+---
+
+## D-012 — Fundação transversal: 6 princípios, CLAUDE.md separado, higiene
+
+**Data:** 2026-05-29
+**Status:** aceita
+**Autor:** ambos (feedback do Claude/GameDataHub + análise + decisão do usuário)
+
+### Contexto
+Após o MVP (17 nichos + custom), o usuário trouxe o feedback massivo que um Claude gerou no projeto real GameDataHub (nicho dev), além de materiais de uso real do nicho design/cliente. Esse feedback evoluiu a estrutura de docs muito além do que o kit gerava: CLAUDE.md separado, princípio anti-concordância-automática, princípio anti-desperdício-de-tokens, filosofia rolante/estável/cresce com regras de higiene, ROADMAP/GLOSSARY, tabela de gatilhos. Decidiu-se refinar área por área; esta é a Etapa 0 (fundação), antes de tocar nos nichos um a um.
+
+### Decisão
+1. **Adicionar 2 princípios universais** (total 6): «Analisa antes de aceitar» e «Não desperdiça tokens». Os 4 antigos (direto, incerteza, trade-offs, captura ideias) foram reescritos mais ricos.
+2. **Gerar CLAUDE.md** como artefato separado das Instruções, com toggle de abas. Instruções = núcleo denso (lido em todo turno); CLAUDE.md = comportamento completo (subido como arquivo, versionável).
+3. **Estruturas base**: filosofia de arquivos, regras de higiene, tabela de gatilhos — refletidas no CLAUDE.md gerado.
+
+### Alternativas consideradas
+- **Fundir CLAUDE.md dentro das Instruções (como era)** — rejeitada: as Instruções são lidas em toda mensagem e ficariam caras/longas; e não dá para versionar/atualizar separado.
+- **Só CLAUDE.md, sem núcleo nas Instruções** — rejeitada: arquivos de conhecimento podem não ser carregados (RAG sob demanda); o essencial precisa estar nas Instruções, que são garantidamente lidas.
+- **Refazer todos os 18 nichos de uma vez** — rejeitada (foi justamente o erro de método do MVP): espalha o esforço, deixa cada nicho raso. Fundação primeiro, depois um nicho por vez.
+
+### Fundamento técnico (pesquisa 2026-05-29)
+- Instruções do Projeto: lidas inteiras em cada mensagem ("função em hot loop"); cada token custa para sempre.
+- Project knowledge: usa RAG nos planos pagos (só carrega o relevante quando o acervo é grande); quando pequeno, entra inteiro. Fácil de atualizar trocando o arquivo.
+- Conclusão: especialização, não redundância. Núcleo curto + arquivo completo.
+
+### Definição de arquivos: núcleo + opcionais
+- **Núcleo (7):** CLAUDE, CONTEXT, STATUS, DECISIONS, IDEAS, CHANGELOG, LOG-TEMPLATE.
+- **Opcionais (3):** ROADMAP, GLOSSARY, BRIEFING/continuidade.
+- Por que não fundir ROADMAP no IDEAS/STATUS: horizontes temporais distintos (plano em fases vs. brainstorm vs. agora). Fundir recriaria fonte-de-verdade-dupla. Mas como nem todo projeto tem plano de fases, ROADMAP é opcional.
+
+### Consequências
+- **Positivas:** comportamento do kit alinhado ao que o uso real provou ser superior; Instruções mais baratas em token; CLAUDE.md versionável; base pronta para aprofundar cada nicho.
+- **Negativas:** mais um artefato para o usuário subir (CLAUDE.md) — mitigado: ctrl+A + arrastar resolve, e o ganho de qualidade compensa.
+- **Pendente:** os nichos individuais ainda não foram aprofundados (Etapa 1+). A fundação prepara a máquina; cada nicho será lapidado com seu próprio feedback ao longo do tempo.
+
+### Sobre a feature nativa "Pesquisar e referenciar conversas" (Opus 4.8)
+Levantado pelo usuário. Análise: a feature cobre continuidade entre conversas suas, mas é sob demanda e por busca, limitada ao projeto, não persistente. O kit mantém diferencial em: portabilidade (arquivos vão pro Git, funcionam em qualquer conta), estrutura deliberada (decisão/ideia/estado separados), e controle do que entra no contexto. Vale continuar lapidando.

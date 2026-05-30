@@ -1,41 +1,36 @@
-# STATUS — Kit de Contexto Universal — 2026-05-27
+# STATUS — Kit de Contexto Universal — 2026-05-29
+
+> Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Sintetizar/finalizar.
+Refinamento área por área, após o MVP (v1.0.0).
 
-A versão v1.0.0 está pronta para deploy. Estrutura definida, 18 nichos implementados, Custom builder funcional, meta-doc completa.
+Acabou de entrar a **Etapa 0 — Fundação transversal (v1.1.0)**. Próxima: **Etapa 1 — aprofundar o nicho dev**.
 
-## Volume atual
-- Nichos em produção: **18** (8 core + 8 criativos + 1 special/custom)
-- Templates únicos: **~85** (média de 4-6 por nicho)
-- Prompts G+ específicos: **68** (4 por nicho × 17 prontos)
-- Linhas de código (HTML único): **~6000**
-- Tamanho do `index.html`: **~285 KB** (sem minificar, sem comprimir)
+## O que mudou nesta sessão (v1.1.0)
+- **2 novos princípios universais** em todos os nichos: «Analisa antes de aceitar» e «Não desperdiça meus tokens». Vindos do feedback massivo do Claude no projeto GameDataHub (dev).
+- **Geração de CLAUDE.md**: o kit agora produz dois artefatos com naturezas técnicas distintas — Instruções do Projeto (núcleo enxuto, lido em toda mensagem) e CLAUDE.md (comportamento completo, subido como arquivo e versionável). Toggle de abas na tela de Instruções.
+- **Filosofia rolante/estável/cresce** + **regras de higiene anti-inchaço** + **tabela de gatilhos** agora são estruturas base do kit, refletidas no CLAUDE.md gerado.
 
-## Em foco esta semana
-- Deploy no GitHub Pages
-- Eventuais ajustes pós-publicação se algo quebrar em produção
+## Decisão de arquitetura (fundamentada por pesquisa)
+- **Instruções do Projeto** são lidas inteiras a cada mensagem (token-caras) -> devem ser densas.
+- **Arquivos de conhecimento** usam RAG nos planos pagos (carregados sob demanda quando o acervo é grande) e são fáceis de atualizar/versionar.
+- Por isso: núcleo curto nas Instruções + versão completa no CLAUDE.md. Não é redundância — é especialização.
 
-## Decisões pendentes
-- **Nenhuma bloqueante.** A v1 está fechada conceitualmente.
-- Próxima decisão grande aparece se houver uso real e feedback que justifique v1.1.
+## Próximos passos
+1. **Etapa 1 — dev aprofundado** (próxima sessão): reconstruir o nicho dev como referência de ouro, incorporando o feedback do GameDataHub (9 arquivos com CLAUDE/ROADMAP/GLOSSARY, prompts G+ que hoje faltam, CONTEXT com armadilhas catalogadas).
+2. Etapas seguintes: um nicho por vez, cada um aproveitando a fundação.
+3. Com o tempo: coletar novos "feedbacks" de Claudes usando cada nicho na prática, e relapidar.
 
-## Bloqueios
-Nenhum.
-
-## Próximos passos imediatos
-1. Subir `index.html` em repo público no GitHub.
-2. Ativar GitHub Pages (rota `/`).
-3. Conferir o site no ar.
-4. Compartilhar quando confortável.
-
-## Próximos passos pensados para v1.1 (se houver)
-1. Exportar/importar preset Custom como JSON (`meta/IDEIAS.md` → i11).
-2. Drag-and-drop para reordenar arquivos no Custom (i20).
-3. Atalhos de teclado adicionais (i24).
-
-Nada disso está prometido. Será decidido com base em uso real.
+## Definição de arquivos (núcleo + opcionais)
+**Núcleo (todo projeto):** CLAUDE, CONTEXT, STATUS, DECISIONS, IDEAS, CHANGELOG, LOG-TEMPLATE.
+**Opcionais (conforme complexidade):** ROADMAP (plano em fases), GLOSSARY (jargão próprio), BRIEFING/continuidade (transferência frequente).
+Racional: cada arquivo tem um horizonte temporal distinto; fundir recriaria duplicação. Mas nem todo projeto precisa de todos — daí o núcleo + opcionais.
 
 ## Pendências
-- [ ] Deploy GitHub Pages (próxima ação).
-- [ ] Decidir se manter os arquivos `Kit_Conversas.md` e `Projetando_com_o_Claude.md` no repo público ou só no Projeto Claude.ai (são as fontes do brainstorm).
+- [ ] Etapa 1 (dev aprofundado).
+- [ ] Atualizar README e PLANNING para refletir CLAUDE.md + 6 princípios (quando a fundação estabilizar após o dev).
+- [ ] Reavaliar posicionamento do kit frente à feature nativa "Pesquisar e referenciar conversas" — diferencial confirmado: portabilidade (Git, qualquer conta), estrutura deliberada, e controle do que entra no contexto.
+
+---
+*Próxima sessão: Etapa 1 — aprofundar o nicho dev usando o feedback do GameDataHub como matéria-prima.*

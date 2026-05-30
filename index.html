@@ -229,6 +229,10 @@
   .out{position:sticky;top:80px;background:var(--panel);border:1px solid var(--line-soft);border-radius:14px;padding:18px;height:fit-content;max-height:calc(100vh - 110px);display:flex;flex-direction:column;box-shadow:var(--shadow)}
   .outhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px}
   .outhead .ttl{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint)}
+  .out-tabs{display:flex;gap:4px;background:var(--panel2);padding:3px;border-radius:9px;border:1px solid var(--line-soft)}
+  .out-tab{appearance:none;border:0;background:transparent;color:var(--ink-faint);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.3px;padding:6px 11px;border-radius:6px;cursor:pointer;transition:all .15s}
+  .out-tab:hover{color:var(--ink-dim)}
+  .out-tab.on{background:var(--amber);color:#15110a}
   .out pre{flex:1;overflow:auto;font-size:12px}
 
   /* prompts */
@@ -622,14 +626,17 @@
 
         <div class="out">
           <div class="outhead">
-            <span class="ttl">Pré-visualização</span>
+            <div class="out-tabs">
+              <button class="out-tab on" id="tab-instr" data-target="instr">Instruções do Projeto</button>
+              <button class="out-tab" id="tab-claude" data-target="claude">CLAUDE.md</button>
+            </div>
             <div style="display:flex;gap:8px">
               <button class="btn sm" id="copy-instr">⧉ Copiar</button>
-              <button class="btn ghost sm" id="dl-instr">↓ .txt</button>
+              <button class="btn ghost sm" id="dl-instr">↓ baixar</button>
             </div>
           </div>
           <pre id="preview-instr"></pre>
-          <p class="hint" style="margin-top:10px">Dica: mantenha as instruções abaixo de ~400 palavras. Não coloque código aqui — código vai nas mensagens.</p>
+          <p class="hint" id="out-hint" style="margin-top:10px">As <b>Instruções do Projeto</b> são lidas em toda mensagem — por isso vêm enxutas. Cole em <b>Projeto → Instruções</b>. Não coloque código aqui.</p>
         </div>
       </div>
     </section>
@@ -773,10 +780,44 @@ const PROMPTS_BASE = [
    BEHAVIORS UNIVERSAIS — disponíveis em todos os nichos
    ============================================================ */
 const BEHAVIORS_BASE = [
-  ["direct","Direto e objetivo","prefere respostas funcionais a explicações longas"],
-  ["uncertain","Admite incerteza","diz explicitamente quando não tem certeza"],
-  ["tradeoffs","Explica trade-offs","em decisões importantes, expõe os custos antes de seguir"],
-  ["ideas","Captura ideias","registra no IDEAS tudo que você mencionar, mesmo desorganizado"],
+  ["analyze","Analisa antes de aceitar","Não segue cegamente o que eu proponho. Avalia viabilidade, utilidade e eficiência de cada sugestão minha — sou humano e posso propor coisas subótimas. Se for boa, confirma e segue; se for parcial, propõe refinamento; se for ruim ou redundante, diz claramente «isso não vale a pena porque X» e oferece alternativa. Concordância automática gera dívida e bagunça; discordar com fundamento é serviço prestado. Nunca se limita às minhas palavras: pega o que eu disse, verifica a real possibilidade, e apresenta a posição — a favor, aprimorando ou contra — sempre explicada e sinalizada."],
+  ["notokens","Não desperdiça meus tokens","Cada turno consome quota da conversa. Não pergunta o que eu já decidi; não pede confirmação de plano já aprovado (plano confirmado = executa); não abre menu de opções para decisões pequenas ou óbvias. Em dúvida entre fazer ou perguntar, faz e relata — é mais barato corrigir depois do que gastar turno perguntando. Consolida perguntas inevitáveis num único momento, não pinga uma por mensagem."],
+  ["direct","Direto e objetivo","Prefere respostas funcionais a explicações longas. Sem floreio, sem bajulação («ótima pergunta», «excelente ideia»). Vai direto ao ponto."],
+  ["uncertain","Admite incerteza","Diz explicitamente quando não tem certeza («não verifiquei», «supondo que», «preciso confirmar»). Nunca afirma como fato algo que está chutando. Quando o assunto tem versão/data que muda, verifica antes de afirmar em vez de confiar na memória."],
+  ["tradeoffs","Explica trade-offs","Em decisões importantes, expõe os custos e alternativas antes de seguir. Para cada recomendação relevante, dá o melhor argumento contrário — se não houver um razoável, a recomendação provavelmente é fraca."],
+  ["ideas","Captura ideias","Registra no IDEAS tudo que eu mencionar, mesmo desorganizado ou no meio de outro assunto — sem esperar pedido."],
+];
+
+/* ============================================================
+   FILOSOFIA DOS ARQUIVOS — texto base, universal a todos os nichos
+   Cada arquivo tem um "comportamento temporal" distinto. Isto evita
+   inchaço e duplicação (a maior causa de degradação do contexto).
+   ============================================================ */
+const FILE_PHILOSOPHY = {
+  estavel: "Estável — muda pouco, só em alteração estrutural. Lido para ambientação.",
+  rolante: "Rolante — descreve só o AGORA. Item resolvido SAI daqui (vai pro CHANGELOG/log).",
+  cresce:  "Cresce — acumula em ordem reversa. Nunca reescrito, só estendido.",
+  cresce_devagar: "Cresce devagar — só entradas importantes. Arquiva as antigas quando ficar grande.",
+  segundo_cerebro: "Segundo cérebro — captura tudo, nunca perde nada. Ideia muda de status, não some.",
+  referencia: "Referência fixa — modelo nunca substituído pelo conteúdo preenchido."
+};
+
+/* Regras de higiene anti-inchaço — entram nas instruções e no CLAUDE.md */
+const HYGIENE_RULES = [
+  "Referência cruzada, não duplicação: um dado tem UMA fonte de verdade. Quando uma ideia vira trabalho, ela aparece também no STATUS — mas continua no IDEAS, só mudando de status. Não copie o conteúdo para dois lugares.",
+  "STATUS é só o agora: item resolvido sai do STATUS e vai para o CHANGELOG (e para o log da sessão). Médio/longo prazo vive no ROADMAP, não no STATUS.",
+  "IDEAS nunca perde: ideia implementada vai para a seção «Concluídas»; ideia descartada vai para «Descartadas» com o motivo. Assim nunca se reabre discussão já resolvida.",
+  "DECISIONS cresce devagar: quando passar de ~700 linhas ou uma decisão for substituída, mova as antigas para um arquivo de arquivo morto."
+];
+
+/* Tabela de gatilhos universal — evento → arquivo a atualizar.
+   Cada nicho pode estender com gatilhos próprios. */
+const TRIGGERS_BASE = [
+  ["Início de sessão", "Lê CLAUDE.md → CONTEXT.md → STATUS.md → última entrada do CHANGELOG."],
+  ["Decisão importante tomada", "DECISIONS.md (formato ADR: contexto, decisão, alternativas, consequências)."],
+  ["Bug grave resolvido", "DECISIONS.md (sintoma, causa raiz, solução, lição)."],
+  ["Ideia mencionada (sua ou minha)", "IDEAS.md (captura na hora, sem pedir)."],
+  ["Fim de sessão", "STATUS.md atualizado + CHANGELOG se fechou algo + log da sessão."],
 ];
 
 /* ============================================================
@@ -5018,6 +5059,7 @@ const STATE = {
   extra: "",
   fillValues: {},
   customPreset: null,
+  outTab: "instr",   // qual aba do painel de saída: "instr" | "claude"
 };
 
 /* ---------- LocalStorage keys ---------- */
@@ -5526,6 +5568,12 @@ function renderOutputs(niche){
 
 /* =========================================================
    7. INSTRUCTIONS PREVIEW
+   Duas saídas com naturezas técnicas diferentes:
+   - buildInstr(): NÚCLEO DENSO para as Instruções do Projeto.
+     Lido inteiro em TODA mensagem → cada token custa para sempre.
+     Só diretrizes load-bearing, sem racional longo.
+   - buildClaudeMd(): VERSÃO COMPLETA para subir como arquivo CLAUDE.md.
+     Consultado quando relevante, fácil de atualizar e versionar.
    ========================================================= */
 function buildInstr(niche){
   if(!niche) return "";
@@ -5540,15 +5588,31 @@ function buildInstr(niche){
   if(tb.version || tb.versao || tb.fase){
     lines.push(`Estágio: ${tb.version || tb.versao || tb.fase}.`);
   }
+  lines.push("");
+  lines.push("> Comportamento detalhado, regras de higiene e tabela de gatilhos estão no **CLAUDE.md** (subido como arquivo). Estas instruções trazem só o essencial, lido em toda mensagem.");
 
+  // Ritual de início — load-bearing, precisa estar em todo turno
+  lines.push("");
+  lines.push("## Ritual de início de sessão");
+  const coreFiles = (niche.contextFiles||[]).map(f=>f.name);
+  const readOrder = [
+    "CLAUDE.md",
+    coreFiles.find(n=>/CONTEXT|PROJETO|JOGO|OBRA|PRODUTO|CONCEITO|TEMA|SÉRIE|SERIE/i.test(n)),
+    coreFiles.find(n=>/STATUS/i.test(n)),
+  ].filter(Boolean);
+  lines.push(`Antes de qualquer ação, leia nesta ordem: ${readOrder.map(f=>`\`${f}\``).join(" → ")}${coreFiles.some(n=>/CHANGELOG/i.test(n))?" → última entrada do `CHANGELOG.md`":""}.`);
+  lines.push("Confirme em uma frase o que entendeu da tarefa antes de executar. Se houver ambiguidade real, pergunte antes.");
+
+  // Princípios essenciais (curtos — versão densa, não a definição longa)
   const bhAll = [...normBehaviors(BEHAVIORS_BASE), ...(niche.behaviors||[])];
   const bhOn = bhAll.filter(b => STATE.behaviors[b.id] !== false);
   if(bhOn.length){
     lines.push("");
     lines.push("## Como trabalhar comigo");
-    bhOn.forEach(b => lines.push(`- ${b.def}`));
+    bhOn.forEach(b => lines.push(`- **${b.label}.** ${shortDef(b.def)}`));
   }
 
+  // Builder (stack/tom/etc) — escolhas concretas
   const sec = niche.builderSection;
   if(sec){
     const picked = [];
@@ -5577,20 +5641,21 @@ function buildInstr(niche){
     niche.conventions.forEach(c => lines.push(`- ${c}`));
   }
 
+  // Arquivos + saídas — compacto
+  if(niche.contextFiles && niche.contextFiles.length){
+    lines.push("");
+    lines.push("## Arquivos de contexto (no Projeto)");
+    lines.push("- **CLAUDE.md** — comportamento do assistente (este conjunto de regras, em versão completa).");
+    niche.contextFiles.forEach(f => lines.push(`- **${f.name}** — ${f.role}`));
+    lines.push("- Logs detalhados de sessão NÃO ficam no Projeto: vivem em `logs/` no Git e são lidos sob demanda.");
+  }
+
   const outOn = (niche.outputs||[]).filter(o => STATE.outputs[o.id] !== false);
   if(outOn.length){
     lines.push("");
-    lines.push("## Saídas obrigatórias por sessão");
+    lines.push("## Ao final de cada sessão");
     outOn.forEach(o => lines.push(`- ${o.label}`));
-    lines.push(`- Atualize **STATUS.md** com a data e o estado atual.`);
-    lines.push(`- Quando uma decisão importante for tomada, registre em **DECISOES.md** ou no arquivo equivalente do nicho.`);
-  }
-
-  if(niche.contextFiles && niche.contextFiles.length){
-    lines.push("");
-    lines.push("## Arquivos de contexto no Projeto");
-    niche.contextFiles.forEach(f => lines.push(`- **${f.name}** — ${f.role}`));
-    lines.push(`- Logs detalhados de sessão NÃO ficam no Projeto: ficam em \`logs/\` no Git, e o Claude lê só sob demanda.`);
+    lines.push("- Regras de higiene completas no CLAUDE.md (resumo: STATUS só o agora; IDEAS nunca perde; uma fonte de verdade por dado).");
   }
 
   lines.push("");
@@ -5605,11 +5670,157 @@ function buildInstr(niche){
   return lines.join("\n");
 }
 
+/* Encurta uma definição longa para a primeira frase (densidade nas Instruções). */
+function shortDef(def){
+  if(!def) return "";
+  // pega até o primeiro ponto final seguido de espaço/fim, limitado
+  const m = def.match(/^(.*?\.)(\s|$)/);
+  let s = m ? m[1] : def;
+  if(s.length > 180) s = s.slice(0,177).trim() + "…";
+  return s;
+}
+
+/* Gera o CLAUDE.md COMPLETO — comportamento, higiene, gatilhos, manutenção.
+   Este é o arquivo que o usuário sobe no Projeto e versiona no Git. */
+function buildClaudeMd(niche){
+  if(!niche) niche = getCurrentNiche();
+  if(!niche) return "";
+  const tb = STATE.topbar || {};
+  const langTxt = langText(tb.langSel || "pt");
+  const L = [];
+
+  L.push("# CLAUDE.md — Instruções para o Assistente");
+  L.push("");
+  L.push("> Arquivo **estável**. Define COMO o assistente age (não O QUE o projeto é — isso é o CONTEXT).");
+  L.push("> É consultado quando o comportamento precisa ser lembrado; edite quando quiser ajustar tom, ritual ou regras.");
+  L.push("> As Instruções do Projeto trazem uma versão curta deste arquivo, lida em toda mensagem.");
+  L.push("");
+  L.push("---");
+
+  // Ritual
+  L.push("");
+  L.push("## Ritual de início de sessão");
+  L.push("");
+  const cf = niche.contextFiles || [];
+  const order = [];
+  order.push("`CLAUDE.md` (este) — confirma comportamento e ritual");
+  const ctxF = cf.find(f=>/CONTEXT|PROJETO|JOGO|OBRA|PRODUTO|CONCEITO|TEMA|SÉRIE|SERIE/i.test(f.name));
+  if(ctxF) order.push(`\`${ctxF.name}\` — entende o projeto (panorama estável)`);
+  const stF = cf.find(f=>/STATUS/i.test(f.name));
+  if(stF) order.push(`\`${stF.name}\` — descobre o estado atual e o próximo passo`);
+  if(cf.some(f=>/CHANGELOG/i.test(f.name))) order.push("última entrada do `CHANGELOG.md` — vê o que mudou desde a sessão anterior");
+  order.forEach((o,i)=>L.push(`${i+1}. Lê ${o}.`));
+  L.push(`${order.length+1}. **Não lê por padrão:** IDEAS inteiro, logs antigos, arquivos de arquivo morto. Lê sob demanda quando a tarefa exigir.`);
+  L.push(`${order.length+2}. Antes de executar: confirma em uma frase o que entendeu. Se houver ambiguidade real, pergunta antes.`);
+
+  // Princípios (versão COMPLETA — definição longa)
+  L.push("");
+  L.push("## Princípios de trabalho");
+  const bhAll = [...normBehaviors(BEHAVIORS_BASE), ...(niche.behaviors||[])];
+  const bhOn = bhAll.filter(b => STATE.behaviors[b.id] !== false);
+  bhOn.forEach((b,i) => {
+    L.push("");
+    L.push(`### ${i+1}. ${b.label}`);
+    L.push(b.def);
+  });
+
+  // Convenções
+  if(niche.conventions && niche.conventions.length){
+    L.push("");
+    L.push("## Convenções");
+    L.push("");
+    niche.conventions.forEach(c => L.push(`- ${c}`));
+  }
+
+  // Como manter os docs — tabela de papéis
+  L.push("");
+  L.push("## Como manter os documentos");
+  L.push("");
+  L.push("Cada arquivo tem um papel e um comportamento temporal distinto. **Respeite o papel; não misture.**");
+  L.push("");
+  L.push("| Arquivo | Comportamento | Quando atualizar |");
+  L.push("|---|---|---|");
+  (niche.contextFiles||[]).forEach(f => {
+    const beh = fileBehaviorLabel(f);
+    L.push(`| \`${f.name}\` | ${beh} | ${f.role} |`);
+  });
+  L.push(`| \`logs/AAAA-MM-DD.md\` | Histórico | Ao final de cada sessão (formato em LOG-TEMPLATE). |`);
+
+  // Higiene
+  L.push("");
+  L.push("## Regras de higiene (impedem inchaço e duplicação)");
+  L.push("");
+  HYGIENE_RULES.forEach(r => L.push(`- ${r}`));
+
+  // Gatilhos
+  L.push("");
+  L.push("## Tabela de gatilhos (evento → o que atualizar)");
+  L.push("");
+  L.push("| Evento | Ação |");
+  L.push("|---|---|");
+  const triggers = [...TRIGGERS_BASE, ...((niche.triggersExtra)||[])];
+  triggers.forEach(([ev,ac]) => L.push(`| ${ev} | ${ac} |`));
+
+  // Saídas obrigatórias
+  const outOn = (niche.outputs||[]).filter(o => STATE.outputs[o.id] !== false);
+  if(outOn.length){
+    L.push("");
+    L.push("## Saídas obrigatórias ao final de cada sessão de trabalho");
+    L.push("");
+    outOn.forEach((o,i) => L.push(`${i+1}. ${o.label}`));
+  }
+
+  // Quando perguntar vs agir
+  L.push("");
+  L.push("## Quando perguntar vs. quando agir");
+  L.push("");
+  L.push("**Pergunta antes de:** decisão com mais de um caminho razoável; tarefa ambígua ou que mexe em mais de um arquivo crítico; apagar/sobrescrever algo cuja perda não é trivial de desfazer.");
+  L.push("");
+  L.push("**Age direto em:** correção óbvia e isolada (informa depois); refinamento de algo já aprovado; captura de ideias no IDEAS.");
+
+  L.push("");
+  L.push("## Idioma");
+  L.push("");
+  L.push(`Respostas em ${langTxt}, incluindo comentários quando houver código.`);
+
+  L.push("");
+  L.push(`*Gerado pelo Kit de Contexto Universal — nicho ${niche.label}. Edite à vontade: este arquivo é seu.*`);
+
+  return L.join("\n");
+}
+
+/* Mapeia um arquivo para o rótulo de comportamento temporal. */
+function fileBehaviorLabel(f){
+  const n = (f.name||"").toUpperCase();
+  const c = (f.cat||"").toLowerCase();
+  // por categoria normalizada primeiro (mais confiável)
+  if(/LOG-TEMPLATE/.test(n)) return "Referência fixa";
+  if(/STATUS/.test(n)) return "Rolante (só o agora)";
+  if(/CHANGELOG/.test(n)) return "Cresce (ordem reversa)";
+  if(/DECIS/.test(n)) return "Cresce devagar (ADR)";
+  if(/IDEA|IDEIA/.test(n)) return "Segundo cérebro (nunca perde)";
+  if(/ROADMAP/.test(n)) return "Plano em fases";
+  if(/CHANGEL|HISTOR|REVIS|REVISÕES|REVISOES|SESS|APARI/.test(n)) return "Cresce (histórico)";
+  if(/BRIEF|CONTINU/.test(n)) return "Snapshot (atualiza antes de migrar)";
+  // estáveis: descrição do projeto / mundo / estilo / referências
+  if(/CONTEXT|PROJETO|PROJECT|CLAUDE|GLOSS|CONCEITO|JOGO|OBRA|PRODUTO|SÉRIE|SERIE|MUNDO|UNIVERSO|ESTILO|PERSONAGENS|PERSONA|CLIENTE|REFERENC|REFERÊNC|RECURSOS|TEMA|MENU|HIPOTESES|HIPÓTESES|SINTESE|SÍNTESE|FONTES|MECANICAS|MECÂNICAS|ARTE|HARMONIA|FAIXAS|LETRAS|PJS|NPCS|CAMPANHA|MAPA|FILTROS|RECEITAS/.test(n)) return "Estável";
+  // fallback por categoria
+  if(c === "rolante") return "Rolante (só o agora)";
+  if(c === "opcional") return "Opcional";
+  if(c === "essencial") return "Estável";
+  return "—";
+}
+
 function updatePreview(){
   const niche = getCurrentNiche();
   if(!niche) return;
   const p = $("#preview-instr");
-  if(p) p.textContent = buildInstr(niche);
+  if(!p) return;
+  if(STATE.outTab === "claude"){
+    p.textContent = buildClaudeMd(niche);
+  } else {
+    p.textContent = buildInstr(niche);
+  }
 }
 
 /* =========================================================
@@ -6089,9 +6300,28 @@ function boot(){
       if(e.key === "Escape" && STATE.niche) closeOverlay();
     });
 
+    // Output tabs: Instruções ↔ CLAUDE.md
+    const tabInstr = $("#tab-instr"), tabClaude = $("#tab-claude");
+    const hint = $("#out-hint");
+    const setTab = (which) => {
+      STATE.outTab = which;
+      if(tabInstr) tabInstr.classList.toggle("on", which === "instr");
+      if(tabClaude) tabClaude.classList.toggle("on", which === "claude");
+      if(hint){
+        hint.innerHTML = which === "claude"
+          ? "O <b>CLAUDE.md</b> é o comportamento completo. Suba como arquivo no Projeto (e versione no Git). É fácil de atualizar sem mexer nas Instruções."
+          : "As <b>Instruções do Projeto</b> são lidas em toda mensagem — por isso vêm enxutas. Cole em <b>Projeto → Instruções</b>. Não coloque código aqui.";
+      }
+      updatePreview();
+    };
+    if(tabInstr) tabInstr.addEventListener("click", () => setTab("instr"));
+    if(tabClaude) tabClaude.addEventListener("click", () => setTab("claude"));
+
     const copyBtn = $("#copy-instr");
     if(copyBtn) copyBtn.addEventListener("click", () => {
-      navigator.clipboard.writeText(buildInstr(getCurrentNiche())).then(() => {
+      const niche = getCurrentNiche();
+      const text = STATE.outTab === "claude" ? buildClaudeMd(niche) : buildInstr(niche);
+      navigator.clipboard.writeText(text).then(() => {
         copyBtn.classList.add("copied"); copyBtn.textContent = "✓ copiado";
         setTimeout(() => { copyBtn.classList.remove("copied"); copyBtn.textContent = "⧉ Copiar"; }, 1400);
       });
@@ -6099,7 +6329,11 @@ function boot(){
     const dlBtn = $("#dl-instr");
     if(dlBtn) dlBtn.addEventListener("click", () => {
       const niche = getCurrentNiche();
-      downloadFile(`instrucoes-${niche.id}.txt`, buildInstr(niche));
+      if(STATE.outTab === "claude"){
+        downloadFile("CLAUDE.md", buildClaudeMd(niche));
+      } else {
+        downloadFile(`instrucoes-${niche.id}.txt`, buildInstr(niche));
+      }
     });
     const dlAll = $("#dl-all");
     if(dlAll) dlAll.addEventListener("click", downloadAllTemplates);
