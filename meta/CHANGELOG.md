@@ -4,6 +4,32 @@
 
 ---
 
+## v1.3.0 — 2026-05-29 — Etapa 2: nicho client (Gestão de Cliente) aprofundado
+
+Segundo nicho reconstruído em profundidade. Matéria-prima: feedback de uso real (BRIEFING do projeto The Brazilian House) + pesquisa de práticas profissionais do nicho (gestão de escopo, rodadas de revisão, "Yes-and" para scope creep, confirmação por escrito, comunicação difícil) + o padrão do dev v2.
+
+### Adicionado / enriquecido no nicho client
+- **8 templates** (antes 6): CLIENTE, PROJETO, ACORDOS, STATUS, ENTREGAS, LOG-TEMPLATE (núcleo) + **COMUNICACOES** e **FINANCEIRO** (opcionais).
+- **6 prompts G-L** (antes 4): G Onboarding, H Registrar reunião, I Pedido fora de escopo ("Yes-and"), J Escrever comunicação (pensando na relação), **K Interpretar feedback ambíguo do cliente**, **L Preparar conversa difícil**.
+- **6 behaviors específicos** reescritos a partir do caso real e da indústria: atua como profissional E cliente-final; distingue feedback do cliente vs. de IA/terceiros; guarda escopo com "Yes-and"; confirma o combinado por escrito; preserva a relação ao comunicar; verifica afirmações técnicas antes de afirmar.
+- **Gatilhos próprios** (triggersExtra): reunião → ACORDOS+STATUS; pedido fora de escopo → ACORDOS + rascunho; entrega → ENTREGAS; mensagem-chave → COMUNICACOES; cotação/fatura → FINANCEIRO.
+
+### Avanços de conteúdo notáveis
+- **PROJETO.md** agora fixa entregáveis, **rodadas de revisão contratadas** e **exclusões** (o que NÃO está incluído) — a defesa central contra scope creep, confirmada pela pesquisa.
+- **CLIENTE.md** captura **como o cliente dá feedback**, incluindo se ele repassa análise de IA/terceiros como se fosse dele (caso real do BRIEFING) e a dor de fundo dele (com as palavras dele).
+- **STATUS.md** introduz "🎾 com quem está a bola" (cliente × prestador) — clareza de próximo passo.
+
+### Fundamento (pesquisa 2026)
+- Escopo explícito com rodadas e exclusões é a defesa central; mudança indefinida é cara.
+- Scope creep se trata com "Yes-and" (reconhece, posiciona como adicional/fase-2, oferece caminho), não com "não está no escopo".
+- Em comunicação difícil, o valor está em perguntar o que se quer preservar na relação e sinalizar se o tom vai sair pela culatra — não só polir texto.
+- O papel do assistente é preparar (rascunho/registro); o profissional edita e envia, decide o que fazer com o feedback.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Client agora com 12 prompts (6 A-F + 6 G-L) e 8 templates; tags semânticas corretas.
+
+---
+
 ## v1.2.0 — 2026-05-29 — Etapa 1: nicho dev aprofundado
 
 Primeiro nicho reconstruído em profundidade (referência de ouro para os demais), usando como matéria-prima o feedback de uso real do projeto GameDataHub.
