@@ -4,6 +4,50 @@
 
 ---
 
+## v1.5.0 — 2026-05-29 — Etapa 3: nicho design (Design Visual) aprofundado
+
+Terceiro nicho reconstruído. Matéria-prima: pesquisa aprofundada do domínio (workflow de design e gestão de revisões; sistema de identidade de marca com 6 ativos e cores multi-espaço; pré-impressão/prepress) + o caso real The Brazilian House (peça impressa, cliente que usa IA, foco em legibilidade) + o padrão de ouro de dev/client v2.
+
+### Adicionado / enriquecido no nicho design
+- **9 templates** (antes 7): PROJETO, CLIENTE, MARCA, REFERENCIAS, DECISOES, REVISOES, STATUS, LOG-TEMPLATE (núcleo) + **PRODUCAO** (opcional, pré-impressão).
+- **MARCA.md** (novo, central): sistema visual com os 6 ativos — logo (clear space, tamanhos mínimos, usos proibidos), **paleta em HEX/RGB/CMYK/Pantone** (para a cor não mudar entre tela e papel), tipografia, extensões, tom.
+- **PRODUCAO.md** (novo, opcional): specs por entregável + **checklist de pré-impressão** (CMYK, sangria, margem de segurança, 300 DPI, fontes incorporadas, marcas de corte, prova real, PDF/X). Resolve o que o caso The Brazilian House expôs.
+- **6 prompts G-L** (antes 4): G Brief/onboarding, H Explorar conceito (apresentar 2-3 direções), I **Interpretar feedback visual vago**, J Registrar decisão visual, K **Checklist de pré-impressão/entrega**, L **Preparar apresentação ao cliente**.
+- **6 behaviors específicos**: dois olhares (designer + público-final); feedback = problema do cliente, solução do designer; consistência com o sistema visual; guarda escopo/rodadas; verifica specs técnicas de impressão; distingue referência de conteúdo vs. estilo.
+- **Gatilhos próprios** (triggersExtra): conceito definido → DECISOES+MARCA; versão entregue → REVISOES+STATUS; decisão de cor/fonte → MARCA+DECISOES; peça indo p/ impressão → checklist PRODUCAO; pedido extra → 'Yes-and'.
+
+### Fundamento (pesquisa 2026)
+- Brief é a fundação; rodadas limitadas (2-3) com escopo claro; documentar feedback evita "ele disse, ela disse".
+- Feedback deve ser específico, não prescritivo: a intuição do cliente sobre o PROBLEMA costuma estar certa, a SOLUÇÃO vem do designer.
+- Identidade = 6 ativos; cores precisam de todos os espaços (HEX/RGB/CMYK/Pantone) para não mudar de tom entre mídias; logo precisa de regras técnicas (clear space, mínimos).
+- Pré-impressão: CMYK desde o início, sangria 3mm, 300 DPI no tamanho final, fontes incorporadas, e PROVA REAL antes da tiragem.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Design com 12 prompts (6 A-F + 6 G-L) e 9 templates; tags semânticas corretas.
+
+---
+
+## v1.4.0 — 2026-05-29 — Etapa 2.5: consolidação da fundação + dogfooding
+
+Pausa deliberada antes da Etapa 3, motivada por três pontos levantados pelo usuário e pela evolução do projeto-feedback GameDataHub2 (que, independentemente, convergiu para regras iguais às nossas — validação).
+
+### Adicionado à fundação (universal, todos os nichos)
+- **9º e 8º princípios universais** (antes 7):
+  - **«Estuda o domínio antes de estruturar»** — ao aprofundar uma área com práticas estabelecidas, pesquisa o estado-da-arte antes de montar a estrutura. Eleva a regra que tornou o client bom de acaso a lei.
+  - **«Verifica antes de pedir arquivo»** — quando o usuário diz «já subi X», procura X primeiro; só pede upload se não achar. Vinda do GameDataHub2; conecta ao princípio de não desperdiçar tokens.
+- **Nova seção no CLAUDE.md gerado**: «Verifica antes de pedir um arquivo» (regra dura).
+
+### Refinado
+- **Protocolo de entrega de docs**: incorporada a nuance do GameDataHub2 — o que decorre do trabalho do assistente, o assistente registra (sem esperar pedido); o que o usuário quer acrescentar por conta é dele. Reforçado «entregar o conjunto consistente de uma vez; estado meio-atualizado é pior que não mexer».
+
+### Dogfooding (o kit aplicado a si mesmo)
+- **Criado `meta/CLAUDE.md`** do próprio projeto Kit: ritual de início, os 9 princípios aplicados a nós, padrões de código do index.html (incluindo a armadilha do `${today}` vs `${today()}`), como manter os docs, o processo de aprofundar um nicho (Etapas), e o checklist de validação. Resolve a transferência de contexto entre conversas do nosso próprio desenvolvimento.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. 9 princípios universais confirmados em todos os nichos.
+
+---
+
 ## v1.3.0 — 2026-05-29 — Etapa 2: nicho client (Gestão de Cliente) aprofundado
 
 Segundo nicho reconstruído em profundidade. Matéria-prima: feedback de uso real (BRIEFING do projeto The Brazilian House) + pesquisa de práticas profissionais do nicho (gestão de escopo, rodadas de revisão, "Yes-and" para scope creep, confirmação por escrito, comunicação difícil) + o padrão do dev v2.

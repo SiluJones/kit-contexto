@@ -788,6 +788,8 @@ const BEHAVIORS_BASE = [
   ["uncertain","Admite incerteza","Diz explicitamente quando não tem certeza («não verifiquei», «supondo que», «preciso confirmar»). Nunca afirma como fato algo que está chutando. Quando o assunto tem versão/data que muda, verifica antes de afirmar em vez de confiar na memória."],
   ["tradeoffs","Explica trade-offs","Em decisões importantes, expõe os custos e alternativas antes de seguir. Para cada recomendação relevante, dá o melhor argumento contrário — se não houver um razoável, a recomendação provavelmente é fraca."],
   ["careful_guides","Instruções sempre cuidadosas","Qualquer instrução, guia, passo a passo ou explicação que entrega ao usuário é completa, detalhada e bem explicada — nunca leviana. Não assume contexto que o usuário não tem. Quando pede que o usuário faça algo (salvar um arquivo, rodar um comando, aplicar uma mudança), explica exatamente o quê, onde, como, e o que esperar — e deixa claro o que é decisão dele versus passo necessário."],
+  ["study_domain","Estuda o domínio antes de estruturar","Quando o trabalho toca uma área com práticas, convenções ou estado-da-arte estabelecidos (e o conhecimento pode estar desatualizado ou incompleto), pesquisa e estuda antes de propor a estrutura — não inventa do zero nem confia só na memória. Busca casos, convenções, orientações e armadilhas da área, e constrói em cima do que os profissionais de fato fazem. Vale especialmente para decisões que ficam (arquitetura, escopo, processo)."],
+  ["check_before_ask","Verifica antes de pedir arquivo","Antes de pedir que o usuário suba qualquer arquivo (JSON, log, saída, documento), verifica primeiro se ele já não está disponível — na base do Projeto, nos uploads, ou já colado na conversa. Procura por nome plausível. Quando o usuário diz «já subi X», a primeira ação é PROCURAR X, não perguntar de novo. Só pede o upload se a busca não encontrar — e aí é específico sobre nome/local esperado."],
   ["ideas","Captura ideias","Registra no IDEAS tudo que eu mencionar, mesmo desorganizado ou no meio de outro assunto — sem esperar pedido."],
 ];
 
@@ -830,19 +832,19 @@ const TRIGGERS_BASE = [
    trabalho de montar o arquivo inteiro é do assistente, não do usuário. */
 const UPDATE_PROTOCOL = {
   titulo: "Como o assistente entrega as atualizações dos documentos",
-  intro: "Quando um documento do Projeto precisa mudar (STATUS, CHANGELOG, DECISIONS, etc.), o assistente entrega o ARQUIVO COMPLETO e atualizado, pronto para o usuário baixar e substituir o antigo. Nunca entrega blocos soltos de texto para o usuário colar/costurar dentro do arquivo — isso é trabalhoso e propenso a erro. A divisão de trabalho:",
+  intro: "As mudanças nos documentos que decorrem do trabalho do assistente são registradas pelo PRÓPRIO assistente — quando ele faz algo, ele mesmo atualiza os docs afetados. O que o usuário quer acrescentar por conta (ele sabe onde e o quê) é decisão dele. Em ambos os casos, a entrega é por ARQUIVO COMPLETO, nunca por blocos soltos para o usuário costurar à mão.",
   claudeFaz: [
-    "Entrega o arquivo INTEIRO já atualizado (não um trecho, não «adicione esta linha em tal seção»). O usuário deve conseguir só substituir o arquivo antigo pelo novo.",
-    "Se vários arquivos mudaram numa sessão, entrega todos os arquivos completos afetados.",
-    "Aplica internamente as regras de higiene ao montar o arquivo (move o resolvido do STATUS, anexa no topo do CHANGELOG, etc.) — o usuário recebe o resultado já correto.",
-    "Avisa quando algo merece registro mesmo sem o usuário pedir — e já entrega o arquivo pronto."
+    "Registra o que decorre do próprio trabalho: se a sessão mexeu em STATUS, decisões, ideias, etc., o assistente entrega esses arquivos atualizados — não espera o usuário pedir.",
+    "Entrega o arquivo INTEIRO já atualizado (não um trecho, não «adicione esta linha»). O usuário só substitui o antigo pelo novo.",
+    "Entrega o conjunto consistente de uma vez: todos os arquivos afetados na mesma leva. Estado meio-atualizado (metade novo, metade antigo) é pior que não mexer.",
+    "Aplica as regras de higiene ao montar o arquivo (move o resolvido do STATUS, anexa no topo do CHANGELOG) — o usuário recebe o resultado já correto."
   ],
   usuarioFaz: [
-    "DECIDE se quer aplicar. Atualizar os documentos é escolha do usuário, nunca obrigação imposta por instrução.",
-    "APLICA de forma simples: baixa os arquivos completos e substitui os antigos na sua pasta (e sobe no Git/Projeto se usar). Sem precisar editar nada à mão.",
-    "Pode ignorar, adiar, ou pedir ajustes antes de aplicar."
+    "DECIDE o que ele próprio quer acrescentar aos docs (pode fazer manualmente e avisar). Atualizar por conta é escolha dele.",
+    "APLICA de forma simples: baixa os arquivos completos e substitui os antigos na pasta (e sobe no Git/Projeto, se usar). Sem editar nada à mão.",
+    "Pode ignorar, adiar ou pedir ajustes antes de aplicar."
   ],
-  nota: "Sobre os arquivos: os documentos que já estão no Projeto chegam ao assistente como somente-leitura (ele lê, mas não salva por cima). Isso NÃO o impede de gerar versões novas e completas — ele cria cada arquivo atualizado como arquivo novo para o usuário baixar e substituir o antigo. Quando o ambiente não tiver criação de arquivo para download, entrega o conteúdo completo de cada arquivo no chat, um por bloco de código, pronto para salvar. Nos dois casos o princípio é o mesmo: arquivo inteiro e atualizado, nunca pedaços para o usuário costurar à mão."
+  nota: "Sobre os arquivos: os documentos já no Projeto chegam ao assistente como somente-leitura (ele lê, não salva por cima). Isso NÃO o impede de entregar versões novas — ele cria cada arquivo atualizado como arquivo novo para baixar. Sem ferramenta de download, entrega o conteúdo completo de cada arquivo no chat, um por bloco. Princípio único: arquivo inteiro, conjunto consistente, nunca pedaços para costurar."
 };
 
 /* ============================================================
@@ -1240,338 +1242,371 @@ Cada decisão recebe um ID sequencial (DEC-001, DEC-002…) e segue o formato ab
 };
 
 /* ============================================================
-   NICHO 2 — DESIGN VISUAL & PROJETOS CRIATIVOS
+   NICHO 2 — DESIGN VISUAL & PROJETOS CRIATIVOS — v2 aprofundado
+   Etapa 3. Cruza: pesquisa do domínio (workflow + revisões,
+   sistema de identidade de marca com 6 ativos e cores multi-espaço,
+   pré-impressão/prepress), o caso real (The Brazilian House) e o
+   padrão de ouro de dev/client v2.
    ============================================================ */
 NICHES.design = {
   id:"design", label:"Design Visual", icon:"✦", group:"serif", category:"core",
-  cardColor:"#c084fc", cardTags:["logo","cardápio","identidade","web"],
-  cardDesc:"Projetos visuais com clientes — briefing à entrega",
+  cardColor:"#c084fc", cardTags:["identidade","editorial","freelance"],
+  cardDesc:"Identidade, layout, conceito — do brief à arte final",
   intro:{
-    headline:"O briefing que o cliente esqueceu. O contexto que você não vai perder.",
-    lede:"Design vive de subjetividade — \"queria mais clean\", \"não gostei dessa fonte\", \"e se fosse outra cor\". Sem registro, cada conversa volta à estaca zero. Aqui as referências, decisões visuais e ciclos de feedback ficam ancorados.",
-    ctxBlurb:"<code>PROJETO.md</code> · <code>CLIENTE.md</code> · <code>REFERÊNCIAS.md</code> · <code>STATUS.md</code> rolante · <code>REVISÕES.md</code> guarda o histórico.",
+    headline:"Do brief à arte final sem perder o conceito no caminho.",
+    lede:"O risco aqui é duplo: perder a coerência visual entre peças (a cor que vira outra, a fonte que escapa) e perder o porquê das escolhas entre uma conversa e outra. Aqui o sistema visual fica registrado — paleta em todos os espaços de cor, regras de logo, decisões de conceito — e cada revisão sabe qual rodada é e o que o cliente já aprovou.",
+    ctxBlurb:"<code>PROJETO.md</code> guarda o brief e o escopo · <code>MARCA.md</code> fixa o sistema visual (logo, cores, tipografia) · <code>DECISOES.md</code> diz por que cada escolha · <code>REVISOES.md</code> rastreia versões e feedback.",
     hero:"design"
   },
   topbar:[
     {id:"project", label:"Projeto", placeholder:"ex: identidade-cafe-azul"},
     {id:"client", label:"Cliente", placeholder:"ex: Café Azul Ltda."},
-    {id:"phase", label:"Fase", type:"select", options:["Briefing","Criação","Revisão","Entrega"]},
+    {id:"phase", label:"Fase", type:"select", options:["Briefing","Conceito","Criação","Revisão","Arte-final","Entrega"]},
   ],
   behaviors:[
-    ["images","Analisa imagens enviadas","interpreta referências visuais, screenshots e versões anteriores"],
-    ["palettes","Sugere paletas HEX","propõe cores em formato HEX prontas para usar"],
-    ["variations","Propõe variações","gera 2-3 opções antes de fechar conceito"],
-    ["clientvoice","Texto para o cliente","propõe a resposta formal quando precisar comunicar"],
-    ["typeflag","Sinaliza problemas tipográficos","aponta hierarquia, kerning, escolhas de fonte arriscadas"],
+    ["dualeye","Dois olhares: designer e quem vai ver","Avalia cada peça como designer (composição, hierarquia, sistema) E como o público que vai recebê-la (consegue ler? entende rápido? a mensagem chega?). Antecipa a reação do usuário-final e do cliente. A dor de fundo do cliente costuma ser concreta (ex.: \"legibilidade para clientes mais velhos\"), não estética abstrata — atende a dor real."],
+    ["feedback_specific","Feedback: problema do cliente, solução do designer","Quando o cliente dá feedback vago (\"não gostei\", \"deixa mais moderno\"), traduz em problema concreto antes de agir — faz perguntas específicas (\"a cor está forte demais? o título compete com a imagem?\"). A intuição do cliente sobre o PROBLEMA costuma estar certa; a SOLUÇÃO vem do designer. Não aplica a solução literal do cliente sem entender o problema por trás."],
+    ["system_consistency","Consistência com o sistema visual","Antes de propor qualquer elemento (cor, fonte, espaçamento, tratamento), consulta MARCA.md e REFERENCIAS.md. Não introduz cor fora da paleta nem fonte fora do sistema sem sinalizar explicitamente como decisão nova. Coerência entre peças é o que separa identidade de colagem."],
+    ["scope_rounds","Guarda escopo e rodadas de revisão","Toda peça tem entregáveis e número de rodadas definidos em PROJETO.md. Quando um pedido extrapola (nova peça, mais rodadas que o contratado), sinaliza com \"Yes-and\": reconhece, posiciona como adicional/fase-2, oferece caminho. Quando a rodada atual é a última contratada, avisa com gentileza."],
+    ["print_verify","Verifica specs técnicas antes de afirmar","Em assuntos onde um erro vira retrabalho ou peça impressa errada (CMYK vs RGB, sangria, resolução, fontes incorporadas, specs de uma ferramenta), confirma o fato por busca antes de afirmar. Não inventa configuração; aponta a dúvida. Pré-impressão tem regras duras — segue o checklist em PRODUCAO.md."],
+    ["ref_type","Distingue referência de conteúdo vs. de estilo","Quando o cliente manda uma referência, separa o que é referência de CONTEÚDO (usar o texto/dados/informação) do que é referência de ESTILO (usar o visual/tom). Confundir as duas gera erro de direção. Anota qual é qual em REFERENCIAS.md."],
   ],
   builderSection:{
     title:"Ferramentas & Entregáveis",
-    hint:"Qualquer combinação é válida. Marque o que faz parte do seu fluxo.",
+    hint:"Marque o que o projeto usa. Entra nas instruções para o assistente não sugerir fora do seu setup.",
     type:"chips",
     groups:[
-      {label:"Ferramentas",items:["Affinity Designer","Affinity Publisher","Affinity Photo","Figma","Illustrator","Photoshop","InDesign","Canva","Procreate","Sketch","Inkscape","CorelDRAW","XD"]},
-      {label:"Tipo de entregável",items:["Logotipo","Identidade Visual","Cardápio / Menu","Catálogo","Apresentação","Mockup Web","Landing Page","Infográfico","Material editorial","Embalagem","Social Media","Sinalização"]},
-      {label:"Formato de saída",items:["PDF","PNG","SVG","JPG","AFDESIGN","AFPUB","INDD","AI","FIG","PSD"]},
+      {label:"Ferramentas", items:["Affinity Designer","Affinity Publisher","Affinity Photo","Figma","Illustrator","Photoshop","InDesign","Canva","Procreate","Sketch","Inkscape","CorelDRAW","Penpot"]},
+      {label:"Tipo de entregável", items:["Logotipo","Identidade visual","Sistema de marca","Cardápio / Menu","Catálogo","Apresentação","Mockup web","Landing page","Infográfico","Material editorial","Embalagem","Social media","Sinalização","Tipografia"]},
+      {label:"Mídia de saída", items:["Impressão","Digital/tela","Ambos (print+digital)","Grande formato","Web"]},
+      {label:"Formato de arquivo", items:["PDF","PDF/X (print)","PNG","SVG","JPG","AFDESIGN","AFPUB","INDD","AI","FIG","PSD","EPS"]},
     ],
-    other:true, otherLabel:"Outras ferramentas/formatos"
+    other:false
   },
-  conventions:true, conventionsFor:"output", // idioma para comunicação
+  conventions:[
+    "O sistema visual (paleta, tipografia, regras de logo) vive em MARCA.md; toda peça nova obedece a ele.",
+    "Cores são registradas em todos os espaços relevantes: HEX e RGB (tela), CMYK (impressão offset), Pantone (cor especial) — para a marca não mudar de tom entre mídias.",
+    "Decisões de conceito (por que esta fonte, esta cor, este símbolo) vão em DECISOES.md — não basta o arquivo do design lembrar.",
+    "Cada versão entregue vira entrada em REVISOES.md, com a rodada de revisão usada e o feedback recebido.",
+    "Escopo (entregáveis, rodadas, exclusões) vive em PROJETO.md e é a referência para julgar pedidos novos.",
+    "Para peças impressas, o checklist de pré-impressão em PRODUCAO.md é obrigatório antes de marcar como pronta."
+  ],
+  triggersExtra:[
+    ["Conceito ou direção visual definida", "Entrega DECISOES.md completo (por que esta direção, alternativas, racional) e MARCA.md se o sistema mudou."],
+    ["Versão entregue ao cliente", "Entrega REVISOES.md completo (versão, rodada usada, feedback) e STATUS.md."],
+    ["Decisão de cor/fonte/símbolo", "Entrega MARCA.md e DECISOES.md completos atualizados."],
+    ["Peça indo para impressão", "Roda e entrega o checklist de PRODUCAO.md; só marca pronta se passar."],
+    ["Pedido de nova peça ou rodada extra", "Entrega o rascunho 'Yes-and' e registra em DECISOES/STATUS o impacto no escopo."],
+  ],
   contextFiles:[
-    {name:"PROJETO.md", cat:"ctx", role:"O que é, para quem, restrições, tom visual. Estável.", content:`# PROJETO.md — [Nome do Projeto]
+    {name:"PROJETO.md", cat:"ctx", role:"O brief: objetivo, público, mídia, tom, entregáveis, rodadas e exclusões. Estável.", content:`# PROJETO.md — [Nome do Projeto]
 
-> Arquivo **estável**. Define o que o projeto é em si.
-> Atualize só em mudanças de escopo, fase ou conceito principal.
-
----
-
-## Sobre
-
-**Cliente:** [Nome / Empresa]
-**Tipo:** [ex: identidade visual completa / cardápio / logo / web design]
-**Fase atual:** [Briefing / Criação / Revisão / Entrega]
-**Prazo:** [data ou "sem prazo fixo"]
-**Formato de entrega:** [PDF, PNG, SVG, AFPUB, etc.]
+> Arquivo **estável**. O brief é a fundação de tudo — o assistente lê para alinhar direção e julgar pedidos.
+> Mude só em alteração real de escopo (e isso vira decisão registrada).
 
 ---
 
-## Tom visual desejado
+## Objetivo
+[O que este projeto precisa alcançar, em 1-3 frases. O resultado para o cliente/negócio, não as tarefas.]
 
-[2-3 adjetivos: ex. "clean, sofisticado, terroso" — definidos com o cliente]
+## Público-alvo
+- **Quem vai ver/usar:** [perfil concreto. Idade, contexto, como consome.]
+- **A dor de fundo:** [o que realmente importa para eles. Ex.: "clientes mais velhos precisam ler o menu rápido". Palavras do cliente entre aspas.]
 
----
+## Mídia e contexto de uso
+- **Onde vai viver:** [impressão / digital / ambos / grande formato]
+- **Se impressão:** [tamanho final, tipo de papel se souber, onde será impresso. Specs detalhadas em PRODUCAO.md.]
+- **Se digital:** [telas, contexto — mobile? apresentação?]
 
-## Restrições
+## Tom visual pretendido
+[3-5 adjetivos âncora + o que evitar. Ex.: "acolhedor, artesanal, legível — NÃO corporativo, NÃO minimalista frio".]
 
-- **Manter da identidade atual:** [se aplicável: cor X, fonte Y]
-- **Não usar:** [cores/elementos vetados pelo cliente]
-- **Limitações técnicas:** [ex: precisa funcionar em P&B; precisa exportar CMYK]
+## Entregáveis (o que está incluído)
+- [Entregável concreto + formato + quantidade. Ex.: "1 cardápio A3 frente e verso, PDF print-ready".]
+- [...]
 
----
+## Rodadas de revisão contratadas
+- **Número:** [ex.: 2 rodadas de ajuste após a primeira versão]
+- **O que conta como rodada:** [definição, para não virar revisão infinita]
+- **Rodadas já usadas:** [ex.: 1 de 2]
 
-## Ferramentas em uso
+## O que NÃO está incluído (exclusões)
+> Contém scope creep. Liste o que o cliente pode achar incluso mas não está.
+- [Ex.: versões para redes sociais; impressão física; novas fotos/ilustrações; mais de N rodadas.]
 
-- [ex: Affinity Designer para vetor, Photo para tratamento]
-
----
-
-## Entregáveis previstos
-
-| Entregável | Formato | Status |
-|---|---|---|
-| [ex: Logo principal] | SVG + PNG 2x | em criação |
-
----
-
-*Última atualização: [data] — [o que mudou]*
+## Prazo
+- [Marco — data — status]
 `},
-    {name:"CLIENTE.md", cat:"ctx", role:"Perfil do cliente, gosto, histórico, vetos.", content:`# CLIENTE.md — [Nome do Cliente]
+    {name:"CLIENTE.md", cat:"ctx", role:"Quem é o cliente: gosto, vetos, como dá feedback. Estável.", content:`# CLIENTE.md — [Nome do Cliente]
 
-> Quem é, como se comunica, o que gosta e o que rejeita.
-> Carrega entre projetos do mesmo cliente.
-
----
-
-## Perfil
-
-**Quem é:** [pessoa/empresa, área, porte]
-**Decisor final:** [quem aprova de fato]
-**Canal preferido:** [WhatsApp / e-mail / reunião / etc.]
-**Tom da comunicação:** [formal / próximo / técnico]
+> Arquivo **estável**. O assistente lê para acertar o tom da comunicação e antecipar o gosto/atrito.
 
 ---
 
-## Referências de gosto
+## Quem é
+- **Nome / negócio:** [...]
+- **Quem aprova:** [a pessoa que decide é quem pediu? há um chefe por trás?]
+- **Familiaridade com design:** [leigo / tem repertório / acha que entende]
 
-- **Curte:** [estilos, marcas, exemplos concretos]
-- **Não curte:** [o que sempre rejeita]
+## Gosto e referências do próprio cliente
+- **Gosta de:** [estilos, marcas que admira, exemplos que citou.]
+- **Não gosta de / vetos:** [o que ele rejeita explicitamente.]
 
----
+## Como dá feedback (importante)
+- **Forma:** [específico / vago ("não gostei") / prescritivo ("põe vermelho")]
+- **Usa IA ou terceiros?** [se repassa análise de GPT/Gemini ou de um conhecido como se fosse dele — anote. Tratar com cuidado: separar a vontade real dele da sugestão de fora.]
+- **Velocidade de aprovação:** [decide rápido / some / muda de ideia]
 
-## O que NÃO fazer
+## Sensibilidades
+- [Assuntos delicados; como ele reage a crítica/correção; o que irrita.]
 
-- [Regras explícitas que o cliente já pediu]
-
----
-
-## Histórico de projetos com este cliente
-
-- [data] — [projeto, link no Git, status]
-
----
-
-## Observações
-
-[Personalidade, gatilhos, particularidades de processo]
+## Histórico
+- [Projetos anteriores; atritos e como foram resolvidos.]
 `},
-    {name:"REFERENCIAS.md", cat:"ctx", role:"Mood board textual, paletas, tipografias, links aprovados.", content:`# REFERÊNCIAS.md — [Projeto]
+    {name:"MARCA.md", cat:"ctx", role:"O sistema visual: logo (regras), paleta em todos os espaços de cor, tipografia, extensões, tom. Estável.", content:`# MARCA.md — Sistema Visual
 
-> Mood board em texto. Inclui o que foi aprovado pelo cliente como referência válida.
-> Imagens reais ficam em \`refs/\` (não no Projeto do Claude).
+> Arquivo **estável** e central. É a fonte de verdade do visual — toda peça obedece a ele.
+> Para identidade/marca, são seis ativos: logo, marca secundária, paleta, tipografia, extensões, tom.
+> Se o projeto é uma peça avulsa (não uma identidade), preencha só o que se aplica.
 
 ---
+
+## 1. Logo / marca primária
+- **Descrição:** [o que é o logo, versões — horizontal, vertical, símbolo isolado.]
+- **Clear space (zona de respiro):** [espaço mínimo ao redor. Ex.: "altura do 'x' do logotipo".]
+- **Tamanho mínimo:** [impressão (mm) e digital (px) — abaixo disso perde legibilidade.]
+- **Usos proibidos:** [não distorcer, não trocar cor, não aplicar sobre fundo de baixo contraste, não adicionar efeitos.]
+
+## 2. Marca secundária / variações
+- [Submarca, selo, versão monocromática, favicon — quando usar cada uma.]
+
+## 3. Paleta de cores
+> Registre em TODOS os espaços relevantes para a cor não mudar entre tela e papel.
+
+| Nome | HEX | RGB | CMYK | Pantone | Uso |
+|---|---|---|---|---|---|
+| [Primária] | #...... | r,g,b | c,m,y,k | [PMS ...] | [onde usar] |
+| [Secundária] | | | | | |
+| [Apoio/neutro] | | | | | |
+
+- **Regra de contraste:** [combinações garantidas; mínimos de acessibilidade se for digital.]
+
+## 4. Tipografia
+- **Display / títulos:** [família, pesos usados, quando usar.]
+- **Texto corrido:** [família, peso, tamanho-base.]
+- **Hierarquia:** [como título / subtítulo / corpo / legenda se diferenciam.]
+- **Fallback:** [fonte de substituição se a principal não estiver disponível.]
+
+## 5. Extensões visuais
+- [Padrões, ícones, grafismos, tratamento de imagem/fotografia, grid.]
+
+## 6. Tom visual
+- [A "personalidade" que o conjunto transmite, em uma frase + o que NÃO somos.]
+`},
+    {name:"REFERENCIAS.md", cat:"ctx", role:"Moodboard textual: paletas, tipografias, links — distinguindo conteúdo de estilo. Estável.", content:`# REFERENCIAS.md — [Projeto]
+
+> Arquivo **estável**. Moodboard em texto + referências do cliente, com a distinção crucial: conteúdo vs. estilo.
+
+---
+
+## Direção visual (moodboard textual)
+[Descreva em palavras o clima visual: "luz quente, texturas de papel, tipografia serifada com personalidade". Liga o tom de PROJETO.md à execução.]
+
+## Referências do cliente
+> Para cada uma, marque: é referência de CONTEÚDO (usar o texto/dados/info) ou de ESTILO (usar o visual)?
+- **[Referência + link]** — [CONTEÚDO ou ESTILO?] — [o que aproveitar dela especificamente.]
+- [...]
 
 ## Paletas em estudo
+- [Combinações candidatas — antes de virarem oficiais em MARCA.md.]
 
-| Nome | HEX | Uso pretendido | Aprovação |
-|---|---|---|---|
-| Âmbar terroso | #c8954e | Primária | ✅ aprovada |
-| Verde-musgo | #5a6b3e | Secundária | em análise |
+## Tipografias em estudo
+- [Fontes candidatas + por que combinam com o tom.]
 
----
-
-## Tipografia
-
-| Família | Uso | Status |
-|---|---|---|
-| Fraunces | Display, títulos | em teste |
-| Inter | Corpo | aprovada |
-
----
-
-## Referências externas
-
-- [link/imagem] — [por que serve]
-- [link/imagem] — [o que destacar]
-
----
-
-## Texturas / Elementos visuais
-
-[grão, fundo, ilustrações de apoio, traço da identidade]
+## Referências negativas
+- [Estilos/exemplos que o projeto NÃO deve seguir — explicitamente.]
 `},
-    {name:"REVISOES.md", cat:"hist", role:"Histórico de versões e feedback do cliente.", content:`# REVISÕES.md — Histórico de Versões
+    {name:"DECISOES.md", cat:"ctx", role:"Por que cada escolha visual: esta fonte, esta cor, este símbolo, este layout. Cresce devagar.", content:`# DECISOES.md — Decisões Visuais
 
-> Cada versão entregue ao cliente, o que mudou, o que ele pediu para mudar.
-> Cresce a cada ciclo. Se ficar enorme, mova as antigas para \`REVISÕES-ARCHIVE.md\`.
-
----
-
-## v3 — [data]
-**Estado:** aprovada / em revisão / rejeitada
-**Entregue:** [arquivos/links]
-**Pedidos do cliente:**
-- [item 1]
-- [item 2]
-**Próximo passo:** [o que fazer com o feedback]
+> Arquivo que **cresce devagar**. Guarda o PORQUÊ das escolhas — o que o arquivo de design não conta.
+> Evita refazer a mesma discussão ("por que não usamos azul mesmo?") a cada conversa.
 
 ---
 
-## v2 — [data]
-**Estado:** revisada para v3
-**Mudanças desde v1:** [resumo]
-**Pedidos do cliente:** [...]
-**Próximo passo:** [...]
-
----
-
-## v1 — [data]
-**Estado:** substituída por v2
-**Conceito apresentado:** [resumo do que foi proposto]
-**Feedback:** [reação do cliente, dúvidas, ajustes pedidos]
-`},
-    {name:"DECISOES.md", cat:"ctx", role:"Decisões de conceito e visual: por que esta fonte, esta cor, este símbolo.", content:`# DECISÕES.md — Registro de Decisões Visuais
-
-> Para cada escolha conceitual relevante, por que foi feita assim.
-> Evita "ah, mas e se a gente tentasse aquela ideia velha?" voltando 5 sessões depois.
-
----
-
-## DEC-001 — [Título: ex. Paleta principal em tons terrosos]
-
-**Data:** YYYY-MM-DD
-**Status:** aceita | proposta | substituída por DEC-[N]
+## DEC-[N] — [A decisão, em uma linha]
+**Data:** AAAA-MM-DD · **Status:** ativa | revista por DEC-X
 
 ### Contexto
-[O que o cliente pediu, qual o problema, qual o desafio visual]
+[Que escolha precisou ser feita e por quê agora.]
 
 ### Decisão
-[O que ficou definido]
+[O que foi decidido. Ex.: "tipografia de títulos: Fraunces; corpo: Inter".]
 
 ### Alternativas consideradas
-- [Opção A] — [por que não]
-- [Opção B] — [por que não]
+- **[Alternativa]** — [por que não.]
 
-### Justificativa
-[Por que essa escolha resolve o briefing — em termos visuais e estratégicos]
+### Racional
+[Por que esta escolha serve ao objetivo/público/tom de PROJETO.md. Ligue à dor de fundo do cliente quando aplicável.]
+
+### Aprovação
+[O cliente aprovou? Em que data? (cruza com REVISOES.md.)]
+
+---
+
+## DEC-[N+1] — [...]
+[...]
 `},
-    {name:"STATUS.md", cat:"ctx", role:"Estado atual: o que está aprovado, o que aguarda, próximo passo. Rolante.", content:`# STATUS.md — Estado Atual
+    {name:"REVISOES.md", cat:"hist", role:"Histórico de versões entregues, feedback do cliente e qual rodada foi usada. CRESCE.", content:`# REVISOES.md — Histórico de Versões
 
-> Arquivo **rolante**: descreve apenas o estado de AGORA.
-> Item resolvido sai daqui → vai para o REVISÕES.md e para o log da sessão.
-
----
-
-## Versão atual entregue
-
-**v[N]** — [data] — [aprovada / em revisão]
+> Arquivo que **cresce**. Cada versão entregue e cada feedback ficam registrados, com a rodada de revisão.
+> Prova o que foi entregue/quando e mostra quantas rodadas já rolaram (controle de escopo).
 
 ---
 
-## ✅ Aprovado pelo cliente
+## [Entregável] — v[N]
+**Enviado em:** AAAA-MM-DD · **Como:** [PDF / link / mockup]
+**O que mudou desde a anterior:** [resumo das alterações.]
+**Feedback do cliente:** [o que ele disse — literal quando relevante. Vago? Específico? De terceiro/IA?]
+**Tradução do feedback:** [o problema concreto por trás, como o designer entendeu.]
+**Rodada de revisão:** [ex.: usou a 1ª de 2.]
+**Status:** [aguardando feedback / em ajuste / aprovada]
 
-- [Conceito X] — aprovado em [data]
-- [Paleta Y] — aprovada
+---
+
+## [Entregável] — v[N+1]
+[...]
+`},
+    {name:"STATUS.md", cat:"ctx", role:"O agora: o que está aprovado, o que aguarda, próximo passo, com quem está a bola. Rolante.", content:`# STATUS.md — Estado Atual
+
+> Arquivo **rolante**: só o AGORA. O assistente lê para saber onde retomar.
+> Item resolvido sai daqui (vira versão em REVISOES, ou nota no log).
 
 ---
 
-## 🔧 Em criação / em revisão
+## Fase atual
+[Briefing / Conceito / Criação / Revisão / Arte-final / Entrega]
 
-- [ ] [O que está sendo trabalhado agora]
+## 🎾 Com quem está a bola
+[**Designer** — preciso fazer X / **Cliente** — aguardando aprovação/feedback de Y desde DATA.]
 
----
+## ✅ Aprovado
+- [O que o cliente já bateu o martelo — não mexer sem novo pedido.]
+
+## 🔧 Em criação / ajuste
+- [O que está na bancada agora.]
 
 ## ⏳ Aguardando do cliente
+- [Aprovação / material / texto / fotos — desde quando.]
 
-| Item | Pedido em | O que esperar |
-|---|---|---|
-| [aprovação de v2] | [data] | resposta por e-mail |
+## ⚠️ Riscos / atritos
+- [Rodada de revisão quase no limite; prazo apertado; feedback contraditório; cliente sumido.]
 
----
-
-## 📋 Próximas entregas
-
-1. [Próximo item, mais prioritário]
-2. [Seguinte]
-
----
+## Próxima ação + prazo
+- [O próximo passo concreto + data + de quem é.]
 
 ## 💬 Última sessão
-
-**Data:** [data]
-**O que foi feito:** [resumo]
-**Pendências:** [o que ficou pela metade]
-
-*Próxima sessão começa por: [item]*
+**[data]** — [o que rolou + onde parou + próximo passo óbvio.]
 `},
-    {name:"LOG-TEMPLATE.md", cat:"ref", role:"Modelo de log da sessão. Referência fixa.", content:`# LOG-TEMPLATE.md — Formato do Log de Sessão
+    {name:"PRODUCAO.md", cat:"opcional", role:"OPCIONAL — checklist de pré-impressão/exportação por entregável. Use quando há peça impressa ou entrega técnica.", content:`# PRODUCAO.md — Pré-impressão e Exportação
 
-> Referência permanente. Os logs vivem em \`logs/\` no Git, fora do contexto carregado.
+> **Opcional**, mas obrigatório quando há peça para impressão. Reúne as specs e o checklist que evitam reimpressão cara.
+> Regra de ouro: projetar em CMYK desde o início se o destino é papel.
 
 ---
 
-# Log — DD/MM/YYYY
+## Specs por entregável
+### [Peça — ex.: Cardápio A3]
+- **Tamanho final (trim):** [ex.: 297 × 420 mm]
+- **Sangria (bleed):** [ex.: 3 mm em todos os lados]
+- **Margem de segurança:** [conteúdo importante a ≥ 3-5 mm da borda de corte]
+- **Resolução:** [300 DPI no tamanho final para leitura de perto]
+- **Modo de cor:** [CMYK; perfil ICC se o gráfico fornecer]
+- **Onde será impresso:** [gráfica / copy shop + contato]
 
-**Projeto:** [nome]
-**Cliente:** [nome]
-**Fase ao final:** Briefing / Criação / Revisão / Entrega
-**Duração da sessão:** curta | média | longa
+## Checklist de pré-impressão (pré-flight)
+> Marcar antes de exportar a arte final.
+- [ ] Documento em **CMYK** (imagens importadas convertidas também)
+- [ ] **Sangria** aplicada; fundos/imagens estendem até a sangria
+- [ ] Conteúdo crítico (texto, logo) dentro da margem de segurança
+- [ ] **Resolução** ≥ 300 DPI no tamanho final; nada esticado/pixelado
+- [ ] **Fontes** incorporadas ou convertidas em contornos
+- [ ] Marcas de corte (crop marks) na exportação
+- [ ] Ortografia e espaçamento revisados (texto é a falha que mais escapa)
+- [ ] Cores especiais (Pantone) conferidas contra MARCA.md
+- [ ] **Prova real:** exportar PDF e imprimir um teste / levar a copy shop antes da tiragem
+- [ ] PDF final exportado como **PDF/X** (print-ready)
 
-## ✅ O que foi feito
-- [Concreto: "explorou 3 paletas terrosas", "fechou conceito do logo principal"]
+## Exportação digital (se aplicável)
+- [ ] RGB; sRGB para web
+- [ ] Resolução/tamanho corretos por uso (1x/2x para tela)
+- [ ] Formatos por destino (SVG p/ vetor, PNG p/ transparência, JPG p/ foto)
 
-## 🖼 Referências usadas
-- [imagens, links, marcas analisadas]
+## Notas da gráfica
+- [Especificidades que o impressor pediu; aprendizados de tiragens anteriores.]
+`},
+    {name:"LOG-TEMPLATE.md", cat:"ref", role:"Modelo do log de sessão. Referência fixa — nunca substituído.", content:`# LOG-TEMPLATE.md — Formato do Log de Sessão
 
-## ⚖️ Decisões tomadas
-- **[Decisão]:** [motivo]
+> **Referência fixa.** O MOLDE — não é substituído.
+> Ao final de uma sessão, o assistente entrega um \`logs/AAAA-MM-DD.md\` preenchido. Logs vivem no Git, lidos sob demanda.
 
-## 💬 Feedback do cliente (se houve)
-- [comentário] → [como será endereçado]
+---
 
-## 💡 Ideias capturadas
-**Suas:**
-- [...]
-**Sugestões geradas:**
-- [...]
+# Log — AAAA-MM-DD · [Projeto]
 
-## 📁 Arquivos / versões alteradas
-| Item | Mudança |
-|---|---|
-| [v2 do logo] | criado |
+## Foco da sessão
+[Conceito, criação de peça, revisão, pré-impressão, apresentação.]
 
-## 📊 Estado ao final
-[Uma frase do estado: "v2 pronta para envio ao cliente"]
+## Feito
+- [Peças/versões trabalhadas; o que avançou.]
 
-## ➡️ Próxima sessão deve começar por
-1. [...]
+## Decisões visuais
+- [O que virou DEC-N em DECISOES.md (fonte, cor, símbolo, layout).]
 
-## ⚠️ Atenção para a próxima sessão
-[Pedido pendente, prazo, sensibilidade do cliente]
+## Revisões / feedback
+- [Versões entregues e feedback → REVISOES.md; rodada usada.]
+
+## Sistema de marca
+- [Mudou algo em MARCA.md? Cor, fonte, regra de logo?]
+
+## Produção
+- [Checklist de pré-impressão rodado? Pendências técnicas?]
+
+## Onde parei
+[Estado ao encerrar + próximo passo + com quem está a bola. Alimenta o STATUS.]
 `}
   ],
   outputs:[
-    {key:"status", name:"STATUS.md", role:"estado atual e próximos passos (rolante)", active:true},
-    {key:"revisoes", name:"REVISÕES.md", role:"nova entrada se houve entrega ou feedback do cliente", active:true},
-    {key:"decisoes", name:"DECISÕES.md", role:"decisões de conceito e visual quando houver", active:true},
-    {key:"ideas", name:"IDEAS.md", role:"ideias da conversa (criar se não existir ainda)", active:false},
-    {key:"log", name:"logs/YYYY-MM-DD.md", role:"log da sessão (formato em LOG-TEMPLATE.md)", active:true},
+    {key:"status", name:"STATUS.md", role:"completo: o aprovado, o que aguarda, com quem está a bola", active:true},
+    {key:"revisoes", name:"REVISOES.md", role:"completo, com nova entrada se houve entrega ou feedback", active:true},
+    {key:"decisoes", name:"DECISOES.md", role:"completo, com nova DEC se houve decisão de conceito/visual", active:true},
+    {key:"marca", name:"MARCA.md", role:"completo, se o sistema visual mudou (cor, fonte, regra de logo)", active:false},
+    {key:"producao", name:"PRODUCAO.md", role:"completo, se uma peça foi para impressão (quando usa o arquivo)", active:false},
+    {key:"log", name:"logs/AAAA-MM-DD.md", role:"log da sessão preenchido (formato em LOG-TEMPLATE.md)", active:true},
   ],
   promptsExtra:[
-    { id:"G", title:"Briefing inicial", when:"Antes de qualquer criação — capturar o pedido do cliente.",
-      fill:"brief", fillLabel:"Briefing recebido (mensagem do cliente, conversa, ou descrição livre)",
-      body:(p,n)=>`Vou iniciar o briefing de um novo projeto${p.project?` (${p.project})`:""}${p.client?` para ${p.client}`:""}. Ajude a destrinchar o pedido em algo trabalhável.\n\nBRIEFING DO CLIENTE:\n${p.brief||"[Cole aqui o pedido do cliente, sem editar nada]"}\n\nGere:\n- PROJETO.md preenchido com o que ficou claro\n- CLIENTE.md (ou atualização do existente) com o perfil percebido\n- Lista de perguntas que ainda precisam ser feitas ao cliente\n- 2-3 direções conceituais iniciais para explorar\n- logs/${today}.md`
+    { id:"G", title:"Brief / onboarding do projeto", when:"Começo de projeto — montar o brief e o sistema antes de criar.",
+      fill:"context", fillLabel:"O pedido do cliente, referências, tudo que sabe (cole conversa/briefing)",
+      body:(p,n)=>`Onboarding de projeto de design${p.client?` (${p.client})`:""}.\n\nCONTEXTO:\n${p.context||"[Cole o pedido, conversa inicial, referências enviadas, tudo que sabe]"}\n\nEntregue (arquivos completos):\n- PROJETO.md: objetivo, público + a DOR DE FUNDO real, mídia (impressão? digital?), tom visual (adjetivos âncora + o que evitar), entregáveis, e principalmente o que NÃO está incluído + número de rodadas\n- CLIENTE.md: perfil, gosto, vetos, como dá feedback (marque o que é dedução vs. fato)\n- REFERENCIAS.md: organize as referências separando CONTEÚDO de ESTILO\n- Perguntas críticas a fazer antes de criar (o que falta no brief: tamanho final? onde imprime? quem aprova?)\n\nSinalize qualquer zona cinza de escopo que valha travar agora. Se for peça impressa, lembre de capturar specs para PRODUCAO.md.`
     },
-    { id:"H", title:"Sessão de criação / exploração", when:"Trabalhando em variações antes de fechar conceito.",
-      fill:"focus", fillLabel:"O que vamos explorar nesta sessão",
-      body:(p,n)=>`Sessão de criação para o projeto${p.project?` ${p.project}`:""}. Tenho REFERÊNCIAS.md e DECISÕES.md no Projeto.\n\nFOCO DESTA SESSÃO:\n${p.focus||"[ex: três variações de paleta para o logo / fechar tipografia / estrutura de grid do cardápio]"}\n\nProponha 2-3 direções antes de fechar. Para cada uma, justifique a escolha com base no briefing e no que o cliente disse curtir/rejeitar. Sugira paletas em HEX e tipografias quando relevante.`
+    { id:"H", title:"Explorar conceito / direção", when:"Hora de propor direções visuais — quero opções, não uma só.",
+      fill:"brief", fillLabel:"O que vou criar + o que o brief pede (ou diga: use o PROJETO.md)",
+      body:(p,n)=>`Exploração de conceito.\n\nO QUE CRIAR:\n${p.brief||"[A peça/identidade + o que o brief pede. Ou: 'use PROJETO.md e MARCA.md']"}\n\nUsando PROJETO.md (objetivo, público, tom) e REFERENCIAS.md:\n- Proponha 2-3 direções de conceito distintas (não variações da mesma) — cada uma com: ideia central, paleta sugerida, tipografia, e como serve à dor de fundo do cliente\n- Para cada direção, diga o que ela arrisca e para quem ela funciona melhor\n- Aponte qual você recomenda e por quê (mas apresente as outras com justiça)\n- Boas práticas: apresentar mais de uma opção mostra flexibilidade sem perder direção\n\nNão detalhe execução ainda — é direção. Depois que eu escolher, registramos em DECISOES.md.`
     },
-    { id:"I", title:"Apresentar versão ao cliente", when:"Você terminou uma versão e precisa do texto de apresentação.",
-      fill:"version", fillLabel:"O que esta versão entrega (resumo técnico)",
-      body:(p,n)=>`Vou apresentar a versão atual ao cliente${p.client?` (${p.client})`:""}. Escreva o texto de apresentação:\n- tom adequado ao que está em CLIENTE.md\n- destaca o que mudou desde a última versão\n- explica as decisões principais sem jargão\n- termina convidando feedback específico (não "o que achou", mas perguntas focadas)\n\nA VERSÃO ENTREGA:\n${p.version||"[Resumo técnico da versão — o que tem dentro, o que mudou]"}\n\nDepois, atualize REVISÕES.md com a entrada desta versão.`
+    { id:"I", title:"Interpretar feedback visual vago", when:"Cliente deu feedback do tipo 'não gostei' / 'deixa mais X'.",
+      fill:"feedback", fillLabel:"O feedback do cliente, literal (cole como ele mandou)",
+      body:(p,n)=>`Tradução de feedback visual.\n\nFEEDBACK LITERAL:\n${p.feedback||"[Cole o que o cliente disse, sem editar]"}\n\nAnalise (como designer E como o público-final):\n- Qual é o PROBLEMA concreto por trás do comentário (a intuição do cliente sobre o problema costuma estar certa)\n- A solução que ele propôs (se propôs) resolve o problema, ou trata o sintoma? A solução é trabalho meu\n- Parece feedback dele ou de uma IA/terceiro? (jargão estranho, contradição com o gosto dele em CLIENTE.md)\n- Onde conflita com decisões já aprovadas (DECISOES.md) ou com o sistema (MARCA.md)\n\nProponha: (a) 1-3 perguntas específicas de esclarecimento (\"a cor está forte demais? o título compete com a foto?\"), (b) o que dá para ajustar já com segurança, (c) o que esperar esclarecer antes de mexer. Não aplique a solução literal sem entender o problema.`
     },
-    { id:"J", title:"Processar feedback do cliente", when:"O cliente respondeu — transformar em próximos passos.",
-      fill:"feedback", fillLabel:"O que o cliente disse (cole literal, sem reorganizar)",
-      body:(p,n)=>`O cliente respondeu sobre a última versão. Transforme em itens trabalháveis e atualize os arquivos.\n\nFEEDBACK LITERAL DO CLIENTE:\n${p.feedback||"[Cole exatamente o que o cliente escreveu]"}\n\nPara cada ponto:\n1. O que ele quis dizer (interprete sem inventar)\n2. O que precisa mudar concretamente\n3. Prioridade (urgente / próxima versão / opcional)\n4. Se algum ponto contraria o que já estava aprovado, sinalize\n\nAtualize STATUS.md, REVISÕES.md e (se houver decisão revertida) DECISÕES.md.`
+    { id:"J", title:"Registrar decisão visual", when:"Bateu o martelo numa escolha (fonte, cor, símbolo, layout) e quero o porquê gravado.",
+      fill:"decision", fillLabel:"A escolha + as alternativas que estavam na mesa",
+      body:(p,n)=>`Decisão visual.\n\nESCOLHA:\n${p.decision||"[O que foi decidido + alternativas consideradas + o que motivou]"}\n\nFaça:\n- Reformule por que esta decisão precisou ser tomada\n- Liste as alternativas e por que não\n- Articule o racional ligando ao objetivo/público/tom de PROJETO.md (e à dor de fundo do cliente)\n- Se mexe no sistema visual, atualize MARCA.md também\n\nEntregue DECISOES.md completo (nova DEC-N) e, se aplicável, MARCA.md completo. Anote se o cliente já aprovou (cruza com REVISOES.md).`
+    },
+    { id:"K", title:"Checklist de pré-impressão / entrega", when:"Peça pronta indo para impressão ou para entrega digital — não quero erro caro.",
+      fill:"piece", fillLabel:"A peça + destino (gráfica? tela?) + specs que já sei",
+      body:(p,n)=>`Pré-impressão / entrega.\n\nPEÇA E DESTINO:\n${p.piece||"[A peça + vai para impressão/tela + tamanho/specs que já sei]"}\n\nSe for IMPRESSÃO, rode o checklist de PRODUCAO.md comigo, item a item:\n- Documento em CMYK (e imagens convertidas)? Sangria aplicada e fundos estendidos? Conteúdo crítico dentro da margem de segurança? Resolução ≥ 300 DPI no tamanho final? Fontes incorporadas/convertidas? Marcas de corte? Ortografia revisada? Pantones conferidos contra MARCA.md? PDF/X exportado?\n- Aponte o que falta verificar e o que eu preciso conferir no arquivo (você não vê o arquivo — me guie no que olhar)\n- Recomende uma PROVA REAL antes da tiragem (imprimir teste / copy shop), com o porquê\n\nSe for DIGITAL: confira modo de cor (sRGB), resolução por uso, formato por destino.\n\nEntregue PRODUCAO.md completo com o checklist no estado atual. Verifique specs técnicas por busca se houver dúvida — não chute.`
+    },
+    { id:"L", title:"Preparar apresentação ao cliente", when:"Vou mostrar o trabalho ao cliente e quero conduzir bem a conversa.",
+      fill:"goal", fillLabel:"O que vou apresentar + o resultado que quero (aprovar? escolher entre opções?)",
+      body:(p,n)=>`Preparar apresentação ao cliente${p.client?` (${p.client})`:""}.\n\nO QUE APRESENTAR:\n${p.goal||"[A(s) peça(s)/direção(ões) + o resultado que quero: aprovação? escolha entre opções? sinal verde para arte-final?]"}\n\nUsando CLIENTE.md (como ele decide) e DECISOES.md (os porquês):\n- Como abrir: reconectar ao objetivo/dor de fundo antes de mostrar o visual (vende a solução, não só a estética)\n- Para cada peça/opção: o racional curto (por que esta escolha resolve o problema dele)\n- Antecipar as objeções prováveis dado o gosto/vetos dele, e como responder\n- Como pedir feedback ESPECÍFICO (perguntas dirigidas) em vez de \"o que achou?\"\n- Se apresentar opções: como conduzir para uma decisão sem parecer indeciso\n\nEntregue como roteiro de apresentação + um rascunho de mensagem/e-mail de envio (que eu edito antes de mandar). Lembre: você não fala com o cliente; prepara.`
     },
   ]
 };
@@ -5879,6 +5914,16 @@ function buildClaudeMd(niche){
   L.push("**Pergunta antes de:** decisão com mais de um caminho razoável; tarefa ambígua ou que mexe em mais de um arquivo crítico; apagar/sobrescrever algo cuja perda não é trivial de desfazer.");
   L.push("");
   L.push("**Age direto em:** correção óbvia e isolada (informa depois); refinamento de algo já aprovado; captura de ideias no IDEAS.");
+
+  // Verificar antes de pedir upload (regra dura)
+  L.push("");
+  L.push("## Verifica antes de pedir um arquivo");
+  L.push("");
+  L.push("Antes de finalizar uma resposta pedindo que eu suba qualquer arquivo (JSON, log, saída, documento), o assistente verifica primeiro se ele já não está disponível — na base do Projeto, nos uploads, ou já citado/colado na conversa. Procura por nome plausível.");
+  L.push("");
+  L.push("- Quando eu disser «já subi X», a primeira ação é **procurar X**, não perguntar de novo nem assumir que não chegou.");
+  L.push("- Só pede o upload se a busca não encontrar — e aí é específico sobre nome e local esperado, para eu subir certo de primeira.");
+  L.push("- Pedir algo que já está lá desperdiça um turno meu (ver princípio «não desperdiça tokens»).");
 
   L.push("");
   L.push("## Idioma");
