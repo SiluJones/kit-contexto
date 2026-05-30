@@ -4,6 +4,32 @@
 
 ---
 
+## v1.6.0 — 2026-05-29 — Etapa 4: nicho narrative (Narrativa & Ficção) aprofundado
+
+Quarto nicho reconstruído. Matéria-prima: pesquisa aprofundada do domínio (story bible e continuidade; o papel da IA na ficção; craft de estrutura) + o padrão de ouro de dev/client/design v2. Sem caso real ainda — domínio coberto por pesquisa.
+
+### Adicionado / enriquecido no nicho narrative
+- **9 templates** (antes 7): BIBLIA, PERSONAGENS, ENREDO, VOZ, CONTINUIDADE, STATUS, LOG-TEMPLATE (núcleo) + **CRONOLOGIA** e **GLOSSARIO** (opcionais).
+- **BIBLIA.md** (reformulado de UNIVERSO): a story bible com Tier 1 / Tier 2 explícitos (essencial primeiro, aprofunda sob demanda) + pilares de continuidade.
+- **PERSONAGENS.md** enriquecido: aparência que não pode variar, querer (externo) × precisar (interno) como motor do arco, voz/fala, e "evolução registrada" (onde o personagem está AGORA, para não regredir).
+- **ENREDO.md** (reformulado de TRAMA): estrutura + resumo rolante do que aconteceu + o que vem + decisões de enredo (DEC) + fios soltos a pagar (setup/payoff).
+- **CONTINUIDADE.md** (reformulado de INCONSISTENCIAS): notas de continuidade + grafia canônica (tabela) + convenções de estilo + furos resolvidos.
+- **6 prompts G-L** (reescritos): G Explorar continuações, H Revisar continuidade, I Feedback de desenvolvimento (pacing/arco), J Simular diálogo de personagem, K Registrar decisão narrativa, L Checar voz e grafia.
+- **6 behaviors específicos** — o mais importante: «A IA não escreve a história — explora, o autor decide». Mais: separa problema mecânico de julgamento subjetivo; continuidade consulta antes de inventar; protege a voz do autor; beats como diagnóstico não fórmula; não super-documenta.
+- **builderSection** ampliado: + tempo verbal; gênero/formato/POV reorganizados.
+
+### Fundamento (pesquisa 2026)
+- A story bible ancora consistência entre sessões (igual à sala de roteiristas de TV); mas NÃO super-documentar — Tier 1 primeiro, escrever importa mais que catalogar.
+- A IA NUNCA escreve a história: a voz do autor é insubstituível; risco de manter prosa-IA sem examinar se soa como o autor.
+- A IA é confiável no mecânico (continuidade, pacing, lógica), não no julgamento subjetivo (se a cena merece o pagamento emocional, se a metáfora funciona) — essas decisões são do autor.
+- Beats/estrutura são diagnóstico na revisão, não molde a priori (risco de virar "versão burra do próprio estilo"); a história tem prioridade sobre o outline.
+- Continuação = explorar possibilidades para o autor desenvolver na própria voz; simular diálogo ajuda a entender dinâmicas.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Narrative com 12 prompts (6 A-F + 6 G-L) e 9 templates; tags semânticas corretas.
+
+---
+
 ## v1.5.0 — 2026-05-29 — Etapa 3: nicho design (Design Visual) aprofundado
 
 Terceiro nicho reconstruído. Matéria-prima: pesquisa aprofundada do domínio (workflow de design e gestão de revisões; sistema de identidade de marca com 6 ativos e cores multi-espaço; pré-impressão/prepress) + o caso real The Brazilian House (peça impressa, cliente que usa IA, foco em legibilidade) + o padrão de ouro de dev/client v2.

@@ -3,34 +3,42 @@
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Refinamento área por área, após o MVP. **Etapas 1 (dev), 2 (client), 2.5 (fundação+dogfooding) e 3 (design) concluídas.**
+Refinamento área por área, após o MVP. **Etapas 1 (dev), 2 (client), 2.5 (fundação+dogfooding), 3 (design) e 4 (narrative) concluídas.**
 
-Próxima: **Etapa 4 — escolher o próximo nicho.**
+Próxima: **Etapa 5 — escolher o próximo nicho.**
 
 ## ✅ Concluído recentemente
 - **v1.0.0** — MVP: 17 nichos + custom.
-- **v1.1.0 / v1.1.1** — Fundação: 7 princípios, CLAUDE.md separado, higiene, gatilhos; entrega de docs como arquivos completos.
-- **v1.2.0** — Etapa 1: dev aprofundado (9 templates, prompts G-K).
-- **v1.3.0** — Etapa 2: client aprofundado (8 templates +COMUNICACOES/FINANCEIRO, prompts G-L).
-- **v1.4.0** — Etapa 2.5: consolidação (9º princípio "estuda o domínio" + regra "verifica antes de pedir arquivo", nuance de entrega do GameDataHub2) + **dogfooding**: criado `meta/CLAUDE.md` do próprio projeto.
-- **v1.5.0** — Etapa 3: design aprofundado (9 templates +MARCA +PRODUCAO, prompts G-L com pré-impressão e apresentação).
+- **v1.1.0 / v1.1.1** — Fundação: princípios universais, CLAUDE.md separado, higiene, gatilhos; entrega de docs como arquivos completos.
+- **v1.2.0** — Etapa 1: dev (9 templates, prompts G-K).
+- **v1.3.0** — Etapa 2: client (8 templates, prompts G-L).
+- **v1.4.0** — Etapa 2.5: consolidação (9 princípios totais) + dogfooding (meta/CLAUDE.md do projeto).
+- **v1.5.0** — Etapa 3: design (9 templates +MARCA +PRODUCAO, prompts G-L).
+- **v1.6.0** — Etapa 4: narrative (9 templates: BIBLIA/PERSONAGENS/ENREDO/VOZ/CONTINUIDADE/STATUS/LOG +CRONOLOGIA +GLOSSARIO; prompts G-L; behavior central "a IA não escreve a história").
 
 ## 🎯 Próximos passos
-1. **Etapa 4 — próximo nicho.** Candidatos por impacto/uso: **narrative** (obra longa, alto custo de esquecimento, sem caso real ainda mas domínio rico), **research** (rigor de fontes/citação), **marketing** (calendário/audiência), ou um criativo (**game**, já tem profundidade decente). A decidir com o usuário.
-2. Manter o padrão: estudar domínio (pesquisa + feedback real se houver) → projetar (núcleo+opcionais, behaviors, prompts G+, gatilhos) → construir isolado → validar (node + jsdom 17/17) → publicar + CHANGELOG/STATUS.
-3. Coletar novos feedbacks de Claudes conforme cada nicho for testado, e relapidar.
+1. **Etapa 5 — próximo nicho.** Candidatos: **research** (rigor de fontes/citação/metodologia — alto valor, domínio rico), **marketing** (calendário/audiência/voz de marca), ou um criativo: **game** (game design/sistemas), **music**, **rpg**, **cuisine**, **animation**, **comics**, **pixel**, **product**, **business**, **brainstorm**. A decidir com o usuário.
+2. Manter o ritual: estudar domínio (pesquisa + feedback real se houver) → projetar → construir isolado → validar (node + jsdom 17/17) → publicar + CHANGELOG/STATUS.
+3. Coletar feedbacks de Claudes conforme cada nicho for testado, e relapidar.
 4. Ao fim da maioria: atualizar README e PLANNING (multi-nicho) para refletir CLAUDE.md, 9 princípios, núcleo+opcionais.
 
-## 📁 Nichos já no padrão de ouro (referência para os próximos)
-- **dev** (Etapa 1), **client** (Etapa 2), **design** (Etapa 3).
-- Padrão: arquivo-âncora com "como funciona/sistema" + armadilhas + ângulo próprio do nicho; ADR para decisões; histórico que cresce; STATUS rolante com "com quem está a bola"; prompts A-F + G+ específicos; behaviors derivados de pesquisa + caso real.
+## 📁 Nichos já no padrão de ouro (4 de 17)
+- **dev** (E1), **client** (E2), **design** (E3), **narrative** (E4).
+- Restam: research, product, business, marketing, game, pixel, brainstorm, music, rpg, cuisine, animation, comics (12) + custom (gerador, não precisa de aprofundamento de conteúdo).
+
+## Padrão de ouro consolidado (para os próximos)
+- Arquivo-âncora com "como funciona / sistema / bíblia" + armadilhas/continuidade + ângulo próprio do nicho.
+- Decisões em formato registrado (DEC); histórico que cresce; STATUS rolante.
+- Núcleo enxuto + opcionais marcados.
+- Prompts A-F universais + 6 G-L específicos cobrindo as tarefas reais do domínio.
+- Behaviors derivados de pesquisa + caso real, capturando o que de fato importa naquele ofício.
 
 ## Pendências
-- [ ] Decidir o próximo nicho (Etapa 4).
+- [ ] Decidir o próximo nicho (Etapa 5).
 - [ ] Atualizar README/PLANNING quando a maioria dos nichos estiver no padrão.
 - [ ] Reavaliar posicionamento frente à feature nativa "Pesquisar e referenciar conversas".
 
-## 🗂 Estado dos arquivos do nosso próprio projeto (meta/)
-- Núcleo presente: **CLAUDE.md** (novo!), STATUS, CHANGELOG, DECISOES, IDEIAS, LOG-TEMPLATE.
+## 🗂 Estado dos arquivos do nosso projeto (meta/)
+- Núcleo: CLAUDE, STATUS, CHANGELOG, DECISOES, IDEIAS, LOG-TEMPLATE.
 - Brainstorm de origem: TEMA, MAPA, FILTROS.
-- Raiz: README, PLANNING, DEPLOY-GUIDE (podem precisar de atualização ao fim das etapas).
+- Raiz: README, PLANNING, DEPLOY-GUIDE (atualizar ao fim das etapas).
