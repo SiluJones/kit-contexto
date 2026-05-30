@@ -3,43 +3,31 @@
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Refinamento área por área, após o MVP. **Etapas 1 (dev), 2 (client), 2.5 (fundação+dogfooding), 3 (design), 4 (narrative) e 5 (research) concluídas.**
+Refinamento área por área, após o MVP. **Etapas 1-6 concluídas. Os 6 nichos "sérios" estão no padrão de ouro.**
 
-Próxima: **Etapa 6 — escolher o próximo nicho.**
+Próxima: **Etapa 7 — primeiro nicho criativo** (ou continuar com business/marketing, ver abaixo).
 
-## ✅ Concluído recentemente
-- **v1.0.0** — MVP: 17 nichos + custom.
-- **v1.1.0 / v1.1.1** — Fundação: princípios universais, CLAUDE.md separado, higiene, gatilhos; entrega como arquivos completos.
-- **v1.2.0** — E1 dev (9 templates, prompts G-K).
-- **v1.3.0** — E2 client (8 templates, prompts G-L).
-- **v1.4.0** — E2.5 consolidação (9 princípios) + dogfooding (meta/CLAUDE.md).
-- **v1.5.0** — E3 design (9 templates +MARCA +PRODUCAO, G-L).
-- **v1.6.0** — E4 narrative (9 templates, G-L, "a IA não escreve a história").
-- **v1.7.0** — E5 research (8 templates, G-L, citelock fundamentado + auditoria de integridade de citações).
+## ✅ Nichos no padrão de ouro (6 de 17)
+- **dev** (E1), **client** (E2), **design** (E3), **narrative** (E4), **research** (E5), **product** (E6).
+- **Faltam aprofundar (11):** business, marketing, game, pixel, brainstorm, music, rpg, cuisine, animation, comics + custom (custom é gerador, não precisa).
+- Obs.: business e marketing ainda NÃO foram aprofundados — eu havia mencionado "fechar os sérios"; product fechou o ciclo de discovery/UX, mas business (métricas/estratégia/finanças) e marketing (audiência/conteúdo/voz) seguem na fila se quiser tratá-los como "sérios" antes dos criativos.
 
 ## 🎯 Próximos passos
-1. **Etapa 6 — próximo nicho.** Candidatos restantes: **product/UX** (discovery, jornadas, specs — "sério", muito usado), **business** (métricas, estratégia), **marketing** (calendário, audiência, voz), ou criativos: **game**, **music**, **rpg**, **cuisine**, **animation**, **comics**, **pixel**, **brainstorm**. Sugestão: product ou marketing (fecham os "sérios"); depois os criativos. A decidir.
+1. **Etapa 7 — decidir:** business, marketing, ou começar os criativos (game/music/rpg/cuisine/animation/comics/pixel/brainstorm).
 2. Manter o ritual: estudar domínio → projetar → construir isolado → validar (node + jsdom 17/17) → publicar + CHANGELOG/STATUS.
-3. Coletar feedbacks de Claudes conforme cada nicho for testado.
-4. Ao fim da maioria: atualizar README e PLANNING (multi-nicho).
+3. Aplicar ao próprio projeto as melhorias transversais que surgirem.
 
-## 📁 Nichos no padrão de ouro (5 de 17)
-- **dev** (E1), **client** (E2), **design** (E3), **narrative** (E4), **research** (E5).
-- Restam: product, business, marketing, game, pixel, brainstorm, music, rpg, cuisine, animation, comics (11) + custom (gerador).
+## 🔧 Pendências e ideias em análise (desta sessão)
+- [ ] **GitHub defasado:** o index sincronizado estava na ~v1.6; é preciso subir a v1.8.0 (research v2 + product v2 não estavam no repo).
+- [ ] **Limpeza de arquivos** (recomendação dada ao usuário): mover os 15 `*__refinado__DEV` e 7 `*__GameDataHub2` para fora do projeto/para uma pasta de arquivo — matéria-prima já consumida (E1 e E2.5). Decisão do usuário.
+- [ ] **3 ideias novas do usuário em análise** (registradas em IDEIAS.md): (a) git commit ao final — IMPLEMENTAR JÁ como princípio; (b) mecanismo de segurança p/ dados pessoais/vergonhosos — adiar para análise longa; (c) "backdoor" de atualização do kit + prefixo/sufixo nos downloads — avaliar viabilidade.
+- [ ] **Mecânica "concluir entrega + perguntar permissão no mesmo turno"** — avaliar como regra de eficiência.
+- [ ] **Revisar a qualidade das Instruções geradas** — pesquisa + análise pendente.
+- [ ] Atualizar README/PLANNING quando a maioria dos nichos estiver no padrão.
 
-## Padrão de ouro consolidado
-- Arquivo-âncora com "como funciona/sistema/bíblia" + armadilhas/continuidade + ângulo próprio.
+## 📁 Padrão de ouro consolidado
+- Arquivo-âncora (visão/sistema/bíblia) + ângulo próprio do nicho + armadilhas/continuidade.
 - Decisões registradas (DEC); histórico que cresce; STATUS rolante.
 - Núcleo enxuto + opcionais marcados.
-- Prompts A-F universais + 6 G-L específicos das tarefas reais do domínio.
-- Behaviors derivados de pesquisa + caso real (o que de fato importa no ofício).
-
-## Pendências
-- [ ] Decidir o próximo nicho (Etapa 6).
-- [ ] Atualizar README/PLANNING quando a maioria estiver no padrão.
-- [ ] Reavaliar posicionamento frente à feature nativa "Pesquisar e referenciar conversas".
-
-## 🗂 Estado dos arquivos do projeto (meta/)
-- Núcleo: CLAUDE, STATUS, CHANGELOG, DECISOES, IDEIAS, LOG-TEMPLATE.
-- Brainstorm de origem: TEMA, MAPA, FILTROS.
-- Raiz: README, PLANNING, DEPLOY-GUIDE (atualizar ao fim das etapas).
+- Prompts A-F universais + 6 G-L específicos das tarefas reais.
+- Behaviors derivados de pesquisa + caso real.

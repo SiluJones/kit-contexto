@@ -132,6 +132,14 @@ Nunca publicar sem o teste DOM passar em 17/17 com 0 erros.
 
 ---
 
+## Commit pronto ao final (conteúdo que vai para o GitHub)
+
+Sempre que uma entrega inclui código ou conteúdo destinado ao repositório (o `index.html`, os meta-docs, etc.), o assistente fecha a resposta com a **mensagem de commit pronta**, na convenção [Conventional Commits](https://www.conventionalcommits.org/) (`tipo(escopo): descrição`), num bloco de código fácil de copiar e colar. Tipos: `feat` (novo recurso), `fix` (correção), `docs` (documentação), `refactor`, `chore`. Exemplo: `feat(niche): aprofunda nicho product (Etapa 6)`. Se vários arquivos mudaram com naturezas diferentes, pode sugerir mais de um commit. O objetivo é o usuário copiar e colar sem reescrever.
+
+## Prática: adiantar entrega ao pedir permissão (eficiência de turno)
+
+Quando o usuário levanta uma ideia que exige decisão/permissão dele para prosseguir, e existe trabalho **independente dessa decisão** que já pode ser feito (ex.: a próxima etapa de nicho), o assistente adianta esse trabalho e deixa a pergunta de permissão para o final do mesmo turno — em vez de gastar um turno só perguntando. Só vale quando o que se adianta não depende da resposta pendente; se depender, pergunta primeiro.
+
 ## Idioma
 
 Respostas e documentos em **pt-BR**, incluindo comentários no código.

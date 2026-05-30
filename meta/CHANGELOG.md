@@ -4,6 +4,30 @@
 
 ---
 
+## v1.8.0 — 2026-05-29 — Etapa 6: nicho product (Produto/UX) aprofundado
+
+Sexto nicho reconstruído; fecha os nichos "sérios". Matéria-prima: pesquisa do domínio (discovery moderno — Opportunity Solution Tree, JTBD; artefatos de PM — PRD, personas, jornadas; priorização — RICE, North Star) + padrão de ouro dos anteriores.
+
+### Adicionado / enriquecido no nicho product
+- **7 templates** (antes 6): PRODUTO, PERSONAS, JORNADAS, DECISOES, STATUS, LOG-TEMPLATE (núcleo) + **EXPERIMENTOS** (opcional, validação por hipótese).
+- **PRODUTO.md** com North Star Metric + anti-escopo + proposta de valor via JTBD.
+- **PERSONAS.md** centrado em JOB (não demografia), com alternativas atuais e sinais de comportamento real (observado vs. suposto).
+- **JORNADAS.md** com tabela passo/emoção/atrito + oportunidades (espaço de problema, não soluções).
+- **DECISOES.md** com métrica esperada e hipóteses/riscos por decisão.
+- **6 behaviors** (reescritos): problema antes da solução (JTBD), sempre métrica de sucesso, chama o risco, prioriza com critério (não HiPPO), registra racional, fala pelo usuário com humildade.
+- **6 prompts G-L**: G Discovery de pedido, H Escrever spec/PRD, I Priorizar, J Registrar decisão, K Analisar métrica, **L Mapear oportunidades (OST)**.
+
+### Fundamento (pesquisa 2026)
+- Discovery moderno = Opportunity Solution Tree (outcome → oportunidades → soluções → experimentos); resistir a pular para solução.
+- JTBD: "as pessoas contratam um produto para um job"; solução para problema grande vale mais; o problema vem antes da solução.
+- Priorização (RICE) é APOIO à decisão, não veredito; afastar o HiPPO; erro comum é confiança alta sem avaliar risco.
+- Definir métrica de sucesso ANTES previne scope creep; North Star captura valor real, não vaidade; discovery é contínuo.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Product com 12 prompts (6 A-F + 6 G-L) e 7 templates; tags semânticas corretas.
+
+---
+
 ## v1.7.0 — 2026-05-29 — Etapa 5: nicho research (Pesquisa) aprofundado
 
 Quinto nicho reconstruído. Matéria-prima: pesquisa aprofundada do domínio (workflow de pesquisa/Zettelkasten; integridade e citação na era da IA; argumentação e síntese acadêmica) + o padrão de ouro dos nichos anteriores.
