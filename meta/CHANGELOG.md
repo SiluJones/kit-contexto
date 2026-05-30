@@ -4,6 +4,31 @@
 
 ---
 
+## v1.2.0 — 2026-05-29 — Etapa 1: nicho dev aprofundado
+
+Primeiro nicho reconstruído em profundidade (referência de ouro para os demais), usando como matéria-prima o feedback de uso real do projeto GameDataHub.
+
+### Adicionado ao nicho dev
+- **3 arquivos opcionais** (além dos 6 do núcleo): `ROADMAP.md` (plano em fases), `GLOSSARY.md` (termos do projeto), `HISTORICO.md` (conhecimento consolidado de fases antigas, lido sob demanda). Total: 9 templates.
+- **5 prompts G-K** (o dev tinha zero antes): G Debugar com método (causa raiz, não band-aid), H Registrar decisão técnica (vira DEC-N), I Revisar código/diff, J Planejar feature ou fase, K Auditar antes de mexer em peça crítica.
+- **Gatilhos específicos de dev** (`triggersExtra`): decisão de arquitetura → DECISIONS completo; mudança de fase → ROADMAP completo; termo novo → GLOSSARY completo.
+
+### Enriquecido
+- **CONTEXT.md**: agora inclui «Como funciona [componente] (CRÍTICO)», «Armadilhas Conhecidas» (o que NÃO fazer, com porquê) e «Contexto de Produto». Antes era só visão/stack/estrutura.
+- **STATUS.md**: estrutura ✅Funcionando / 🔧Em Progresso / ❌Quebrado / 📋Backlog acionável / 📁Arquivos Críticos / 💬Última Sessão.
+- **DECISIONS.md**: formato DEC-N (ADR) + FIX-N (bug grave: sintoma/causa raiz/solução/lição), com regra de arquivamento acima de ~700 linhas.
+- **IDEAS.md**: separado em Usuário × Assistente + Concluídas + Descartadas (com motivo).
+- **6 behaviors de dev** reescritos: comentário com propósito, preserva código existente, causa raiz, mudança mínima, sinaliza o que testar, indica prints.
+
+### Corrigido
+- **Mapeamento de categorias de arquivo**: `hist`→histórico (cresce), `ref`→referência, rolante→contexto. Antes `hist` aparecia como «opcional» e LOG-TEMPLATE como «rolante» (remendo da v1.1). Nova função única `fileTag()` substituiu a lógica duplicada em dois lugares. Nova tag visual «opcional».
+- **Nota de ambiente corrigida**: a versão anterior dizia que «dentro de um Projeto não dá para gerar arquivos» — tecnicamente errado. O correto: os arquivos já no Projeto são somente-leitura, mas isso não impede gerar versões novas completas para baixar/salvar.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Dev agora com 11 prompts (6 A-F + 5 G-K) e 9 templates. Tags semânticas conferidas em dev e game.
+
+---
+
 ## v1.1.1 — 2026-05-29 — Entrega de documentos como arquivos completos
 
 Ajuste de direção a partir de esclarecimento do usuário. O ponto de fricção no uso real não era "o Claude pediu pra atualizar os docs" — era **o Claude ter entregado blocos soltos de texto para o usuário costurar à mão dentro dos arquivos**. O usuário quer arquivos completos, prontos para baixar e substituir.

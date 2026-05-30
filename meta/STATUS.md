@@ -3,40 +3,29 @@
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Refinamento área por área, após o MVP (v1.0.0).
+Refinamento área por área, após o MVP. **Etapa 1 (nicho dev aprofundado) concluída.**
 
-Acabou de entrar a **Etapa 0 — Fundação transversal (v1.1.0)**. Próxima: **Etapa 1 — aprofundar o nicho dev**.
+Próxima: **Etapa 2 — escolher o próximo nicho a aprofundar.**
 
-## Entrega de documentos (v1.1.1) — arquivos completos, não blocos
-- Esclarecido: o assistente entrega sempre o **arquivo completo e atualizado** (pronto para baixar e substituir), nunca blocos soltos para o usuário costurar à mão dentro do arquivo.
-- Ressalva: dentro de um Projeto (somente-leitura), entrega o conteúdo completo de cada arquivo no chat, um por bloco — mesmo princípio, arquivo inteiro.
-- **7º princípio universal**: «Instruções sempre cuidadosas» — qualquer guia/passo a passo entregue ao usuário é completo, detalhado e bem explicado, nunca leviano.
-- Aplicar continua sendo decisão do usuário; montar o arquivo é trabalho do assistente.
+## ✅ Concluído recentemente
+- **v1.0.0** — MVP: 17 nichos + custom, 1 HTML autossuficiente.
+- **v1.1.0** — Fundação transversal: 6→7 princípios universais (analisa antes de aceitar, não desperdiça tokens, instruções cuidadosas), geração de CLAUDE.md separado das Instruções, filosofia rolante/estável/cresce, regras de higiene, tabela de gatilhos.
+- **v1.1.1** — Entrega de documentos: o assistente entrega arquivos COMPLETOS para baixar/substituir, nunca blocos soltos para costurar. Nota de ambiente corrigida (Projeto somente-leitura não impede gerar arquivos novos).
+- **v1.2.0** — **Etapa 1: nicho dev aprofundado** como referência de ouro. 9 templates (núcleo 6 + ROADMAP/GLOSSARY/HISTORICO opcionais), 5 prompts G-K (debug, decisão, revisão, plano, auditoria), CONTEXT/STATUS/DECISIONS/IDEAS enriquecidos. Mapeamento de tags corrigido (fileTag único).
 
-## O que mudou nesta sessão (v1.1.0)
-- **2 novos princípios universais** em todos os nichos: «Analisa antes de aceitar» e «Não desperdiça meus tokens». Vindos do feedback massivo do Claude no projeto GameDataHub (dev).
-- **Geração de CLAUDE.md**: o kit agora produz dois artefatos com naturezas técnicas distintas — Instruções do Projeto (núcleo enxuto, lido em toda mensagem) e CLAUDE.md (comportamento completo, subido como arquivo e versionável). Toggle de abas na tela de Instruções.
-- **Filosofia rolante/estável/cresce** + **regras de higiene anti-inchaço** + **tabela de gatilhos** agora são estruturas base do kit, refletidas no CLAUDE.md gerado.
+## 🎯 Próximos passos
+1. **Etapa 2 — próximo nicho.** Sugestão de ordem por impacto/uso: **client (Gestão de Cliente)** — já temos feedback real forte (o BRIEFING_CONTINUIDADE_v2) — ou **design**, ou **narrative**. A decidir com o usuário.
+2. Repetir o padrão da Etapa 1 em cada nicho: enriquecer arquivos, adicionar prompts específicos, gatilhos próprios.
+3. Conforme cada nicho for testado na prática, coletar novos feedbacks de Claudes e relapidar.
+4. Quando a maioria dos nichos estiver aprofundada: atualizar README e PLANNING (multi-nicho) para refletir CLAUDE.md, 7 princípios e núcleo+opcionais.
 
-## Decisão de arquitetura (fundamentada por pesquisa)
-- **Instruções do Projeto** são lidas inteiras a cada mensagem (token-caras) -> devem ser densas.
-- **Arquivos de conhecimento** usam RAG nos planos pagos (carregados sob demanda quando o acervo é grande) e são fáceis de atualizar/versionar.
-- Por isso: núcleo curto nas Instruções + versão completa no CLAUDE.md. Não é redundância — é especialização.
-
-## Próximos passos
-1. **Etapa 1 — dev aprofundado** (próxima sessão): reconstruir o nicho dev como referência de ouro, incorporando o feedback do GameDataHub (9 arquivos com CLAUDE/ROADMAP/GLOSSARY, prompts G+ que hoje faltam, CONTEXT com armadilhas catalogadas).
-2. Etapas seguintes: um nicho por vez, cada um aproveitando a fundação.
-3. Com o tempo: coletar novos "feedbacks" de Claudes usando cada nicho na prática, e relapidar.
-
-## Definição de arquivos (núcleo + opcionais)
-**Núcleo (todo projeto):** CLAUDE, CONTEXT, STATUS, DECISIONS, IDEAS, CHANGELOG, LOG-TEMPLATE.
-**Opcionais (conforme complexidade):** ROADMAP (plano em fases), GLOSSARY (jargão próprio), BRIEFING/continuidade (transferência frequente).
-Racional: cada arquivo tem um horizonte temporal distinto; fundir recriaria duplicação. Mas nem todo projeto precisa de todos — daí o núcleo + opcionais.
+## 📁 Como o dev v2 ficou (referência para os próximos)
+- **Núcleo (6):** CONTEXT, STATUS, DECISIONS, CHANGELOG, IDEAS, LOG-TEMPLATE.
+- **Opcionais (3):** ROADMAP, GLOSSARY, HISTORICO.
+- **Prompts:** A-F universais + G-K específicos do nicho.
+- **Padrão de qualidade:** CONTEXT com «como funciona (CRÍTICO)» + armadilhas + produto; DECISIONS com DEC/FIX; IDEAS com Usuário/Assistente/Concluídas/Descartadas; STATUS com seções de estado.
 
 ## Pendências
-- [ ] Etapa 1 (dev aprofundado).
-- [ ] Atualizar README e PLANNING para refletir CLAUDE.md + 6 princípios (quando a fundação estabilizar após o dev).
-- [ ] Reavaliar posicionamento do kit frente à feature nativa "Pesquisar e referenciar conversas" — diferencial confirmado: portabilidade (Git, qualquer conta), estrutura deliberada, e controle do que entra no contexto.
-
----
-*Próxima sessão: Etapa 1 — aprofundar o nicho dev usando o feedback do GameDataHub como matéria-prima.*
+- [ ] Decidir o próximo nicho (Etapa 2).
+- [ ] Atualizar README/PLANNING quando a fundação + nichos estabilizarem.
+- [ ] Reavaliar posicionamento frente à feature nativa "Pesquisar e referenciar conversas" — diferencial: portabilidade (Git/qualquer conta), estrutura deliberada, controle do que entra no contexto.
