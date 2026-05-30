@@ -4,6 +4,30 @@
 
 ---
 
+## v1.7.0 — 2026-05-29 — Etapa 5: nicho research (Pesquisa) aprofundado
+
+Quinto nicho reconstruído. Matéria-prima: pesquisa aprofundada do domínio (workflow de pesquisa/Zettelkasten; integridade e citação na era da IA; argumentação e síntese acadêmica) + o padrão de ouro dos nichos anteriores.
+
+### Adicionado / enriquecido no nicho research
+- **8 templates** (antes 6): TEMA, FONTES, HIPOTESES, SINTESE, STATUS, LOG-TEMPLATE (núcleo) + **GLOSSARIO** e **HISTORICO** (opcionais).
+- **FONTES.md** reforçado: regra dura de só catalogar fonte VERIFICADA, citekey (autor-ano), e — central — a nota de POR QUE cada fonte importa (apoia/complica/contradiz a tese), além de uma fila "a verificar".
+- **HIPOTESES.md** com três níveis explícitos (evidência × hipótese × especulação), status por hipótese, e seções de confirmadas/refutadas/intuições.
+- **SINTESE.md** reformulado como ARGUMENTO: mapa do argumento, síntese por eixo temático (não por fonte), conceitos definidos, contra-argumentos e respostas, lacunas.
+- **7 behaviors** (antes 5): citelock reforçado, hipótese vs. evidência vs. especulação, steel-man, **síntese é argumento não resumo**, **lacuna → tese**, **toda nota diz por que existe**, traduções controladas.
+- **6 prompts G-L** (reescritos): G Mapear literatura (de fonte-semente, sem inventar citação), H Fichar fonte, I Testar hipótese, J Avançar síntese, **K Auditar integridade das citações**, L Revisar argumento.
+- **Gatilhos próprios** (triggersExtra): fonte verificada → FONTES; hipótese muda status → HIPOTESES; avanço → SINTESE; conceito definido → SINTESE/GLOSSARIO.
+
+### Fundamento (pesquisa 2026)
+- Citação fabricada é crise real: ~40% das referências geradas por IA são erradas/inexistentes; alucinação é INDUZIDA pelo pedido, não inevitável; confiança ≠ correção. Daí o citelock como regra dura e o prompt de auditoria.
+- Notas precisam dizer POR QUE existem (Zettelkasten); bibliografia separada das notas de ideia; conhecimento deve sobreviver ao fim do projeto.
+- Síntese ≠ resumo: conexões/padrões/tensões entre fontes; cada fonte tem função; sinalizar fonte dominante e asserção sem sustentação.
+- Tese precisa ser arguível (existe contra-argumento crível); posicionar como lacuna→tese; enfrentar a objeção mais forte (steel-man).
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Research com 12 prompts (6 A-F + 6 G-L) e 8 templates; tags semânticas corretas.
+
+---
+
 ## v1.6.0 — 2026-05-29 — Etapa 4: nicho narrative (Narrativa & Ficção) aprofundado
 
 Quarto nicho reconstruído. Matéria-prima: pesquisa aprofundada do domínio (story bible e continuidade; o papel da IA na ficção; craft de estrutura) + o padrão de ouro de dev/client/design v2. Sem caso real ainda — domínio coberto por pesquisa.
