@@ -18,6 +18,7 @@ Próxima: **Etapa 10 — próximo criativo.**
 3. Padrão dos criativos: tende a "explora/o criador decide" + ofício + anti-scope, menos "decisão/risco/métrica".
 
 ## 🆕 Funcionalidades recentes do kit
+- **fix selects do topbar (v1.11.1):** Gênero/Engine/Fase apareciam vazios — renderTopbar agora aceita `options:` e `opts:`; idioma default corrigido (pt-BR→pt). Teste de topbar adicionado ao ritual.
 - **Seletor de SO (v1.11.0):** Windows-CMD/PowerShell/macOS/Linux no builder; injeta sintaxe de comando certa nas Instruções e CLAUDE.md.
 - **Afixo nos downloads (v1.9.0):** prefixo/sufixo opcional. Padrão inalterado.
 - **9 princípios universais**; CLAUDE.md gerado separado das Instruções; commit no formato CMD Windows.
@@ -28,7 +29,7 @@ Próxima: **Etapa 10 — próximo criativo.**
 - [ ] **Revisar a qualidade das Instruções geradas** — o usuário pediu: confirmar se estão polidas/eficientes. Pesquisa + análise pendente.
 - [ ] **Reagrupar narrative** (cosmético): hoje group "literary"; é criativo, não "sério". Só afeta tema visual. Avaliar ao mexer nos criativos.
 - [ ] Atualizar README/PLANNING quando os criativos avançarem.
-- [ ] **GitHub:** subir a v1.11.0 (game + seletor de SO).
+- [ ] **GitHub:** subir a v1.11.1 (game + seletor de SO + fix dos selects do topbar).
 
 ## 📁 Padrão de ouro consolidado
 - Arquivo-âncora (visão/sistema/bíblia/marca/contexto/experiência) + ângulo próprio do nicho + armadilhas/continuidade.

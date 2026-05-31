@@ -4,6 +4,23 @@
 
 ---
 
+## v1.11.1 — 2026-05-30 — fix: selects do topbar (Gênero/Engine/Fase) vazios
+
+Correção de bug funcional na interface, reportado pelo usuário (dropdowns do topbar apareciam vazios no game design e em outros nichos).
+
+### Corrigido
+- **Selects do topbar não populavam.** A `renderTopbar` só lia `f.opts` (formato de pares `[[valor,label]]`), mas os nichos reconstruídos (client, narrative, marketing, research, product, business, game) definem as opções como `options:["string",...]`. Resultado: `f.opts` indefinido → nenhuma `<option>` gerada → dropdown vazio. Agora a função aceita os DOIS formatos (`opts` de pares e `options` de strings), normalizando internamente. Imune a isso no futuro.
+- **Idioma aparecia em branco.** 10 campos `langSel` usavam `default:"pt-BR"`, mas `LANGS` usa o valor `"pt"` — o default não casava com nenhuma opção. Corrigido para `default:"pt"` (agora mostra "Português (pt-BR)" selecionado).
+- Selects sem default agora mostram um placeholder "—" inicial (em vez de auto-selecionar a primeira opção silenciosamente).
+
+### Lição registrada
+- O teste jsdom validava contagem de templates/prompts/preview, mas NÃO o conteúdo do topbar — por isso o bug passou. Teste de regressão do topbar (contar opções reais por select) foi adicionado ao ritual de validação.
+
+### Validação
+- Teste DOM: 17/17 nichos, 0 erros. game (Gênero 14 / Engine 11 / Fase 6), research (Área 8 / Fase 6), pixel (formato antigo, 4/5/4) — todos populam. Idioma = Português em todos.
+
+---
+
 ## v1.11.0 — 2026-05-30 — Etapa 9: nicho game design aprofundado + seletor de SO
 
 Nono nicho (primeiro CRIATIVO) reconstruído — o 2º favorito do usuário, com refino dedicado. Matéria-prima: pesquisa do domínio (MDA framework; economia/balanceamento de sistemas; produção indie e scope creep) + padrão de ouro dos anteriores.
