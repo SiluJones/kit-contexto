@@ -4,6 +4,33 @@
 
 ---
 
+## v1.10.0 — 2026-05-30 — Etapa 8: nicho business (Negócios) aprofundado
+
+Oitavo nicho reconstruído — fecha os nichos "sérios". Matéria-prima: pesquisa do domínio (estratégia — frameworks como lentes, OKR, Business Model Canvas, SWOT/Porter; unit economics — CAC/LTV/runway, declarar premissas; decisão — first principles, risco e custo de oportunidade) + padrão de ouro dos anteriores.
+
+### Antes / correção
+- **fix(meta): regra de commit corrigida para CMD do Windows.** O `\` (continuação de linha bash) quebrava no CMD do usuário. CLAUDE.md do projeto agora especifica: comando numa linha só, repetindo `-m` (cada `-m` = um parágrafo). Registrada ideia i-N5 (comandos sensíveis ao SO).
+
+### Nicho business v2
+- **7 templates** (antes 6): CONTEXTO, OBJETIVOS, ANALISE, DECISOES, STATUS, LOG-TEMPLATE (núcleo) + **MODELO-FINANCEIRO** (opcional, unit economics).
+- **CONTEXTO.md** com modelo de negócio (à la Canvas) + mercado + restrições.
+- **OBJETIVOS.md** como FILTRO de decisão, com OKR (objetivo + KR mensuráveis) e "o que decidimos NÃO perseguir".
+- **ANALISE.md** estruturada em premissas → análise → sensibilidade → conclusão → contraponto.
+- **MODELO-FINANCEIRO.md** com tabela de unit economics (margem, CAC, LTV, LTV:CAC, payback, churn, runway), cenários e "a história por trás dos números".
+- **6 behaviors** (reescritos): premissa sempre na mesa; número com conta (não chutado); sempre o contraponto; first principles antes de framework; risco e custo de oportunidade; a estratégia é o filtro.
+- **6 prompts G-L**: G Diagnosticar, H Modelar números/unit economics, I Avaliar decisão (contraponto), J Planejar, K Aplicar lente/framework, **L Pensar cenários**.
+
+### Fundamento (pesquisa 2026)
+- Frameworks são lentes complementares, não receitas; combinar só se cada um agregar; entender o problema (first principles) vem antes.
+- OKR para metas mensuráveis; estratégia como filtro de decisão ("isto nos aproxima da meta?"); foco é dizer não.
+- Unit economics: poucos números importam (CAC, LTV, churn, margem, burn); são interdependentes (escalar com fundamento ruim queima caixa); LTV:CAC ~3:1, payback tão importante quanto a razão; SEMPRE declarar premissas.
+- Decisão por risco E custo de oportunidade; a narrativa por trás dos números importa mais que a planilha.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Business com 12 prompts e 7 templates; tags semânticas corretas.
+
+---
+
 ## v1.9.0 — 2026-05-30 — Etapa 7: nicho marketing aprofundado + afixo nos downloads
 
 Sétimo nicho reconstruído + implementação da ideia N3-B (prefixo/sufixo nos downloads).

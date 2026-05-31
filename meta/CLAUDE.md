@@ -134,18 +134,23 @@ Nunca publicar sem o teste DOM passar em 17/17 com 0 erros.
 
 ## Commit pronto ao final (conteúdo que vai para o GitHub)
 
-Sempre que uma entrega inclui código ou conteúdo destinado ao repositório (o `index.html`, os meta-docs, etc.), o assistente fecha a resposta com o **comando de commit completo, pronto para colar no console** — não só a mensagem, mas o `git commit -m ... -m ...` inteiro, num bloco de código.
+Sempre que uma entrega inclui código ou conteúdo destinado ao repositório (o `index.html`, os meta-docs, etc.), o assistente fecha a resposta com o **comando de commit completo, pronto para colar no console**, num bloco de código.
 
-Formato (Conventional Commits — `tipo(escopo): descrição`), com o título numa flag `-m` e o corpo em outra `-m`:
+**AMBIENTE: o usuário usa CMD do Windows.** Por isso o comando NÃO pode usar a continuação de linha `\` (isso é sintaxe de bash/Linux; no CMD o `\` quebra o comando com erro `'\' is outside repository` / `'-m' não é reconhecido`).
+
+Formato correto para CMD do Windows — **tudo numa linha só**, repetindo `-m` (cada `-m` vira um parágrafo da mensagem):
 
 ```
-git commit -m "feat(niche): aprofunda nicho product/UX (Etapa 6, v1.8.0)" \
-  -m "- product v2: 7 templates (+EXPERIMENTOS opcional), prompts G-L, 6 behaviors
-- baseado em Opportunity Solution Tree, JTBD, PRD e priorização RICE/North Star
-- atualiza CHANGELOG (v1.8.0) e STATUS"
+git commit -m "tipo(escopo): título curto" -m "- linha 1 do corpo" -m "- linha 2 do corpo"
 ```
 
-Tipos: `feat` (novo recurso), `fix` (correção), `docs` (documentação), `refactor`, `chore`. O objetivo é o usuário copiar e colar direto no terminal sem reescrever nem reformatar. Se mudanças de naturezas bem diferentes ocorreram, pode sugerir mais de um comando de commit.
+Convenção [Conventional Commits](https://www.conventionalcommits.org/) no título (`tipo(escopo): descrição`). Tipos: `feat` (novo recurso), `fix` (correção), `docs` (documentação), `refactor`, `chore`.
+
+Regras práticas:
+- **Uma linha só, sem `\`.** Sem quebras de linha dentro do comando — o CMD trata cada quebra como um novo comando.
+- Aspas duplas em cada `-m`. Evitar aspas duplas DENTRO do texto (o CMD encerra a string). Se precisar destacar, usar aspas simples ou nada.
+- Corpo opcional: para mudanças triviais, basta o título num único `-m`.
+- O objetivo é copiar e colar direto no terminal e funcionar de primeira.
 
 ## Prática: adiantar entrega ao pedir permissão (eficiência de turno)
 
