@@ -4,6 +4,27 @@
 
 ---
 
+## v1.13.0 — 2026-05-30 — Etapa 11: nicho music (Música) aprofundado
+
+Décimo-primeiro nicho (3º criativo). Matéria-prima: pesquisa do domínio (produção — 4 fases demo→master, pré-produção, arranjo; mix/teoria — gain staging, EQ, kick×baixo, reference track; letra/songwriting — prosódia, específico→universal, hook) + padrão de ouro dos anteriores.
+
+### Nicho music v2
+- **7 templates** (antes 6): PROJETO, FAIXAS, LETRAS, ARRANJO, STATUS, LOG-TEMPLATE (núcleo) + **REFERENCIAS** (opcional, biblioteca destrinchada). HARMONIA virou ARRANJO (harmonia + arranjo + decisões + checklists técnicos).
+- **PROJETO.md** com sonoridade-alvo + voz lírica + referências como lente; **LETRAS.md** com prosódia e o princípio específico→universal; **ARRANJO.md** com decisões (intenção) + checklists técnicos de pré-produção/mix/QC.
+- **7 behaviors**: honestidade sobre o som (NÃO ouço áudio — julgo no papel, o produtor confere de ouvido); letra com voz e prosódia; harmonia em humanês (ligada ao efeito); referência como lente não cópia; arranjo é movimento; registra a intenção; orienta e propõe, o artista toca e decide.
+- **6 prompts G-L**: G Conceito/sonoridade, H Escrever/revisar letra, I Harmonia/progressões, J Estrutura/arranjo, K Checklist de mix (ordem técnica), **L Destravar (bloqueio criativo)**.
+
+### Fundamento (pesquisa 2026)
+- 4 fases (demo→gravação→mix→master); pré-produção (referência, BPM/tom, esboço); arranjo = quando elementos entram/saem; o gap de QC pré-master é onde se perde qualidade.
+- Mix: gain staging primeiro (mix estático antes de plugins, headroom -6 a -3dB); EQ é dar espaço (kick×baixo, cortar mud 125-500Hz); reference track é bússola.
+- Letra: prosódia (casamento palavra+música); partir do específico (imagem concreta) para o universal; hook = simplicidade/repetição/contraste/prosódia; ritmo melódico é a fundação; rima é ferramenta, não obrigação.
+- Limite do assistente: não ouve áudio — orienta teoria/estrutura/letra e dá checklists; o sonoro é do ouvido do artista.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros, selects do topbar populando. Music com 12 prompts e 7 templates.
+
+---
+
 ## v1.12.0 — 2026-05-30 — Etapa 10: nicho pixel art aprofundado
 
 Décimo nicho (2º criativo; 3º favorito do usuário). Matéria-prima: pesquisa do domínio (fundamentos — clusters, AA, dithering, silhueta, evitar jaggies/banding/pillow; animação — timing, squash&stretch, anticipation, pivô; workflow/consistência — style guide anti-drift, resolução em grade, outline padronizado) + padrão de ouro dos anteriores.

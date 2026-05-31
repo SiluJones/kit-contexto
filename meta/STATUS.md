@@ -3,17 +3,17 @@
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Refinamento área por área, após o MVP. **Etapas 1-10 concluídas.** 10 nichos no padrão de ouro.
+Refinamento área por área, após o MVP. **Etapas 1-11 concluídas.** 11 nichos no padrão de ouro.
 
-Próxima: **Etapa 11 — próximo criativo.**
+Próxima: **Etapa 12 — próximo criativo.**
 
 ## ✅ Nichos no padrão de ouro (10 de 17)
 - Sérios (8): **dev, client, design, narrative, research, product, marketing, business**.
-- Criativos (2): **game** (E9), **pixel** (E10).
-- **Faltam — criativos (5):** music, rpg, cuisine, animation, comics + **brainstorm** (reservado para ser o ÚLTIMO) + custom (gerador, não precisa).
+- Criativos (3): **game** (E9), **pixel** (E10), **music** (E11).
+- **Faltam — criativos (4):** rpg, cuisine, animation, comics + **brainstorm** (reservado para ser o ÚLTIMO) + custom (gerador, não precisa).
 
 ## 🎯 Próximos passos
-1. **Etapa 11 — próximo criativo.** Favoritos do usuário já feitos: dev✓, game✓, pixel✓, narrative✓. Restantes: music, rpg, cuisine (tem caso real The Brazilian House), animation, comics. **brainstorm fica por último (fechamento poético).** A decidir.
+1. **Etapa 12 — próximo criativo.** Restantes: rpg, cuisine (tem caso real The Brazilian House), animation, comics. **brainstorm fica por último (fechamento poético).** A decidir.
 2. Ritual: pesquisa do domínio → projetar → construir isolado → validar (jsdom 17/17) → publicar + CHANGELOG/STATUS.
 
 ## 🆕 Funcionalidades recentes do kit
@@ -28,7 +28,7 @@ Próxima: **Etapa 11 — próximo criativo.**
 - [ ] **Revisar a qualidade das Instruções geradas** — o usuário pediu. Pesquisa + análise pendente.
 - [ ] **Reagrupar narrative** (cosmético): hoje group "literary"; avaliar ao mexer nos criativos.
 - [ ] Atualizar README/PLANNING quando os criativos avançarem.
-- [ ] **GitHub:** subir a v1.12.0 (pixel art).
+- [ ] **GitHub:** subir a v1.13.0 (music).
 
 ## 📁 Padrão de ouro consolidado
 - Arquivo-âncora (visão/sistema/bíblia/estilo) + ângulo próprio + armadilhas/continuidade.
