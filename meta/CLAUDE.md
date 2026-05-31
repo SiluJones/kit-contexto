@@ -134,7 +134,18 @@ Nunca publicar sem o teste DOM passar em 17/17 com 0 erros.
 
 ## Commit pronto ao final (conteúdo que vai para o GitHub)
 
-Sempre que uma entrega inclui código ou conteúdo destinado ao repositório (o `index.html`, os meta-docs, etc.), o assistente fecha a resposta com a **mensagem de commit pronta**, na convenção [Conventional Commits](https://www.conventionalcommits.org/) (`tipo(escopo): descrição`), num bloco de código fácil de copiar e colar. Tipos: `feat` (novo recurso), `fix` (correção), `docs` (documentação), `refactor`, `chore`. Exemplo: `feat(niche): aprofunda nicho product (Etapa 6)`. Se vários arquivos mudaram com naturezas diferentes, pode sugerir mais de um commit. O objetivo é o usuário copiar e colar sem reescrever.
+Sempre que uma entrega inclui código ou conteúdo destinado ao repositório (o `index.html`, os meta-docs, etc.), o assistente fecha a resposta com o **comando de commit completo, pronto para colar no console** — não só a mensagem, mas o `git commit -m ... -m ...` inteiro, num bloco de código.
+
+Formato (Conventional Commits — `tipo(escopo): descrição`), com o título numa flag `-m` e o corpo em outra `-m`:
+
+```
+git commit -m "feat(niche): aprofunda nicho product/UX (Etapa 6, v1.8.0)" \
+  -m "- product v2: 7 templates (+EXPERIMENTOS opcional), prompts G-L, 6 behaviors
+- baseado em Opportunity Solution Tree, JTBD, PRD e priorização RICE/North Star
+- atualiza CHANGELOG (v1.8.0) e STATUS"
+```
+
+Tipos: `feat` (novo recurso), `fix` (correção), `docs` (documentação), `refactor`, `chore`. O objetivo é o usuário copiar e colar direto no terminal sem reescrever nem reformatar. Se mudanças de naturezas bem diferentes ocorreram, pode sugerir mais de um comando de commit.
 
 ## Prática: adiantar entrega ao pedir permissão (eficiência de turno)
 

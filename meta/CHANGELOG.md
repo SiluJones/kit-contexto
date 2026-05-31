@@ -4,6 +4,35 @@
 
 ---
 
+## v1.9.0 — 2026-05-30 — Etapa 7: nicho marketing aprofundado + afixo nos downloads
+
+Sétimo nicho reconstruído + implementação da ideia N3-B (prefixo/sufixo nos downloads).
+
+### Afixo opcional nos nomes de arquivo (ideia i-N3 parte B)
+- Nova caixa na aba Templates: escolher **padrão** (nome original, como sempre), **prefixo** ou **sufixo**, com um campo de texto.
+- Função única `applyAffix(name)` aplicada em downloadFile, downloadAllTemplates, ZIP e CLAUDE.md — um só ponto de verdade.
+- Padrão = inalterado: quem não ativa continua baixando `STATUS.md`. Ativando prefixo "meu-projeto" → `meu-projeto__STATUS.md`; sufixo → `STATUS__meu-projeto.md`. Sanitiza espaços/barras/aspas. Preview ao vivo.
+
+### Nicho marketing v2
+- **7 templates** (antes 6): MARCA, AUDIENCIA, TOM-E-VOZ, PAUTA, STATUS, LOG-TEMPLATE (núcleo) + **RESULTADOS** (opcional, desempenho por funil).
+- **MARCA.md** com os 3-5 PILARES de conteúdo (temas que a marca possui, ligados a dor da audiência).
+- **TOM-E-VOZ.md** com eixos de tom, exemplos aprovados/evitados, vocabulário e ajustes por canal.
+- **PAUTA.md** como calendário vivo (tabela tema/pilar/formato/canal/status) + banco de temas + histórico.
+- **6 behaviors** (reescritos): ancora nos pilares; voz consistente e do humano (IA é multiplicador); escreve para a audiência; adapta ao canal (não copia); distingue vanity de métrica real; calendário vivo.
+- **6 prompts G-L**: G Estratégia/pilares, H Gerar pauta, I Escrever peça, **J Repurposing**, K Analisar desempenho (vanity vs. real), L Calibrar voz.
+
+### Fundamento (pesquisa 2026)
+- Content pillars (3-5 temas que a marca possui) dão direção e autoridade; conteúdo sem plano vira pilha de assets.
+- Calendário editorial é documento vivo; estratégia documentada → mais resultado.
+- Voz consistente entre formatos/canais; IA é multiplicador, humano é dono do POV/voz/precisão.
+- Distribuição é estratégica (formato nativo por plataforma); repurposing multiplica, não copia.
+- Métrica organizada pelo funil (awareness/consideração/decisão/lealdade); vanity ≠ actionable; foco em poucas métricas com contexto.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Marketing com 12 prompts e 7 templates. Afixo testado (padrão/prefixo/sufixo, sanitização, preview).
+
+---
+
 ## v1.8.0 — 2026-05-29 — Etapa 6: nicho product (Produto/UX) aprofundado
 
 Sexto nicho reconstruído; fecha os nichos "sérios". Matéria-prima: pesquisa do domínio (discovery moderno — Opportunity Solution Tree, JTBD; artefatos de PM — PRD, personas, jornadas; priorização — RICE, North Star) + padrão de ouro dos anteriores.

@@ -1,33 +1,40 @@
-# STATUS — Kit de Contexto Universal — 2026-05-29
+# STATUS — Kit de Contexto Universal — 2026-05-30
 
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Refinamento área por área, após o MVP. **Etapas 1-6 concluídas. Os 6 nichos "sérios" estão no padrão de ouro.**
+Refinamento área por área, após o MVP. **Etapas 1-7 concluídas.** 7 nichos no padrão de ouro.
 
-Próxima: **Etapa 7 — primeiro nicho criativo** (ou continuar com business/marketing, ver abaixo).
+Próxima: **Etapa 8 — business** (já decidido pelo usuário). Fecha os "sérios".
 
-## ✅ Nichos no padrão de ouro (6 de 17)
-- **dev** (E1), **client** (E2), **design** (E3), **narrative** (E4), **research** (E5), **product** (E6).
-- **Faltam aprofundar (11):** business, marketing, game, pixel, brainstorm, music, rpg, cuisine, animation, comics + custom (custom é gerador, não precisa).
-- Obs.: business e marketing ainda NÃO foram aprofundados — eu havia mencionado "fechar os sérios"; product fechou o ciclo de discovery/UX, mas business (métricas/estratégia/finanças) e marketing (audiência/conteúdo/voz) seguem na fila se quiser tratá-los como "sérios" antes dos criativos.
+## ✅ Nichos no padrão de ouro (7 de 17)
+- **dev** (E1), **client** (E2), **design** (E3), **narrative** (E4), **research** (E5), **product** (E6), **marketing** (E7).
+- **Faltam (10):** business (E8, próximo), game, pixel, brainstorm, music, rpg, cuisine, animation, comics + custom (custom é gerador, não precisa).
 
 ## 🎯 Próximos passos
-1. **Etapa 7 — decidir:** business, marketing, ou começar os criativos (game/music/rpg/cuisine/animation/comics/pixel/brainstorm).
-2. Manter o ritual: estudar domínio → projetar → construir isolado → validar (node + jsdom 17/17) → publicar + CHANGELOG/STATUS.
+1. **Etapa 8 — business** (métricas, estratégia, finanças, modelo de negócio). Ritual padrão: pesquisa do domínio → projetar → construir → validar (jsdom 17/17) → publicar + CHANGELOG/STATUS.
+2. Depois de business, começam os **criativos**: game, music, rpg, cuisine, animation, comics, pixel, brainstorm.
 3. Aplicar ao próprio projeto as melhorias transversais que surgirem.
 
-## 🔧 Pendências e ideias em análise (desta sessão)
-- [ ] **GitHub defasado:** o index sincronizado estava na ~v1.6; é preciso subir a v1.8.0 (research v2 + product v2 não estavam no repo).
-- [ ] **Limpeza de arquivos** (recomendação dada ao usuário): mover os 15 `*__refinado__DEV` e 7 `*__GameDataHub2` para fora do projeto/para uma pasta de arquivo — matéria-prima já consumida (E1 e E2.5). Decisão do usuário.
-- [ ] **3 ideias novas do usuário em análise** (registradas em IDEIAS.md): (a) git commit ao final — IMPLEMENTAR JÁ como princípio; (b) mecanismo de segurança p/ dados pessoais/vergonhosos — adiar para análise longa; (c) "backdoor" de atualização do kit + prefixo/sufixo nos downloads — avaliar viabilidade.
-- [ ] **Mecânica "concluir entrega + perguntar permissão no mesmo turno"** — avaliar como regra de eficiência.
-- [ ] **Revisar a qualidade das Instruções geradas** — pesquisa + análise pendente.
-- [ ] Atualizar README/PLANNING quando a maioria dos nichos estiver no padrão.
+## 🆕 Funcionalidades recentes do kit
+- **Afixo nos downloads (v1.9.0):** prefixo/sufixo opcional nos nomes de arquivo (aba Templates). Padrão inalterado.
+- **9 princípios universais** na fundação; CLAUDE.md gerado separado das Instruções.
+
+## 🔧 Pendências e ideias em análise
+- [ ] **i-N3 parte A** (canal de atualização do kit / "backdoor" de ingestão de novas regras): avaliar — provavelmente resolve-se com uma seção no CLAUDE.md gerado ("se o usuário trouxer um arquivo de atualização do kit, aplique as novas regras"). A discutir.
+- [ ] **i-N2** (segurança de dados pessoais/sensíveis): adiada para análise longa com pesquisa. Tensão: não estragar a captura de informação útil.
+- [ ] **Revisar a qualidade das Instruções geradas** — pesquisa + análise pendente (o usuário pediu: confirmar se estão polidas/eficientes, já que não precisam de estrutura rebuscada, só que o Claude entenda).
+- [ ] Atualizar README/PLANNING quando a maioria dos nichos estiver no padrão (faltarão poucos após business).
+- [ ] **GitHub:** subir a v1.9.0 (marketing v2 + afixo). Esperar a sincronização do Projeto antes de conferir.
 
 ## 📁 Padrão de ouro consolidado
-- Arquivo-âncora (visão/sistema/bíblia) + ângulo próprio do nicho + armadilhas/continuidade.
+- Arquivo-âncora (visão/sistema/bíblia/marca) + ângulo próprio do nicho + armadilhas/continuidade.
 - Decisões registradas (DEC); histórico que cresce; STATUS rolante.
 - Núcleo enxuto + opcionais marcados.
 - Prompts A-F universais + 6 G-L específicos das tarefas reais.
 - Behaviors derivados de pesquisa + caso real.
+
+## 🗂 Convenções do projeto
+- Entrega: arquivos completos em outputs/meta; o usuário organiza no repo (raiz, não meta/).
+- Commit ao final no formato comando-completo (git commit -m "..." \\ -m "..."), pronto para colar.
+- pt-BR em tudo, inclusive comentários de código.
