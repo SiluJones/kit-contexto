@@ -4,6 +4,32 @@
 
 ---
 
+## v1.11.0 — 2026-05-30 — Etapa 9: nicho game design aprofundado + seletor de SO
+
+Nono nicho (primeiro CRIATIVO) reconstruído — o 2º favorito do usuário, com refino dedicado. Matéria-prima: pesquisa do domínio (MDA framework; economia/balanceamento de sistemas; produção indie e scope creep) + padrão de ouro dos anteriores.
+
+### Seletor de sistema operacional (ideia i-N5, implementada)
+- Novo campo no "Construir instrução" (Windows-CMD / Windows-PowerShell / macOS / Linux / não especificar). Injeta nas Instruções E numa seção "Ambiente" do CLAUDE.md a sintaxe certa de comandos de terminal (continuação de linha, caminhos), evitando o bug do `git commit` que quebrou no CMD do usuário. Padrão = não especificar. Persiste no estado.
+
+### Nicho game v2
+- **8 templates** (antes 7): JOGO, MECANICAS, UNIVERSO, ARTE-E-SOM, PRODUCAO, STATUS, LOG-TEMPLATE (núcleo) + **NIVEIS** (opcional, level design).
+- **JOGO.md** começa pela EXPERIÊNCIA alvo (aesthetic) + core loop + pilares + anti-escopo (GDD enxuto e vivo).
+- **MECANICAS.md** registra a INTENÇÃO por trás dos números (curva pretendida, sensação), economia com sources/sinks, premissas de jogador.
+- **PRODUCAO.md** é a defesa contra scope creep: MVP, vertical slice, marcos, e o "cemitério saudável" (cortado/adiado com porquê).
+- **7 behaviors**: começa pela experiência (MDA); pensa em sistemas; ancora no core loop; guarda a intenção por trás do número; trata escopo como assassino; design é hipótese a testar; explora mas o designer decide.
+- **6 prompts G-L**: G Conceito/core loop, H Projetar mecânica, I Balancear sistema, J Decisão de escopo (cabe ou corta), K Playtest, **L Diagnosticar 'não está divertido'**.
+
+### Fundamento (pesquisa 2026)
+- MDA: começar pela aesthetic (a experiência), mecânicas → dynamics → aesthetics; core loop é o coração; definir a emoção alinha tudo; GDD enxuto e vivo.
+- Economia começa com intenção; curvas (exponencial/logarítmica/sigmoide) têm propósito; alvo é o Flow (esforço×recompensa); simulação revela edge cases; pense em sistemas, não features.
+- Scope creep é o assassino nº1 de jogos indie; cada "não" é um "sim" ao jogo terminado; vertical slice (cortar escopo, não qualidade); ideia boa que não cabe → registrar para depois.
+- Design é hipótese; validar barato (protótipo de papel, vertical slice, playtest) antes de comprometer produção.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Game com 12 prompts e 8 templates. Seletor de SO testado (injeta em Instruções + CLAUDE.md).
+
+---
+
 ## v1.10.0 — 2026-05-30 — Etapa 8: nicho business (Negócios) aprofundado
 
 Oitavo nicho reconstruído — fecha os nichos "sérios". Matéria-prima: pesquisa do domínio (estratégia — frameworks como lentes, OKR, Business Model Canvas, SWOT/Porter; unit economics — CAC/LTV/runway, declarar premissas; decisão — first principles, risco e custo de oportunidade) + padrão de ouro dos anteriores.

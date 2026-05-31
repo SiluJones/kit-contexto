@@ -3,34 +3,35 @@
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Refinamento área por área, após o MVP. **Etapas 1-8 concluídas. TODOS os 8 nichos "sérios" estão no padrão de ouro.**
+Refinamento área por área, após o MVP. **Etapas 1-9 concluídas.** 9 nichos no padrão de ouro (8 sérios + game design).
 
-Próxima: **Etapa 9 — primeiro nicho CRIATIVO.**
+Próxima: **Etapa 10 — próximo criativo.**
 
-## ✅ Nichos no padrão de ouro (8 de 17)
-- **dev** (E1), **client** (E2), **design** (E3), **narrative** (E4), **research** (E5), **product** (E6), **marketing** (E7), **business** (E8).
-- **Faltam — os criativos (8):** game, pixel, brainstorm, music, rpg, cuisine, animation, comics + custom (gerador, não precisa de aprofundamento).
+## ✅ Nichos no padrão de ouro (9 de 17)
+- Sérios: **dev, client, design, narrative, research, product, marketing, business** (E1-E8).
+- Criativos: **game** (E9).
+- **Faltam — criativos (7):** pixel, music, rpg, cuisine, animation, comics + **brainstorm** (reservado para ser o ÚLTIMO, fechamento poético) + custom (gerador, não precisa).
 
 ## 🎯 Próximos passos
-1. **Etapa 9 — escolher o primeiro criativo.** Candidatos: **game** (game design/sistemas — já tem base decente), **music** (composição/produção), **rpg** (mesa/campanha), **cuisine** (receitas/cardápio — há caso real The Brazilian House), **animation**, **comics**, **pixel** (pixel art), **brainstorm** (ideação — é o nicho do próprio kit). A decidir com o usuário.
+1. **Etapa 10 — próximo criativo.** Favoritos do usuário já feitos: dev✓, game✓. Resta o 3º favorito: **pixel art** — forte candidato. Outros: music, rpg, cuisine (tem caso real The Brazilian House), animation, comics. **brainstorm fica por último.**
 2. Manter o ritual: pesquisa do domínio → projetar → construir isolado → validar (jsdom 17/17) → publicar + CHANGELOG/STATUS.
-3. Os criativos podem ter dinâmica diferente dos sérios (menos "decisão/risco", mais "exploração/ofício") — adaptar o padrão, não copiar cegamente.
+3. Padrão dos criativos: tende a "explora/o criador decide" + ofício + anti-scope, menos "decisão/risco/métrica".
 
 ## 🆕 Funcionalidades recentes do kit
-- **Afixo nos downloads (v1.9.0):** prefixo/sufixo opcional nos nomes de arquivo. Padrão inalterado.
-- **9 princípios universais**; CLAUDE.md gerado separado das Instruções.
-- **Regra de commit corrigida para CMD Windows** (comando numa linha, -m repetido).
+- **Seletor de SO (v1.11.0):** Windows-CMD/PowerShell/macOS/Linux no builder; injeta sintaxe de comando certa nas Instruções e CLAUDE.md.
+- **Afixo nos downloads (v1.9.0):** prefixo/sufixo opcional. Padrão inalterado.
+- **9 princípios universais**; CLAUDE.md gerado separado das Instruções; commit no formato CMD Windows.
 
 ## 🔧 Pendências e ideias em análise (em IDEIAS.md)
 - [ ] **i-N3 parte A** (canal de atualização do kit): provavelmente uma seção no CLAUDE.md gerado. A discutir.
 - [ ] **i-N2** (segurança de dados pessoais): adiada para análise longa.
-- [ ] **i-N5** (comandos de terminal sensíveis ao SO): generalizar para nichos com terminal (dev). Avaliar campo de SO no builder.
-- [ ] **Revisar a qualidade das Instruções geradas** — o usuário pediu: confirmar se estão polidas/eficientes (sem estrutura rebuscada, mas claras). Pesquisa + análise pendente.
-- [ ] Atualizar README/PLANNING quando os criativos avançarem (a maioria já está no padrão).
-- [ ] **GitHub:** subir a v1.10.0 (business + correção do commit).
+- [ ] **Revisar a qualidade das Instruções geradas** — o usuário pediu: confirmar se estão polidas/eficientes. Pesquisa + análise pendente.
+- [ ] **Reagrupar narrative** (cosmético): hoje group "literary"; é criativo, não "sério". Só afeta tema visual. Avaliar ao mexer nos criativos.
+- [ ] Atualizar README/PLANNING quando os criativos avançarem.
+- [ ] **GitHub:** subir a v1.11.0 (game + seletor de SO).
 
 ## 📁 Padrão de ouro consolidado
-- Arquivo-âncora (visão/sistema/bíblia/marca/contexto) + ângulo próprio do nicho + armadilhas/continuidade.
+- Arquivo-âncora (visão/sistema/bíblia/marca/contexto/experiência) + ângulo próprio do nicho + armadilhas/continuidade.
 - Decisões registradas (DEC); histórico que cresce; STATUS rolante.
 - Núcleo enxuto + opcionais marcados.
 - Prompts A-F universais + 6 G-L específicos das tarefas reais.
