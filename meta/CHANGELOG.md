@@ -4,6 +4,30 @@
 
 ---
 
+## v1.12.0 — 2026-05-30 — Etapa 10: nicho pixel art aprofundado
+
+Décimo nicho (2º criativo; 3º favorito do usuário). Matéria-prima: pesquisa do domínio (fundamentos — clusters, AA, dithering, silhueta, evitar jaggies/banding/pillow; animação — timing, squash&stretch, anticipation, pivô; workflow/consistência — style guide anti-drift, resolução em grade, outline padronizado) + padrão de ouro dos anteriores.
+
+### Nicho pixel v2
+- **7 templates** (antes 6): ESTILO, SPRITES, ANIMACAO, RESTRICOES, STATUS, LOG-TEMPLATE (núcleo) + **TILESET** (opcional, cenários).
+- **ESTILO.md** trava paleta (com rampas/hue shifting), resolução+grade, outline padronizado, fonte de luz fixa, e a "assinatura negativa" (vilões banidos).
+- **ANIMACAO.md** com timing de referência por ação (idle ~400ms, walk ~100-150ms, run ~80-100ms, hold no impacto), squash&stretch, anticipation como game design, e pivô consistente (anti-janky).
+- **SPRITES.md** cataloga com silhueta, paleta usada, pivô e estado; RESTRICOES separa limites técnicos e disciplinas autoimpostas.
+- **7 behaviors**: paleta é lei; silhueta antes de tudo; AA é escolha (não default); caça jaggies/banding/pillow/tangentes; timing antes de frames; trava consistência (anti-drift); orienta e critica — o artista executa.
+- **6 prompts G-L**: G Definir estilo/paleta, H Planejar sprite, I Criticar sprite, J Planejar animação, K Diagnosticar problema visual, **L Auditar consistência (anti-drift)**.
+
+### Fundamento (pesquisa 2026)
+- Fundamentos: clusters para textura, silhueta legível primeiro, sombrear = esculpir forma (não enfeitar); AA é controverso (muitos evitam — borda dura é estética); paleta limitada força melhor design.
+- Vilões: jaggies, doubles, banding, pillow shading, tangentes — com seus consertos.
+- Animação: timing é tudo (poucos frames bem cronometrados > muitos flat); squash&stretch vale até em 16×16 (1px); anticipation é game design (telegrafar ataques); pivô inconsistente é o erro nº1.
+- Consistência: style guide escrito cedo previne visual drift (o assassino indie); resolução em grade limpa; outline padronizado nunca misturado; 32×32 é o sweet spot.
+- Papel do assistente: orienta/planeja/critica técnica e mantém coerência — não desenha os pixels.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros, selects do topbar populando. Pixel com 12 prompts e 7 templates.
+
+---
+
 ## v1.11.1 — 2026-05-30 — fix: selects do topbar (Gênero/Engine/Fase) vazios
 
 Correção de bug funcional na interface, reportado pelo usuário (dropdowns do topbar apareciam vazios no game design e em outros nichos).
