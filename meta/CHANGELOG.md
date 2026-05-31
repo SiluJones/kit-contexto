@@ -4,6 +4,28 @@
 
 ---
 
+## v1.14.0 — 2026-05-30 — Etapa 12: nicho rpg (Mestres de RPG) aprofundado
+
+Décimo-segundo nicho (4º criativo). Matéria-prima: pesquisa do domínio (prep — método Lazy DM/Sly Flourish, prep leve, segredos abstratos; mesa — agência do jogador, yes-and, improviso, NPCs com motivação, Session Zero/safety tools, pacing) + padrão de ouro dos anteriores.
+
+### Nicho rpg v2
+- **8 templates** (antes 7): MUNDO, PJs, NPCs, CAMPANHA, SESSAO, STATUS, LOG-TEMPLATE (núcleo) + **REGRAS-CASEIRAS** (opcional, house rules/rulings/Session Zero).
+- **SESSAO.md** reestruturado no método Lazy DM (início forte, cenas modulares, segredos, NPCs, ameaças, recompensas, cliffhanger).
+- **CAMPANHA.md** com "situação atual (não enredo linear)", segredos abstratos da revelação, e fios soltos/promessas a pagar; **PJs.md** com gancho pessoal e spotlight (equilíbrio de holofote); **NPCs.md** com voz/motivação/stakes + "bag of tricks".
+- **7 behaviors**: lore tem memória; NPCs com voz/motivação/stakes; PJs no banco do motorista (mestre é facilitador, não oponente); prep leve do que a party toca; segredos abstratos da revelação; improvisa com coerência (yes-and); cuida da mesa (Session Zero, segurança, pacing).
+- **6 prompts G-L**: G Criar mundo, H Preparar sessão (Lazy DM), I Encarnar/criar NPC, **J Improvisar agora** (a party saiu do previsto), K Processar a sessão (pós-mesa), **L Resolver problema de mesa**.
+
+### Fundamento (pesquisa 2026)
+- Método Lazy DM (Sly Flourish): prep sessão-a-sessão, leve e modular; o mínimo é início forte + 2-3 cenas + 2-3 NPCs + segredos; improvise o resto. Framework vs. detalhe (como jazz).
+- Prep o que a party vai tocar, não o mundo inteiro; segredos/pistas são o tecido conectivo, abstratos de como serão revelados.
+- Agência do jogador é central: o GM é facilitador, não oponente; as escolhas dos PJs dirigem a história. Improvisar > preparar; "sim, e..." em vez de bloquear.
+- NPCs com motivação, voz distinta e stakes (proativos). Session Zero + ferramentas de segurança (linhas e véus, X-Card); pacing em camadas; o divertimento de todos antes da história perfeita.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros, selects do topbar populando. RPG com 12 prompts e 8 templates.
+
+---
+
 ## v1.13.0 — 2026-05-30 — Etapa 11: nicho music (Música) aprofundado
 
 Décimo-primeiro nicho (3º criativo). Matéria-prima: pesquisa do domínio (produção — 4 fases demo→master, pré-produção, arranjo; mix/teoria — gain staging, EQ, kick×baixo, reference track; letra/songwriting — prosódia, específico→universal, hook) + padrão de ouro dos anteriores.
