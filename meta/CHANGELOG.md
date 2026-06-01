@@ -4,6 +4,28 @@
 
 ---
 
+## v1.15.0 — 2026-05-30 — Etapa 13: nicho cuisine (Cozinha) aprofundado
+
+Décimo-terceiro nicho (5º criativo). O caso The Brazilian House foi VERIFICADO e descartado para este nicho (é projeto de design gráfico de cardápio físico, não culinária — já serviu ao nicho design). Matéria-prima: pesquisa própria do domínio (desenvolvimento de receita — ratios, teste com 1 variável, padronização; menu/restaurante — engenharia de cardápio, contribution margin vs food cost %, plate cost) + padrão de ouro dos anteriores.
+
+### Nicho cuisine v2
+- **6 templates**: CONCEITO, RECEITAS, MENU, STATUS, LOG-TEMPLATE (núcleo) + **CUSTOS** (opcional, plate cost/margem). (REFERENCIAS antiga foi absorvida em CONCEITO/MENU.)
+- **RECEITAS.md** centrado no RATIO (a proporção) + método com o PORQUÊ + pontos críticos + alérgenos — não só lista de ingredientes.
+- **MENU.md** com engenharia de cardápio (matriz popularidade × margem: estrela/enigma/cavalo de batalha/abacaxi); **CUSTOS.md** com plate cost e a lição bife × frango (margem > food cost %).
+- **7 behaviors**: o ratio é a fundação; muda uma coisa por teste; a pesquisa informa não dirige; NÃO cozinho nem provo (o cozinheiro prova — paralelo ao 'não ouço áudio' do music); técnica com o porquê (ciência); custo e margem (não só food cost %); alergias e clareza.
+- **6 prompts G-L**: G Desenvolver receita, H Escalar/adaptar, I Diagnosticar prato que falhou, J Montar/ajustar menu, K Custo e precificação, **L Combinar sabores/criar do zero**.
+
+### Fundamento (pesquisa 2026)
+- Ratios são a fundação: saber a proporção é saber todas as variações (vinagrete 3:1, bolo em partes iguais); escolha de ingrediente dentro do ratio = personalidade.
+- Desenvolvimento: mudar UMA variável por teste; testar ≥2x; a pesquisa informa o primeiro teste (nunca aleatório), não dirige; Flavor Bible para combinações; outra pessoa testa a clareza.
+- Menu: engenharia de cardápio (popularidade × lucratividade); CONTRIBUTION MARGIN importa mais que food cost % (bife 50% põe mais no caixa que frango 33%); plate cost padronizado (incluir tempero/guarnição); rever sazonal/trimestral.
+- Papel do assistente: não tem paladar — orienta ratio/técnica/estrutura/custo; o ponto e o tempero são do cozinheiro.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros, selects do topbar populando. Cuisine com 12 prompts e 6 templates.
+
+---
+
 ## v1.14.0 — 2026-05-30 — Etapa 12: nicho rpg (Mestres de RPG) aprofundado
 
 Décimo-segundo nicho (4º criativo). Matéria-prima: pesquisa do domínio (prep — método Lazy DM/Sly Flourish, prep leve, segredos abstratos; mesa — agência do jogador, yes-and, improviso, NPCs com motivação, Session Zero/safety tools, pacing) + padrão de ouro dos anteriores.

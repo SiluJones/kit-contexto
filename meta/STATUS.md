@@ -3,17 +3,17 @@
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Refinamento área por área, após o MVP. **Etapas 1-12 concluídas.** 12 nichos no padrão de ouro.
+Refinamento área por área, após o MVP. **Etapas 1-13 concluídas.** 13 nichos no padrão de ouro.
 
-Próxima: **Etapa 13 — próximo criativo.**
+Próxima: **Etapa 14 — próximo criativo.**
 
 ## ✅ Nichos no padrão de ouro (10 de 17)
 - Sérios (8): **dev, client, design, narrative, research, product, marketing, business**.
-- Criativos (4): **game** (E9), **pixel** (E10), **music** (E11), **rpg** (E12).
-- **Faltam — criativos (3):** cuisine, animation, comics + **brainstorm** (reservado para ser o ÚLTIMO) + custom (gerador, não precisa).
+- Criativos (5): **game** (E9), **pixel** (E10), **music** (E11), **rpg** (E12), **cuisine** (E13).
+- **Faltam — criativos (2):** animation, comics + **brainstorm** (reservado para ser o ÚLTIMO) + custom (gerador, não precisa).
 
 ## 🎯 Próximos passos
-1. **Etapa 13 — próximo criativo.** Restantes: cuisine (tem caso real The Brazilian House), animation, comics. **brainstorm fica por último (fechamento poético).** A decidir.
+1. **Etapa 14 — próximo criativo.** Restantes: animation, comics. **brainstorm fica por último (fechamento poético).** A decidir. (Obs.: o caso The Brazilian House foi verificado e NÃO serve para nichos de conteúdo — é design gráfico, já usado no nicho design.)
 2. Ritual: pesquisa do domínio → projetar → construir isolado → validar (jsdom 17/17) → publicar + CHANGELOG/STATUS.
 
 ## 🆕 Funcionalidades recentes do kit
@@ -28,7 +28,7 @@ Próxima: **Etapa 13 — próximo criativo.**
 - [ ] **Revisar a qualidade das Instruções geradas** — o usuário pediu. Pesquisa + análise pendente.
 - [ ] **Reagrupar narrative** (cosmético): hoje group "literary"; avaliar ao mexer nos criativos.
 - [ ] Atualizar README/PLANNING quando os criativos avançarem.
-- [ ] **GitHub:** subir a v1.14.0 (rpg).
+- [ ] **GitHub:** subir a v1.15.0 (cuisine).
 
 ## 📁 Padrão de ouro consolidado
 - Arquivo-âncora (visão/sistema/bíblia/estilo) + ângulo próprio + armadilhas/continuidade.
