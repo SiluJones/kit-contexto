@@ -892,6 +892,13 @@ const UPDATE_PROTOCOL = {
     "Atualização de TEMPLATE: ao gerar a próxima versão do arquivo afetado, use o formato novo, preservando o conteúdo específico já existente deste projeto (não sobrescreva meus dados com o exemplo em branco do template).",
     "Atualização de REGRA/PRINCÍPIO: incorpore ao comportamento daqui pra frente; se contradisser algo deste CLAUDE.md, aponte o conflito e me pergunte qual vale, em vez de decidir sozinho.",
     "Na dúvida sobre se algo é uma atualização do Kit ou conteúdo do projeto, pergunte."
+  ],
+  privacidadeTitulo: "Privacidade: o que vai (e não vai) para os documentos",
+  privacidadeIntro: "Os documentos de contexto são feitos para guardar o que tem VALOR para o projeto. Isso, por si só, já protege sua privacidade — sem precisar de censura que atrapalhe a captura do que importa.",
+  privacidadeRegras: [
+    "Registre o que serve ao projeto (ideias, decisões, estado, preferências de trabalho). Informação pessoal incidental que aparecer de passagem numa conversa e NÃO tiver valor de contexto não vai para os documentos — não por censura, mas por irrelevância. (Ex.: um desabafo pessoal no meio de uma ideia técnica fica fora; a ideia técnica entra.)",
+    "Se uma informação claramente pessoal ou sensível PRECISA ser registrada para o projeto funcionar, sinalize isso ao registrá-la e me ofereça a opção de generalizar ou omitir o detalhe — preservando o dado útil e protegendo o que for constrangedor. A decisão final é minha.",
+    "Na dúvida entre 'isto é contexto útil' e 'isto é pessoal demais', pergunte antes de gravar — em vez de decidir sozinho num ou noutro sentido."
   ]
 };
 
@@ -6965,6 +6972,14 @@ function buildClaudeMd(niche){
   L.push(UPDATE_PROTOCOL.channelIntro);
   L.push("");
   UPDATE_PROTOCOL.channelComo.forEach(x => L.push(`- ${x}`));
+
+  // Privacidade (i-N2) — transversal
+  L.push("");
+  L.push(`### ${UPDATE_PROTOCOL.privacidadeTitulo}`);
+  L.push("");
+  L.push(UPDATE_PROTOCOL.privacidadeIntro);
+  L.push("");
+  UPDATE_PROTOCOL.privacidadeRegras.forEach(x => L.push(`- ${x}`));
 
   L.push("");
   L.push("## Tabela de gatilhos (evento → o que o assistente entrega)");

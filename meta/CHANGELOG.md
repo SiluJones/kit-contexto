@@ -4,6 +4,24 @@
 
 ---
 
+## v1.20.0 — 2026-05-30 — Privacidade (i-N2): relevância + marcação, não censura
+
+Implementa a ideia i-N2 no formato aprovado pelo usuário — no UPDATE_PROTOCOL (transversal a todos os nichos, no CLAUDE.md gerado).
+
+### Adicionado ao CLAUDE.md gerado (todos os nichos)
+- **Seção "Privacidade: o que vai (e não vai) para os documentos".** Tese: o mecanismo certo NÃO é censura (que atrapalharia a captura do que importa), é relevância + marcação.
+  - Informação pessoal incidental sem valor de contexto fica fora — por irrelevância, não censura (resolve o caso do "desabafo no meio de uma ideia").
+  - Informação sensível que PRECISA ser registrada: o assistente sinaliza e oferece generalizar/omitir o detalhe, preservando o dado útil. Decisão final do usuário.
+  - Na dúvida entre "contexto útil" e "pessoal demais", pergunta antes de gravar.
+
+### Também nesta leva
+- **NICHOS-CANDIDATOS.md** (meta): recuperado dos PLANNING-PART1/PART2 o mapa dos 22 nichos candidatos — os 16 que entraram + os 8 que ficaram de fora (Educação, Jurídico, Saúde, Filosofia, Podcast, Coaching, User Research, Arquitetura), com arquivos sugeridos de cada. Para não se perder de novo.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Seção de privacidade confirmada no CLAUDE.md gerado.
+
+---
+
 ## v1.19.0 — 2026-05-30 — Commit ao final + canal de atualização (transversais a todos os nichos)
 
 Implementa duas ideias pendentes, ambas no UPDATE_PROTOCOL (transversal — valem para TODOS os 17 nichos, no CLAUDE.md gerado), sem mexer em nicho individual.
