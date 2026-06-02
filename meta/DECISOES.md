@@ -201,3 +201,28 @@ Após o MVP (17 nichos + custom), o usuário trouxe o feedback massivo que um Cl
 
 ### Sobre a feature nativa "Pesquisar e referenciar conversas" (Opus 4.8)
 Levantado pelo usuário. Análise: a feature cobre continuidade entre conversas suas, mas é sob demanda e por busca, limitada ao projeto, não persistente. O kit mantém diferencial em: portabilidade (arquivos vão pro Git, funcionam em qualquer conta), estrutura deliberada (decisão/ideia/estado separados), e controle do que entra no contexto. Vale continuar lapidando.
+
+---
+
+## D-013 — Refinamento área por área concluído: os 16 nichos no padrão de ouro
+
+**Data:** 2026-05-30 · **Status:** marco atingido
+
+### A decisão / o marco
+Encerrar a fase de refinamento nicho por nicho. Os 16 nichos de conteúdo (8 sérios + 8 criativos) foram reconstruídos no padrão de ouro, cada um a partir de pesquisa de domínio própria (com citações), não só do feedback ou de conversas anteriores.
+
+### Como foi conduzido
+Ritual consistente por nicho: estudar o nicho atual + pesquisa web aprofundada do domínio (2-4 buscas) → projetar (núcleo enxuto + opcionais, behaviors derivados da pesquisa, prompts G-L das tarefas reais) → construir isolado em /home/claude → validar (node --check + balanceamento de tags + jsdom 17/17) → publicar + CHANGELOG/STATUS → commit no formato CMD Windows. Nunca publicado sem 17/17 nichos e 0 erros.
+
+### Padrões que emergiram
+- **Sérios:** ênfase em decisão/risco/premissa/método (dev, business, product, research...) com o arquivo-âncora guardando o "porquê".
+- **Criativos:** ênfase em "explora/critica/orienta — o criador executa/decide". E, num subgrupo, o reconhecimento honesto dos limites do assistente como traço de design: music ("não ouço áudio"), cuisine ("não cozinho nem provo"), pixel/animation/comics ("não desenho/animo"). O assistente dá a leitura técnica; o sentido humano (ouvido, paladar, olho) decide.
+- **brainstorm (o fechamento):** o nicho do próprio kit. Behavior-assinatura "espelho e contraponto, não eco" (anti-sycophancy) — fechando o sentido de toda a ferramenta: pensar COM a IA, não deixar a IA pensar por você.
+
+### O que fica
+- Funcionalidades transversais acumuladas: afixo nos downloads, seletor de SO, fix dos selects do topbar, fundação de 9 princípios, CLAUDE.md separado das Instruções.
+- Pendências de consolidação (não-nicho): revisar README/PLANNING, revisar qualidade das Instruções geradas, i-N3 parte A (canal de atualização), i-N2 (dados pessoais), reagrupar narrative.
+- custom permanece como gerador (sem aprofundamento, por design).
+
+### Negativas / a vigiar
+- Cada nicho foi lapidado com pesquisa, mas ainda não com uso real extenso. O refino verdadeiro continua com o feedback de quem usar cada um (como já previsto para game). Padrão de ouro é piso, não teto.

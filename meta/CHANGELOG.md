@@ -4,6 +4,31 @@
 
 ---
 
+## v1.18.0 — 2026-05-30 — Etapa 16: nicho brainstorm aprofundado — O FECHAMENTO 🎉
+
+Décimo-sexto e ÚLTIMO nicho a aprofundar — e o mais simbólico: é o nicho do PRÓPRIO KIT (ideação, pensar junto). Fecha o ciclo de refinamento área por área. Matéria-prima: pesquisa do domínio (técnicas — divergir/convergir, Double Diamond, SCAMPER, How Might We, affinity/clusters; o papel da IA — parceira de pensamento vs. máquina de respostas, anti-sycophancy, atrito produtivo) + tudo aprendido nas 15 etapas anteriores.
+
+### Nicho brainstorm v2
+- **7 templates**: TEMA, IDEIAS, MAPA, FILTROS, STATUS, LOG-TEMPLATE (núcleo) + **DECISOES** (opcional, quando alimenta escolhas reais).
+- **IDEIAS.md** reestruturado em ativas / banho-maria / descartadas-com-razão / sementes — "nada se perde" (a descartada pode ressuscitar noutro contexto).
+- **TEMA.md** começa pela pergunta central (formato "Como poderíamos...") + suposições embutidas a questionar; **FILTROS.md** com critérios explícitos à vista + caminho recomendado; **MAPA.md** com clusters por afinidade + eixos + território vazio.
+- **8 behaviors** (o mais rico do kit, à altura do fechamento): divergir antes de convergir; **espelho e contraponto, não eco** (anti-bajulação — o behavior-assinatura); questiona a premissa; quebra modelos mentais (SCAMPER/reverso/analogias); clusters e eixos; critério transparente ao convergir; nada se perde + a síntese decide; **pensar COM você, não POR você**.
+- **6 prompts G-L** num arco completo: G Enquadrar o problema (a pergunta certa), H Divergir, I Mapear, J Convergir, **K Aprofundar/pressionar uma ideia** (advogado do diabo honesto), L Destravar.
+
+### Fundamento (pesquisa 2026)
+- Divergir antes de convergir (Double Diamond); volume sobre perfeição; não julgar cedo (o erro nº1 da ideação).
+- SCAMPER e técnicas quebram modelos mentais; brainstorm reverso, analogias, inversão para sair do óbvio; "How Might We" reformula o problema.
+- Convergir com critério explícito (viabilidade/impacto/alinhamento); affinity diagrams/clusters; matriz impacto×esforço como apoio, não veredito.
+- O coração do nicho: a IA é espelho/catalisador do pensamento, não máquina de respostas. A SYCOPHANCY ("glazing") corrói o pensamento crítico — se a interação fica frictionless demais, perde-se a tensão que gera insight. Pensar COM a IA (mantendo o pensamento independente), não deixar a IA pensar POR você. Metas honestas (quem você é, não quem "deveria" ser).
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros, selects do topbar populando. Brainstorm com 12 prompts e 7 templates.
+
+### 🏁 MARCO FINAL
+- **TODOS os 16 nichos de conteúdo estão no padrão de ouro** (8 sérios + 8 criativos). Só o custom (gerador, não precisa de aprofundamento) fica como está. O refinamento área por área está COMPLETO.
+
+---
+
 ## v1.17.0 — 2026-05-30 — Etapa 15: nicho comics (HQs/Mangás) aprofundado
 
 Décimo-quinto nicho (7º e ÚLTIMO criativo de conteúdo). Só falta o brainstorm (fechamento). Matéria-prima: pesquisa do domínio (linguagem sequencial — Scott McCloud/Will Eisner: sarjeta/closure, transições, página como arquitetura; roteiro/lettering — full script vs Marvel method, formato, balão enxuto, virada de página, webtoon) + padrão de ouro dos anteriores.
