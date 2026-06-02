@@ -3,17 +3,19 @@
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Refinamento área por área, após o MVP. **Etapas 1-13 concluídas.** 13 nichos no padrão de ouro.
+Refinamento área por área, após o MVP. **Etapas 1-14 concluídas.** 14 nichos no padrão de ouro.
 
-Próxima: **Etapa 14 — próximo criativo.**
+Próxima: **Etapa 15 — comics (último antes do fechamento).**
 
 ## ✅ Nichos no padrão de ouro (10 de 17)
 - Sérios (8): **dev, client, design, narrative, research, product, marketing, business**.
-- Criativos (5): **game** (E9), **pixel** (E10), **music** (E11), **rpg** (E12), **cuisine** (E13).
-- **Faltam — criativos (2):** animation, comics + **brainstorm** (reservado para ser o ÚLTIMO) + custom (gerador, não precisa).
+- Criativos (6): **game** (E9), **pixel** (E10), **music** (E11), **rpg** (E12), **cuisine** (E13), **animation** (E14).
+- **Faltam — criativos (1):** comics + **brainstorm** (reservado para ser o ÚLTIMO, fechamento poético) + custom (gerador, não precisa).
 
 ## 🎯 Próximos passos
-1. **Etapa 14 — próximo criativo.** Restantes: animation, comics. **brainstorm fica por último (fechamento poético).** A decidir. (Obs.: o caso The Brazilian House foi verificado e NÃO serve para nichos de conteúdo — é design gráfico, já usado no nicho design.)
+1. **Etapa 15 — comics (HQs/mangás).** É o ÚLTIMO nicho de conteúdo antes do fechamento.
+2. **Etapa 16 — brainstorm.** O fechamento poético: é o nicho do próprio kit (ideação). Por último, de propósito.
+3. Depois: revisar README/PLANNING; pendências (i-N3 parte A, i-N2, revisão das Instruções geradas, reagrupar narrative).
 2. Ritual: pesquisa do domínio → projetar → construir isolado → validar (jsdom 17/17) → publicar + CHANGELOG/STATUS.
 
 ## 🆕 Funcionalidades recentes do kit
@@ -28,7 +30,7 @@ Próxima: **Etapa 14 — próximo criativo.**
 - [ ] **Revisar a qualidade das Instruções geradas** — o usuário pediu. Pesquisa + análise pendente.
 - [ ] **Reagrupar narrative** (cosmético): hoje group "literary"; avaliar ao mexer nos criativos.
 - [ ] Atualizar README/PLANNING quando os criativos avançarem.
-- [ ] **GitHub:** subir a v1.15.0 (cuisine).
+- [ ] **GitHub:** subir a v1.16.0 (animation).
 
 ## 📁 Padrão de ouro consolidado
 - Arquivo-âncora (visão/sistema/bíblia/estilo) + ângulo próprio + armadilhas/continuidade.

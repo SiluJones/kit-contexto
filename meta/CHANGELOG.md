@@ -4,6 +4,28 @@
 
 ---
 
+## v1.16.0 — 2026-05-30 — Etapa 14: nicho animation (Animação) aprofundado
+
+Décimo-quarto nicho (6º criativo; penúltimo antes do fechamento). Matéria-prima: pesquisa do domínio (ofício — 12 princípios de animação de Disney/Thomas & Johnston; pipeline — 3 fases, cadeia roteiro→storyboard→animatic que trava o timing) + padrão de ouro dos anteriores. O nicho antigo era forte em "série/roteiro" mas raso no ofício de animação; v2 equilibra os dois lados.
+
+### Nicho animation v2
+- **8 templates**: PROJETO, PERSONAGENS, ROTEIROS, ESTILO, PRODUCAO, STATUS, LOG-TEMPLATE (núcleo) + **CENAS** (opcional, quebra shot a shot).
+- **ROTEIROS.md** com beats + notas de staging/timing pretendido (resolver no papel) + solução visual (mostre, não conte).
+- **ESTILO.md** ganhou seção "Linguagem de movimento" (frame rate/on-twos, quais dos 12 princípios definem o feel, timing característico); **PRODUCAO.md** com o pipeline explícito (pré→produção→pós) e o "cemitério saudável" de cortes.
+- **7 behaviors**: continuidade tem memória; os 12 princípios são o ofício (com moderação); trava o timing antes da produção cara (storyboard/animatic); voz e design por personagem (silhueta que comunica); arco do episódio E da série; mostre em movimento não conte; orienta/estrutura — o animador executa.
+- **6 prompts G-L**: G Conceito/história, H Roteiro, **I Storyboard/animatic (resolver o ritmo)**, J Animar uma ação (os princípios), **K Diagnosticar movimento sem vida**, L Decisão de escopo.
+
+### Fundamento (pesquisa 2026)
+- 12 princípios (Disney/Thomas & Johnston): squash&stretch, antecipação, staging, ease in/out, arcos, follow-through, timing, exagero, secondary action, apelo... — dão peso/vida/clareza; usar com moderação; ignorá-los é dos erros que mais estragam animação.
+- Pipeline em 3 fases (pré→produção→pós); a cadeia roteiro→storyboard→animatic TRAVA timing/staging antes da produção cara; o animatic é a ponte que revela problemas de pacing cedo.
+- Silhueta que comunica personalidade (design simples mas individual); foco no timing tanto quanto no visual.
+- Papel do assistente: não anima nem desenha — orienta princípios/estrutura/roteiro/pipeline; o "ficou com vida" se vê no movimento, é do animador.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros, selects do topbar populando. Animation com 12 prompts e 8 templates.
+
+---
+
 ## v1.15.0 — 2026-05-30 — Etapa 13: nicho cuisine (Cozinha) aprofundado
 
 Décimo-terceiro nicho (5º criativo). O caso The Brazilian House foi VERIFICADO e descartado para este nicho (é projeto de design gráfico de cardápio físico, não culinária — já serviu ao nicho design). Matéria-prima: pesquisa própria do domínio (desenvolvimento de receita — ratios, teste com 1 variável, padronização; menu/restaurante — engenharia de cardápio, contribution margin vs food cost %, plate cost) + padrão de ouro dos anteriores.
