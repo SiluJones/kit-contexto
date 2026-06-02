@@ -880,7 +880,19 @@ const UPDATE_PROTOCOL = {
     "APLICA de forma simples: baixa os arquivos completos e substitui os antigos na pasta (e sobe no Git/Projeto, se usar). Sem editar nada à mão.",
     "Pode ignorar, adiar ou pedir ajustes antes de aplicar."
   ],
-  nota: "Sobre os arquivos: os documentos já no Projeto chegam ao assistente como somente-leitura (ele lê, não salva por cima). Isso NÃO o impede de entregar versões novas — ele cria cada arquivo atualizado como arquivo novo para baixar. Sem ferramenta de download, entrega o conteúdo completo de cada arquivo no chat, um por bloco. Princípio único: arquivo inteiro, conjunto consistente, nunca pedaços para costurar."
+  nota: "Sobre os arquivos: os documentos já no Projeto chegam ao assistente como somente-leitura (ele lê, não salva por cima). Isso NÃO o impede de entregar versões novas — ele cria cada arquivo atualizado como arquivo novo para baixar. Sem ferramenta de download, entrega o conteúdo completo de cada arquivo no chat, um por bloco. Princípio único: arquivo inteiro, conjunto consistente, nunca pedaços para costurar.",
+  commitTitulo: "Commit pronto ao final (se você versiona com Git)",
+  commitIntro: "Quando a entrega inclui arquivos que vão para um repositório Git/GitHub (código ou documentos), o assistente fecha a resposta com a mensagem de commit pronta para copiar e colar, na convenção Conventional Commits (`tipo(escopo): descrição` — feat, fix, docs, refactor, chore). O objetivo é você colar direto no terminal sem reescrever.",
+  commitNota: "Se o seu sistema operacional estiver definido acima, o comando já vem na sintaxe certa do seu shell (ex.: no CMD do Windows, tudo numa linha com `-m` repetido, sem a continuação `\\`). Para mudanças triviais, basta o título; para várias mudanças de naturezas diferentes, o assistente pode sugerir mais de um commit.",
+  channelTitulo: "Canal de atualização do kit",
+  channelIntro: "Este projeto foi montado com o Kit de Contexto. O Kit evolui — novos princípios, templates refinados, regras novas. Quando você trouxer uma atualização do Kit para esta conversa, o assistente deve reconhecê-la e aplicá-la daqui em diante.",
+  channelComo: [
+    "Se eu colar (ou subir) um bloco/arquivo marcado como **atualização do Kit** — por exemplo um trecho de CHANGELOG do Kit, um princípio novo, ou um template revisado —, trate-o como instrução para os próximos outputs desta conversa, sem que eu precise recriar o projeto do zero.",
+    "Ao receber uma atualização, faça um resumo de 1-3 linhas do que mudou e como isso afeta este projeto, e só então passe a aplicar — para eu confirmar que entendeu certo.",
+    "Atualização de TEMPLATE: ao gerar a próxima versão do arquivo afetado, use o formato novo, preservando o conteúdo específico já existente deste projeto (não sobrescreva meus dados com o exemplo em branco do template).",
+    "Atualização de REGRA/PRINCÍPIO: incorpore ao comportamento daqui pra frente; se contradisser algo deste CLAUDE.md, aponte o conflito e me pergunte qual vale, em vez de decidir sozinho.",
+    "Na dúvida sobre se algo é uma atualização do Kit ou conteúdo do projeto, pergunte."
+  ]
 };
 
 /* ============================================================
@@ -6936,7 +6948,24 @@ function buildClaudeMd(niche){
   L.push("");
   L.push(`> ${UPDATE_PROTOCOL.nota}`);
 
-  // Gatilhos
+  // Commit ao final (transversal — relevante para quem versiona com Git)
+  L.push("");
+  L.push(`### ${UPDATE_PROTOCOL.commitTitulo}`);
+  L.push("");
+  L.push(UPDATE_PROTOCOL.commitIntro);
+  if(OSENV.value !== "none" && OS_LABELS[OSENV.value]){
+    L.push("");
+    L.push(`> ${UPDATE_PROTOCOL.commitNota}`);
+  }
+
+  // Canal de atualização do kit (transversal)
+  L.push("");
+  L.push(`### ${UPDATE_PROTOCOL.channelTitulo}`);
+  L.push("");
+  L.push(UPDATE_PROTOCOL.channelIntro);
+  L.push("");
+  UPDATE_PROTOCOL.channelComo.forEach(x => L.push(`- ${x}`));
+
   L.push("");
   L.push("## Tabela de gatilhos (evento → o que o assistente entrega)");
   L.push("");

@@ -4,6 +4,19 @@
 
 ---
 
+## v1.19.0 — 2026-05-30 — Commit ao final + canal de atualização (transversais a todos os nichos)
+
+Implementa duas ideias pendentes, ambas no UPDATE_PROTOCOL (transversal — valem para TODOS os 17 nichos, no CLAUDE.md gerado), sem mexer em nicho individual.
+
+### Adicionado ao CLAUDE.md gerado (todos os nichos)
+- **Commit pronto ao final (i-N1 generalizada):** seção que instrui o assistente a fechar entregas com a mensagem de commit pronta (Conventional Commits), quando o projeto usa Git. Sensível ao SO: se o seletor de SO estiver definido, a nota explica a sintaxe certa do shell (ex.: CMD do Windows = uma linha, `-m` repetido). Antes isso só existia no CLAUDE.md do nosso próprio projeto (dogfooding); agora qualquer projeto criado pelo kit ganha a regra.
+- **Canal de atualização do kit (i-N3 parte A):** seção que prepara o assistente para receber atualizações do Kit dentro de uma conversa que já usa o projeto — reconhecer um bloco/arquivo marcado como "atualização do Kit", resumir o que mudou (1-3 linhas) antes de aplicar, preservar o conteúdo específico do projeto ao adotar um template novo, e perguntar em caso de conflito de regra. Resolve a ideia sem mudar UI: é texto gerado, puro.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros. Ambas as seções confirmadas no CLAUDE.md gerado (testado com music + SO Windows-CMD).
+
+---
+
 ## v1.18.0 — 2026-05-30 — Etapa 16: nicho brainstorm aprofundado — O FECHAMENTO 🎉
 
 Décimo-sexto e ÚLTIMO nicho a aprofundar — e o mais simbólico: é o nicho do PRÓPRIO KIT (ideação, pensar junto). Fecha o ciclo de refinamento área por área. Matéria-prima: pesquisa do domínio (técnicas — divergir/convergir, Double Diamond, SCAMPER, How Might We, affinity/clusters; o papel da IA — parceira de pensamento vs. máquina de respostas, anti-sycophancy, atrito produtivo) + tudo aprendido nas 15 etapas anteriores.

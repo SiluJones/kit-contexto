@@ -15,8 +15,11 @@ Próxima fase: **consolidação e pendências** (sem mais nichos a aprofundar).
 ## 🎯 Próximos passos (consolidação)
 1. **Revisar README/PLANNING** — atualizar para refletir que todos os nichos estão no padrão de ouro (estavam desatualizados desde o MVP).
 2. **Revisar a qualidade das Instruções geradas** — o usuário pediu: confirmar se estão polidas/eficientes (claras sem serem rebuscadas). Pesquisa + análise pendente.
-3. **i-N3 parte A** (canal de atualização do kit / ingestão de novas regras em conversas que já usam o kit): avaliar — provavelmente uma seção no CLAUDE.md gerado.
-4. **i-N2** (segurança de dados pessoais/sensíveis): a análise longa que o usuário quer fazer com calma.
+3. ~~i-N3 parte A (canal de atualização)~~ ✅ FEITO (v1.19.0) — seção no CLAUDE.md gerado.
+   - ~~commit ao final em todos os nichos~~ ✅ FEITO (v1.19.0) — no UPDATE_PROTOCOL, sensível ao SO.
+4. **Custom inteligente (fusão de nichos):** proposta analisada e apresentada ao usuário (composição por seleção de nichos-base, com herança de templates/behaviors/prompts). Aguarda decisão de avançar. Ver análise na conversa.
+5. **i-N2** (segurança de dados pessoais/sensíveis): proposta inicial apresentada (filtro por relevância + marcação, não bloqueio). Aguarda decisão.
+6. **Nichos removidos:** o usuário quer reler a lista; não há registro nos docs/memória disponíveis. Pendente: usuário fornecer ou assistente propor candidatos novos.
 5. **Reagrupar narrative** (cosmético): hoje group "literary"; é criativo. Só afeta tema visual.
 6. **GitHub:** subir a v1.18.0 (brainstorm — fechamento).
 
