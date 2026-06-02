@@ -226,3 +226,35 @@ Ritual consistente por nicho: estudar o nicho atual + pesquisa web aprofundada d
 
 ### Negativas / a vigiar
 - Cada nicho foi lapidado com pesquisa, mas ainda não com uso real extenso. O refino verdadeiro continua com o feedback de quem usar cada um (como já previsto para game). Padrão de ouro é piso, não teto.
+
+---
+
+## D-014 — Arquitetura do Custom Inteligente: composição assistida, não fusão automática
+
+**Data:** 2026-06-02 · **Status:** aprovada (a implementar na próxima conversa)
+
+### A decisão
+Adicionar um SEGUNDO nicho de construção — o **Custom Inteligente** — mantendo o custom atual como **"Blank"** (página em branco, poder total). O Custom Inteligente compõe um nicho novo a partir da SELEÇÃO de nichos existentes, por **concatenação assistida e revisável** — NÃO por fusão automática opaca.
+
+### Por que (o racional)
+- O usuário testou o custom atual e o achou intimidante: é um formulário em branco, sem nenhum mecanismo de herdar templates/behaviors de outros nichos. Ele queria "apertar em mais de um nicho e as características se incorporarem".
+- Pesquisa do padrão (presets/composição) e a lição do GitHub spec-kit: **"full replacement over inheritance — herança é complexa e frágil; composição deve ser explícita e revisável"**. Arrays concatenam (não se fundem mágico); conflitos precisam de detecção.
+- Fusão automática geraria "Frankenstein" incoerente (4 STATUS.md, behaviors contraditórios). O usuário concordou em NÃO fazer o automático perigoso.
+
+### Como (a estrutura aprovada)
+1. **2 nichos de construção, não 3** (mais limpo): Custom (Blank) + Custom Inteligente.
+2. Custom Inteligente abre com chips dos 16 nichos. Marcar importa o material (concatena contextFiles + behaviors + promptsExtra), editável.
+3. **Dedup visível** dos arquivos repetidos (STATUS/LOG que todos têm) e behaviors parecidos.
+4. **Sub-painel = granularidade, não mecânica nova:** "importar nicho inteiro" vs. "escolher peças item a item". Botão "escolher peças" por nicho. NÃO é uma terceira opção.
+5. **Checagem de conflito (spec-kit-inspired):** avisar sobre behaviors contraditórios; sinalizar, não bloquear.
+6. Cai no motor existente (mergeCustom + presets em localStorage).
+
+### Alternativas consideradas
+- **Fusão automática** — rejeitada (risco de Frankenstein; o usuário concordou).
+- **Terceira opção separada para o sub-painel** — rejeitada (é só granularidade do mesmo fluxo; botão a mais bastaria).
+
+### Risco / como saberemos
+Baixo-médio. UI nova sobre motor existente. Fazer por partes (importação+dedup → sub-painel → checagem de conflito), validando jsdom 17/17 a cada passo. Sinal de sucesso: usuário consegue montar um nicho "dev + pixel" (caso real dele: ferramentas de Aseprite) sem recriar tudo do zero.
+
+### Contexto de uso que motivou (do usuário)
+Ele está fazendo ferramentas reais que se encaixam em **dev** como base, algumas com tempero de outro domínio: plugin de Figma (dev), assets Unity/Godot (dev, ou dev+game), plugins/extensão/script de Aseprite para pixel art em massa/procedural (dev + pixel — o caso perfeito para o Custom Inteligente), geração procedural de molduras/bordas (dev + pixel/design).

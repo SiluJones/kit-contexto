@@ -46,3 +46,19 @@ dev, client, design, narrative, research, product, marketing, business (os 8 "s�
 ### Arquitetura & Espaços
 - **Usuário:** arquiteto, designer de interiores, paisagista.
 - **Arquivos sugeridos:** PROJETO, CLIENTE, PROGRAMA (o que o espaço precisa ter), REFERÊNCIAS, STATUS, LOG.
+
+---
+
+## Outros candidatos mencionados de passagem (PLANNING-PART2 + minha sugestão)
+> Citados sem ficha detalhada. Para considerar no futuro.
+- **Moda & Estilo** — coleção, editorial de moda, identidade de estilo pessoal.
+- **Eventos & Produção** — evento corporativo, casamento, festival.
+- **Finanças Pessoais** — metas financeiras, planejamento, tracking. (Área sensível: cuidado, e Claude não é consultor financeiro.)
+- **Tradução & Localização** (sugestão do assistente, não estava no PLANNING) — glossário, voz, decisões de terminologia, consistência entre documentos traduzidos. Caso clássico de perder contexto entre sessões; ninguém no mapa cobre. Ficaria perto de research/narrative.
+
+## Veredito do assistente (prioridade, se um dia quiser expandir)
+- **Alta sinergia / valeria nicho próprio:** Educação & Cursos; Desenvolvimento Pessoal/Journaling (com cuidado por ser área sensível).
+- **Vale, com ressalva:** Jurídico (aviso "não é aconselhamento" em primeiro plano); Podcast & Áudio; Tradução.
+- **Não priorizar (já coberto ou nicho pequeno):** Filosofia (brainstorm cobre), User Research (product cobre), Saúde (sensível demais p/ o ganho), Arquitetura, Moda, Eventos.
+
+> Procedência: recuperado de PLANNING-PART1 (nichos 9-12), PLANNING-PART2 (nichos 17-22 + lista solta) e "Projetando_com_o_Claude.md" (a conversa-semente do projeto). Tudo de filosofia/princípios desses 3 documentos já está destilado na fundação do kit (9 princípios, protocolo de atualização, behaviors de código comentado no dev).

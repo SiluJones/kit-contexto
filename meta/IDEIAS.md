@@ -190,3 +190,37 @@
 **Problema:** o assistente gerou um `git commit` com continuação de linha `\` (sintaxe bash/Linux) e quebrou no CMD do Windows do usuário (`'\' is outside repository`). Isso vale para QUALQUER comando de terminal que o kit ou o Claude gere.
 **Implicação no kit:** as Instruções/CLAUDE.md geradas podem conter comandos (git, instalação, scripts). Se o usuário estiver em Windows (CMD ou PowerShell), Mac ou Linux, a sintaxe muda (continuação de linha, separadores de path, aspas).
 **Possível solução:** o kit poderia ter um campo no builder ("Sistema operacional / shell: Windows-CMD / Windows-PowerShell / Mac-Linux") que injeta na instrução a convenção certa de comando. Ou uma regra no CLAUDE.md gerado: "comandos de terminal no formato compatível com o SO do usuário; na dúvida, perguntar". Para o nosso projeto já foi resolvido (CMD Windows, -m repetido numa linha só). A avaliar como generalizar para os nichos que envolvem terminal (dev principalmente).
+
+---
+
+# Atualização de status — 2026-06-02 (sessão de consolidação)
+
+## i-N1 (commit ao final) — ✅ IMPLEMENTADA E GENERALIZADA (v1.19.0)
+Antes só no CLAUDE.md do nosso projeto (dogfooding); agora é seção do UPDATE_PROTOCOL → aparece no CLAUDE.md de TODOS os nichos, sensível ao SO.
+
+## i-N2 (privacidade / dados pessoais) — ✅ IMPLEMENTADA (v1.20.0)
+No formato relevância + marcação (NÃO censura): incidental irrelevante fica fora por irrelevância; sensível-mas-útil é sinalizado com opção de generalizar/omitir; na dúvida, pergunta. Seção do UPDATE_PROTOCOL.
+
+## i-N3 (backdoor de atualização + afixo) — ✅ AMBAS IMPLEMENTADAS
+- Parte B (afixo prefixo/sufixo): v1.9.0.
+- Parte A (canal de atualização): v1.19.0 — seção no CLAUDE.md que ensina o Claude a reconhecer/aplicar updates do kit trazidos para a conversa.
+
+## i-N4 (entregar + perguntar no mesmo turno) — ✅ JÁ É PRÁTICA
+No CLAUDE.md do projeto. Usada o tempo todo nesta jornada.
+
+## i-N5 (comandos sensíveis ao SO) — ✅ IMPLEMENTADA (v1.11.0)
+Seletor de SO no builder; injeta sintaxe em Instruções e CLAUDE.md.
+
+---
+
+## i-N6 — Custom Inteligente (composição assistida de nichos) — APROVADA, A IMPLEMENTAR
+A grande próxima feature. Ver D-014 (DECISOES) e a seção dedicada no STATUS. Resumo: 2º nicho de construção que importa/concatena material de nichos existentes, com dedup visível, sub-painel de seleção fina e checagem de conflito (spec-kit-inspired). NÃO fusão automática.
+
+## i-N7 — spec-kit para refinar dev e game (FUTURO, do usuário)
+Quando tiver mais feedback de uso dos nichos dev e game, o usuário pedirá uma análise do que do GitHub spec-kit (Spec-Driven Development) pode tornar os PROCESSOS desses nichos mais completos. O usuário não tem certeza se vai conseguir usar o spec-kit em si, mas quer a análise. Anotado.
+
+## i-N8 — Exemplos prontos no Custom (instanciar nichos candidatos) — IDEIA do usuário, condicional
+Após o Custom Inteligente, avaliar oferecer "exemplos" prontos para criar instantaneamente os nichos que ficaram de fora (ver NICHOS-CANDIDATOS.md) — ou instruir como criá-los. O usuário disse "se for problemático, esqueça". A reavaliar depois do Custom Inteligente.
+
+## Nichos como ideias FUTURAS (adiados de propósito pelo usuário)
+Ver NICHOS-CANDIDATOS.md (recuperado dos PLANNING). Não fazer agora. Prioridade do assistente se um dia expandir: Educação & Cursos (nº1); Desenvolvimento Pessoal/Journaling (cuidado: sensível); depois Jurídico/Podcast/Tradução. Tradução & Localização foi sugestão do assistente (não estava no PLANNING).
