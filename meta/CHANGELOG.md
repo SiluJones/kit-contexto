@@ -4,6 +4,32 @@
 
 ---
 
+## v1.17.0 — 2026-05-30 — Etapa 15: nicho comics (HQs/Mangás) aprofundado
+
+Décimo-quinto nicho (7º e ÚLTIMO criativo de conteúdo). Só falta o brainstorm (fechamento). Matéria-prima: pesquisa do domínio (linguagem sequencial — Scott McCloud/Will Eisner: sarjeta/closure, transições, página como arquitetura; roteiro/lettering — full script vs Marvel method, formato, balão enxuto, virada de página, webtoon) + padrão de ouro dos anteriores.
+
+### Nicho comics v2
+- **7 templates**: OBRA, PERSONAGENS, ROTEIRO, MUNDO, STATUS, LOG-TEMPLATE (núcleo) + **PRANCHAS** (opcional, breakdown de páginas/thumbnails).
+- **ROTEIRO.md** em formato real de quadrinho (PÁGINA/QUADRO/BALÃO/LEGENDA/SFX), com marca L/R para a virada de página e notas de transição.
+- **OBRA.md** com método de roteiro e direção de leitura (incl. scroll vertical do webtoon); PERSONAGENS com design/silhueta + formato de balão característico.
+- **7 behaviors**: continuidade tem memória; pensa na sarjeta/closure (não só no quadro); a página é arquitetura (controla o tempo, a quebra de página guarda o reveal); um quadro uma ação; escreve para o artista/letreirista (balão ≤25 palavras); mostre no desenho não no balão; escreve/estrutura — o artista desenha.
+- **6 prompts G-L**: G Conceito, H Escrever roteiro (página/quadro), I Planejar páginas (layout/ritmo), **J Resolver transição/sequência**, K Revisar diálogo e balões, **L Diagnosticar ritmo/leitura travada**.
+
+### Fundamento (pesquisa 2026)
+- A sarjeta e o "closure" (McCloud): o leitor preenche o que está entre quadros — é o que torna o quadrinho interativo; sarjeta padrão/larga/ausente muda o ritmo. As 6 transições de McCloud.
+- A página é arquitetura que controla o tempo (quadro grande desacelera, pequeno acelera); a quebra de página (L/R) guarda o reveal; quebrar o quadro para impacto.
+- Um quadro = uma ação (erro nº1 do novato); roteiro serve ao artista (full script vs Marvel method; formato claro; balão ≤25 palavras / ≤3 linhas; SFX/display lettering).
+- Webtoon/scroll vertical é outra experiência (respiro, "thumb stops"), não um resize. Mostre no desenho; silêncio é recurso.
+- Papel do assistente: não desenha — escreve roteiro, planeja página, mantém coerência; o traço é do artista.
+
+### Validação
+- Teste DOM (jsdom): 17/17 nichos, 0 erros, selects do topbar populando. Comics com 12 prompts e 7 templates.
+
+### Marco
+- **TODOS os 7 criativos de conteúdo concluídos** (game, pixel, music, rpg, cuisine, animation, comics). Falta só o brainstorm (fechamento poético) + custom (gerador).
+
+---
+
 ## v1.16.0 — 2026-05-30 — Etapa 14: nicho animation (Animação) aprofundado
 
 Décimo-quarto nicho (6º criativo; penúltimo antes do fechamento). Matéria-prima: pesquisa do domínio (ofício — 12 princípios de animação de Disney/Thomas & Johnston; pipeline — 3 fases, cadeia roteiro→storyboard→animatic que trava o timing) + padrão de ouro dos anteriores. O nicho antigo era forte em "série/roteiro" mas raso no ofício de animação; v2 equilibra os dois lados.

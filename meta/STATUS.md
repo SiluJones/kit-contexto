@@ -3,19 +3,18 @@
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
 
 ## Fase atual
-Refinamento área por área, após o MVP. **Etapas 1-14 concluídas.** 14 nichos no padrão de ouro.
+Refinamento área por área, após o MVP. **Etapas 1-15 concluídas.** 15 nichos no padrão de ouro.
 
-Próxima: **Etapa 15 — comics (último antes do fechamento).**
+Próxima: **Etapa 16 — brainstorm (o FECHAMENTO poético).**
 
 ## ✅ Nichos no padrão de ouro (10 de 17)
 - Sérios (8): **dev, client, design, narrative, research, product, marketing, business**.
-- Criativos (6): **game** (E9), **pixel** (E10), **music** (E11), **rpg** (E12), **cuisine** (E13), **animation** (E14).
-- **Faltam — criativos (1):** comics + **brainstorm** (reservado para ser o ÚLTIMO, fechamento poético) + custom (gerador, não precisa).
+- Criativos (7): **game** (E9), **pixel** (E10), **music** (E11), **rpg** (E12), **cuisine** (E13), **animation** (E14), **comics** (E15).
+- **Falta só: brainstorm** (E16 — o FECHAMENTO, o nicho do próprio kit) + custom (gerador, não precisa de aprofundamento).
 
 ## 🎯 Próximos passos
-1. **Etapa 15 — comics (HQs/mangás).** É o ÚLTIMO nicho de conteúdo antes do fechamento.
-2. **Etapa 16 — brainstorm.** O fechamento poético: é o nicho do próprio kit (ideação). Por último, de propósito.
-3. Depois: revisar README/PLANNING; pendências (i-N3 parte A, i-N2, revisão das Instruções geradas, reagrupar narrative).
+1. **Etapa 16 — brainstorm (o FECHAMENTO).** O nicho do próprio kit — ideação/pensar junto. Deixado para o final de propósito: fechar o ciclo refinando a ferramenta com que tudo começou. Merece capricho especial.
+2. Depois do brainstorm: revisar README/PLANNING; pendências abertas (i-N3 parte A canal de atualização, i-N2 dados pessoais, revisão da qualidade das Instruções geradas, reagrupar narrative cosmético).
 2. Ritual: pesquisa do domínio → projetar → construir isolado → validar (jsdom 17/17) → publicar + CHANGELOG/STATUS.
 
 ## 🆕 Funcionalidades recentes do kit
@@ -30,7 +29,7 @@ Próxima: **Etapa 15 — comics (último antes do fechamento).**
 - [ ] **Revisar a qualidade das Instruções geradas** — o usuário pediu. Pesquisa + análise pendente.
 - [ ] **Reagrupar narrative** (cosmético): hoje group "literary"; avaliar ao mexer nos criativos.
 - [ ] Atualizar README/PLANNING quando os criativos avançarem.
-- [ ] **GitHub:** subir a v1.16.0 (animation).
+- [ ] **GitHub:** subir a v1.17.0 (comics).
 
 ## 📁 Padrão de ouro consolidado
 - Arquivo-âncora (visão/sistema/bíblia/estilo) + ângulo próprio + armadilhas/continuidade.
