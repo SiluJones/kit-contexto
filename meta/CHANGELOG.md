@@ -1,6 +1,31 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.0.0**.
+> Histórico de versões. Versão atual: **v1.21.0**.
+
+---
+
+## v1.21.0 — 2026-06-03 — Transferência entre conversas: contexto/RAG + plano de handoff (transversal)
+
+Implementa a ideia **i-N9**: ensina o assistente (e o usuário) a lidar com o que o Claude consegue ou não fazer com arquivos do Projeto (RAG) vs. anexados — resolvendo uma lacuna de conhecimento que pôs projetos do usuário em risco. Foi um desvio pedido pelo usuário ANTES do Custom Inteligente.
+
+### Adicionado ao CLAUDE.md gerado (todos os nichos)
+- **Seção "Transferência entre conversas: o que vai para o Projeto e o que se anexa"** no UPDATE_PROTOCOL (campos `handoffTitulo`/`handoffIntro`/`handoffComo`, renderizados em `buildClaudeMd`). Cobre: os dois modos do conhecimento do Projeto (in-context vs. RAG/"Modo de pesquisa"); a **regra dura anti-arquivo-falso** (nunca reconstruir a partir de fragmentos — pedir o anexo); onde colocar cada arquivo (leve→Projeto, de preferência upload direto; grande/em-edição→anexo); o comportamento do anexo (por sessão, custa token, fidelidade total); o **handoff ao final** (dizer arquivo-por-arquivo onde colocar + montar o prompt de início); e a verificação de integridade.
+
+### Adicionado à UI (view "Tokens & Fluxos")
+- **Seção "Contexto vs. RAG — e onde colocar cada arquivo":** o enquadramento RAM/disco, a tabela dos dois modos, como identificar o "Modo de pesquisa", onde colocar cada arquivo, e a regra de ouro. Correção do item que dizia "o Claude lê sozinho" sem a ressalva do RAG.
+
+### Fundamento (pesquisa 2026-06-03)
+- **Documentação oficial:** conhecimento do Projeto alterna automaticamente in-context ↔ RAG por TAMANHO; RAG expande ~10x e mostra indicador visível; volta a in-context se encolher. Sincronização do GitHub é MANUAL ("Sync now"), só puxa nome+conteúdo do branch (sem histórico/PRs), e há relatos de quebra silenciosa. Anexo é por sessão e custa contexto a cada turno; contexto NÃO passa entre conversas a menos que esteja no conhecimento do Projeto.
+- **Persistência/fidelidade:** um arquivo nasce fiel na conversa que o gerou (entra no histórico) — mesma fidelidade de um anexo, mesmo custo de token — mas só enquanto está na janela viva (conversa longa é compactada e perde o que sai da janela). "Ler/aprender" um arquivo NÃO cria cópia durável; a fidelidade vem de o conteúdo estar PRESENTE no contexto.
+- **Context engineering** (Anthropic "Effective context engineering" + literatura): janela é recurso finito; "context rot" (recall cai com o volume; janela maior não resolve); estratégias offload/retrieve/isolate/compress; Git para estado entre sessões; "sumarização iterativa ancorada" (doc de estado) = papel do STATUS. Valida a arquitetura do kit.
+
+### Registros
+- **D-015** (DECISOES): protocolo de transferência (contexto vs. RAG), com fundamento técnico.
+- **i-N9** (IDEIAS): implementada. **i-N10** semeada (carimbo de versão automático nos downloads).
+- **CONTEXT.md** ganhou a seção "Contexto vs. RAG, anexo e fidelidade" + armadilha #7; **CLAUDE.md** ganhou a regra "Transferência e fidelidade de arquivo"; **README.md** ganhou a seção de contexto/RAG/transferência.
+
+### Validação
+- `node --check` (0 erros de sintaxe) + balanceamento de tags + teste DOM (jsdom): **17/17 nichos, 0 erros**, seção de handoff confirmada no CLAUDE.md de todos. Índice em ~519 KB / 7700 linhas. (O "Boot failed: DOMException" no harness é esperado — boot precisa de elementos reais; o teste chama buildClaudeMd/buildInstr direto.)
 
 ---
 
@@ -564,5 +589,6 @@ Itens em `meta/IDEIAS.md` arquivados como "evolução natural":
 - Versão impressa (PDF) dos templates (i13)
 - Drag-and-drop para reordenar arquivos no Custom (i20)
 - Atalhos de teclado adicionais (i24)
+- Carimbo de versão automático nos downloads (i-N10)
 
 Nada disso está prometido. Decisão depende de uso real.

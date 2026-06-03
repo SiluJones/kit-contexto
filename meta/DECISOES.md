@@ -231,7 +231,7 @@ Ritual consistente por nicho: estudar o nicho atual + pesquisa web aprofundada d
 
 ## D-014 — Arquitetura do Custom Inteligente: composição assistida, não fusão automática
 
-**Data:** 2026-06-02 · **Status:** aprovada (a implementar na próxima conversa)
+**Data:** 2026-06-02 · **Status:** aprovada (a implementar)
 
 ### A decisão
 Adicionar um SEGUNDO nicho de construção — o **Custom Inteligente** — mantendo o custom atual como **"Blank"** (página em branco, poder total). O Custom Inteligente compõe um nicho novo a partir da SELEÇÃO de nichos existentes, por **concatenação assistida e revisável** — NÃO por fusão automática opaca.
@@ -258,3 +258,35 @@ Baixo-médio. UI nova sobre motor existente. Fazer por partes (importação+dedu
 
 ### Contexto de uso que motivou (do usuário)
 Ele está fazendo ferramentas reais que se encaixam em **dev** como base, algumas com tempero de outro domínio: plugin de Figma (dev), assets Unity/Godot (dev, ou dev+game), plugins/extensão/script de Aseprite para pixel art em massa/procedural (dev + pixel — o caso perfeito para o Custom Inteligente), geração procedural de molduras/bordas (dev + pixel/design).
+
+---
+
+## D-015 — Protocolo de transferência entre conversas (contexto vs. RAG) — transversal
+
+**Data:** 2026-06-03 · **Status:** aceita e implementada (v1.21.0)
+
+### Contexto
+O usuário levantou — com razão — uma lacuna grave de conhecimento que afetava o uso real do kit (e de qualquer projeto dele no Claude.ai): **não estava claro o que acontece com os arquivos quando se transfere um projeto para uma conversa nova.** A confusão concreta:
+- Ele confiou que "o GitHub / os arquivos do Projeto" dariam continuidade 100% e que o assistente poderia editar o código a partir deles. Em projetos grandes isso NÃO é verdade.
+- Risco real: alguns projetos dele podem ter sido corrompidos ao transferir confiando cegamente nos arquivos do Projeto em modo de busca (o assistente teria editado a partir de fragmentos).
+
+### Fundamento técnico (pesquisa 2026-06-03, docs oficiais + práticas profissionais)
+- **Conhecimento do Projeto tem dois modos automáticos** (Claude Help Center): *in-context* quando o total cabe na janela (arquivos INTEIROS, editáveis com fidelidade) e *RAG / "Modo de pesquisa"* quando o total se aproxima do limite (só FRAGMENTOS recuperados por relevância; capacidade expande ~10x). Há indicador visível na tela do Projeto. Volta a in-context se o conteúdo encolher.
+- **Sincronização do GitHub é manual** ("Sync now"), só puxa nome+conteúdo do branch (sem histórico/PRs), e há relatos de quebrar silenciosamente — logo, o que está no GitHub pode estar atrasado em relação à cópia local; upload direto é mais fresco.
+- **Anexo de conversa** é por sessão (não passa para a próxima), ocupa contexto a cada turno (custa token) e dá fidelidade total. Um arquivo gerado pelo próprio assistente dentro da conversa tem a mesma fidelidade pelo mesmo motivo (entra no histórico). Por isso a conversa original de desenvolvimento mantinha o index fiel sem anexar — ele nasceu ali.
+- **Contexto não passa entre conversas a menos que esteja no conhecimento do Projeto** — continuidade de verdade exige o Projeto; o anexo é fidelidade na sessão ativa.
+- **Enquadramento profissional** (context engineering 2025/26): a janela de contexto é como RAM (rápida, finita, zerada por sessão); arquivos externos são o disco (grandes, mas exigem recuperação). O método robusto de handoff é a "sumarização iterativa ancorada" (um doc de estado — intenção/decisões/ações/próximos passos — sempre atualizado) — que é o papel do nosso STATUS.
+
+### Decisão
+Adicionar um protocolo **transversal** (no `UPDATE_PROTOCOL`, portanto no CLAUDE.md de TODOS os nichos) e ensinar o usuário na própria UI:
+1. **Seção "Transferência entre conversas"** no CLAUDE.md gerado, com: os dois modos; **regra dura anti-arquivo-falso** (nunca reconstruir a partir de fragmentos — pedir o anexo); onde colocar cada arquivo (leve→Projeto, preferindo upload direto; pesado/em-edição→anexo); comportamento do anexo; **handoff ao final** (dizer arquivo-por-arquivo onde colocar + montar um PROMPT DE INÍCIO); verificação de integridade.
+2. **Seção "Contexto vs. RAG — e onde colocar cada arquivo"** na view *Tokens & Fluxos* (a parte que ensina o usuário), com tabela dos dois modos, regra de ouro e o enquadramento RAM/disco.
+
+### Alternativas consideradas
+- **Não documentar (deixar o usuário descobrir)** — rejeitada: foi exatamente a lacuna que pôs projetos em risco.
+- **Mecanismo automático de "detectar modo e agir"** — fora de escopo do kit (o kit gera texto/instrução; quem decide o modo é o tamanho do conhecimento). Resolvido como regra de comportamento + ensino, não como código que checa o ambiente.
+
+### Consequências
+- Todos os nichos passam a instruir o assistente a fazer o handoff e a recusar reconstrução por fragmentos. Vale especialmente para dev/game (arquivos grandes).
+- O usuário tem agora um critério visível (o rótulo "Modo de pesquisa") e uma regra de ouro.
+- **A vigiar:** o usuário vai auditar projetos transferidos no passado para detectar corrupção por edição-via-fragmentos.

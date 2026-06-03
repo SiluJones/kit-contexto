@@ -15,13 +15,13 @@ O kit é, ele mesmo, uma aplicação da própria filosofia (dogfooding): este pr
 
 ## Stack e arquitetura
 
-- **Um arquivo:** `index.html` (~513 KB na v1.20.0). HTML + CSS + JS inline. Sem framework, sem build step.
+- **Um arquivo:** `index.html` (~519 KB na v1.21.0). HTML + CSS + JS inline. Sem framework, sem build step.
 - **Hospedagem:** GitHub Pages — `silujones.github.io/kit-contexto/`. O usuário sobe manualmente o `index.html` (e os meta-docs) ao repositório `github.com/<user>/kit-contexto`.
 - **Bibliotecas externas (CDN):** JSZip (para o "baixar pacote ZIP"). O resto é vanilla.
 - **Persistência no browser:** o kit usa `localStorage` para presets do custom e estado (STATE/snapshot). ATENÇÃO: localStorage é proibido em artifacts do claude.ai, MAS aqui funciona porque o arquivo roda no GitHub Pages do usuário (site real), não como artifact. Ao TESTAR via jsdom isso é simulado.
 
 ### Estrutura do JS (mapa mental)
-1. **Constantes de fundação** (topo do `<script>`): `LANGS` (idiomas — valor "pt", "en", "es", "other"), `BEHAVIORS_BASE` (9 princípios universais), `FILE_PHILOSOPHY`, `HYGIENE_RULES`, `TRIGGERS_BASE`, `UPDATE_PROTOCOL` (protocolo de atualização — agora inclui commit, canal de atualização e privacidade), `AFFIX` (afixo de download), `OSENV`/`OS_LABELS`/`OS_CMDNOTE` (seletor de SO).
+1. **Constantes de fundação** (topo do `<script>`): `LANGS` (idiomas — valor "pt", "en", "es", "other"), `BEHAVIORS_BASE` (9 princípios universais), `FILE_PHILOSOPHY`, `HYGIENE_RULES`, `TRIGGERS_BASE`, `UPDATE_PROTOCOL` (protocolo de atualização — agora inclui commit, canal de atualização, privacidade E o plano de transferência/handoff), `AFFIX` (afixo de download), `OSENV`/`OS_LABELS`/`OS_CMDNOTE` (seletor de SO).
 2. **Objetos `NICHES.<id>`** — um por nicho. Cada um é um objeto grande com a forma descrita abaixo. Delimitados por comentários `/* ---------- NOME ---------- */`.
 3. **Normalizadores** — `normNiche`, `normConventions`, `normBuilderSection`, `fileTag` (consolidado). Aceitam 2 formatos históricos de dados.
 4. **Funções de render** — `renderTopbar` (aceita `opts` de pares E `options` de strings — corrigido na v1.11.1), `renderBehaviors`, `renderBuilder`, `renderCustomForm` (o formulário do custom), `updatePreview`, `buildInstr` (gera as Instruções), `buildClaudeMd` (gera o CLAUDE.md completo).
@@ -49,15 +49,25 @@ Cada nicho tem **12 prompt cards**: 6 universais (A-F) + 6 específicos (G-L). O
 1. Analisa antes de aceitar. 2. Não desperdiça tokens. 3. Direto e objetivo. 4. Admite incerteza. 5. Explica trade-offs. 6. Instruções sempre cuidadosas. 7. Estuda o domínio antes de estruturar. 8. Verifica antes de pedir arquivo. 9. Captura ideias.
 
 ### O UPDATE_PROTOCOL (transversal — aparece no CLAUDE.md de TODOS os nichos)
-Contém: o protocolo de atualização de arquivos (assistente faz / usuário faz / nota sobre arquivos read-only), e agora 3 seções adicionadas nesta sessão:
+Contém: o protocolo de atualização de arquivos (assistente faz / usuário faz / nota sobre arquivos read-only), e 4 seções adicionadas ao longo das últimas sessões:
 - **commit ao final** (commitTitulo/commitIntro/commitNota) — fecha entregas com commit pronto (Conventional Commits), sensível ao SO.
 - **canal de atualização do kit** (channelTitulo/channelIntro/channelComo) — ensina o Claude a reconhecer e aplicar updates do kit trazidos para a conversa.
 - **privacidade** (privacidadeTitulo/privacidadeIntro/privacidadeRegras) — relevância + marcação, não censura (i-N2).
+- **transferência entre conversas / handoff** (handoffTitulo/handoffIntro/handoffComo) — contexto vs. RAG, regra anti-arquivo-falso, onde colocar cada arquivo, e o plano de handoff ao final (i-N9, v1.21.0).
 
 ## Como as peças críticas funcionam
 
 ### `today` nos templates — ARMADILHA CRÍTICA
 Nos templates `.md` (strings em `content`), datas usam `${today}` (a CONSTANTE), **NUNCA `${today()}`**. O `content` é uma template literal avaliada na carga do arquivo; `${today()}` (chamada de função) TRAVA O BOOT INTEIRO (tela branca). Sempre `${today}`.
+
+### Contexto vs. RAG, anexo, e fidelidade de arquivo — FUNDAMENTAL (v1.21.0)
+Entender isto mudou como o próprio kit deve ser desenvolvido e transferido:
+- **Conhecimento do Projeto tem 2 modos automáticos, por TAMANHO total:** *in-context* (pequeno → arquivos INTEIROS no contexto → o assistente lê/reescreve com fidelidade) e *RAG / "Modo de pesquisa"* (grande → só FRAGMENTOS recuperados por relevância). Indicador visível na tela do Projeto. Volta a in-context se o conteúdo encolher. Capacidade do RAG expande ~10x.
+- **O nosso `index.html` (~519 KB) cai em RAG dentro deste Projeto.** Logo, pela busca eu vejo só fragmentos dele. **Para editar o index com fidelidade, ele PRECISA ser anexado na conversa** — NUNCA reconstruído a partir de fragmentos (isso geraria um "arquivo falso"/incompleto). Os `.md` são pequenos: sozinhos ficam em contexto (inteiros); com o index junto, tudo vira RAG.
+- **Anexo de conversa:** vale só naquela conversa (não passa para a próxima), ocupa contexto a cada turno (custa token), e dá fidelidade total. Um arquivo gerado pelo próprio assistente dentro da conversa tem a mesma fidelidade pelo mesmo motivo (entrou no histórico). Por isso a conversa-mãe de desenvolvimento mantinha o index fiel sem anexar — ele nasceu ali.
+- **CUIDADO — janela é finita:** "nasceu na conversa = 100% para sempre" é FALSO. É 100% só enquanto está na janela viva; conversa longa é truncada/compactada (aconteceu nesta própria sessão) e aí a fidelidade do que saiu da janela se perde. Para o index grande, isso reforça: anexar, e em conversa nova reanexar.
+- **Continuidade entre conversas exige o conhecimento do Projeto** (o anexo é fidelidade só na sessão ativa). Sincronização do GitHub é MANUAL ("Sync now") e às vezes falha silenciosamente → para o que precisa estar fresco no Projeto, preferir UPLOAD DIRETO.
+- **Enquadramento profissional** (Anthropic "Effective context engineering" + literatura 2025/26): janela = recurso finito; "context rot" (recall cai à medida que enche); estratégias = offload/retrieve/isolate/compress; Git para estado entre sessões. Tudo valida a arquitetura do kit (Instruções enxutas + STATUS como doc de estado ancorado + separação contexto/histórico).
 
 ### Dois formatos de dados (normalizadores)
 Por razões históricas, os nichos existem em 2 formatos. `renderTopbar` aceita `opts:[[valor,label]]` (pares) E `options:["string"]` (strings) — foi a causa do bug v1.11.1. `normConventions` aceita array, `true` (gera bloco default) ou `false`/null. Sempre rodar o teste jsdom após mexer.
@@ -77,8 +87,9 @@ Por razões históricas, os nichos existem em 2 formatos. `renderTopbar` aceita 
 2. **`renderTopbar` lendo só `f.opts`** → selects de topbar (Gênero/Engine/Fase) vinham VAZIOS nos nichos que usam `options:`. Corrigido na v1.11.1 (aceita os dois formatos). O teste jsdom agora detecta select vazio.
 3. **`default:"pt-BR"` no langSel** → não casava com LANGS (que usa valor "pt"), idioma aparecia em branco. Todos corrigidos para `default:"pt"` na v1.11.1.
 4. **git commit com `\` (continuação de linha bash)** → QUEBRA no CMD do Windows do usuário (`'\' is outside repository`). O usuário usa **CMD do Windows**. Commits devem ser UMA LINHA, com `-m` repetido (cada `-m` = um parágrafo). Registrado no CLAUDE.md do projeto e no seletor de SO.
-5. **Publicar sem validar** → NUNCA publicar sem teste jsdom 17/17 e 0 erros JS. Os 2 "erros" de clipboard/download no jsdom são falsos-positivos conhecidos (jsdom não implementa essas APIs).
+5. **Publicar sem validar** → NUNCA publicar sem teste jsdom 17/17 e 0 erros JS. Os 2 "erros" de clipboard/download no jsdom são falsos-positivos conhecidos (jsdom não implementa essas APIs). O "Boot failed: DOMException" no harness também é esperado (o boot precisa de elementos reais; o teste chama buildClaudeMd/buildInstr direto).
 6. **Caso The Brazilian House** → é projeto de DESIGN GRÁFICO (cardápio físico), NÃO culinária. Já serviu ao nicho design. NÃO usar para cuisine nem outros nichos de conteúdo.
+7. **Editar o `index.html` a partir do conhecimento do Projeto quando está em RAG** → eu veria só fragmentos e poderia gerar um arquivo falso/incompleto. Para mexer no index com segurança, ele tem que estar ANEXADO na conversa (em conversa nova, reanexar). Vale para qualquer arquivo grande. (Ver "Contexto vs. RAG" acima.)
 
 ## Produto / posicionamento
 
@@ -90,11 +101,13 @@ Por razões históricas, os nichos existem em 2 formatos. `renderTopbar` aceita 
 
 - **Deliverable principal:** `/mnt/user-data/outputs/index.html`.
 - **Meta-docs do projeto:** `/mnt/user-data/outputs/meta/` (CONTEXT/CLAUDE/STATUS/CHANGELOG/DECISOES/IDEIAS/NICHOS-CANDIDATOS + TEMA/MAPA/FILTROS/LOG-TEMPLATE herdados).
-- **Projeto no GitHub do usuário (somente-leitura aqui):** `/mnt/project/` — versão sincronizada do repo. O usuário sobe manualmente; sincronização às vezes demora (esperar antes de conferir).
-- **Scratchpad:** `/home/claude/` — onde se constrói nicho isolado e roda teste. `ft_local.js` é o teste jsdom dos 17 nichos (rodar de /home/claude, com o index em /tmp/test_target.html).
+- **Projeto no GitHub do usuário (somente-leitura aqui):** `/mnt/project/` — versão sincronizada do repo. Pode estar VAZIO ou ATRASADO (sync manual); na dúvida, o usuário anexa o que for grande/atual na conversa.
+- **Index grande:** quando o usuário precisar que eu edite o `index.html`, o caminho confiável é ele estar ANEXADO na conversa (no Projeto ele cai em RAG). 
+- **Scratchpad:** `/home/claude/` — onde se constrói nicho isolado e roda teste. `test_niches.js` (ou `ft_local.js`) é o teste jsdom dos 17 nichos (rodar de /home/claude, com o index em disco).
 
 ## Idioma e convenções
 
 - **pt-BR em tudo**, inclusive comentários de código e nomes de template (que são profissionais, ex.: STATUS.md, DECISOES.md).
 - Entrega via `present_files`; arquivos completos para baixar/substituir, NUNCA blocos soltos para costurar.
 - Commit ao final no formato CMD Windows (uma linha, `-m` repetido), pronto para colar.
+- **Handoff ao final:** dizer ao usuário, arquivo por arquivo, onde colocar cada um na próxima conversa (Projeto vs. anexo) e, quando útil, montar o prompt de início.

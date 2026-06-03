@@ -222,5 +222,20 @@ Quando tiver mais feedback de uso dos nichos dev e game, o usuário pedirá uma 
 ## i-N8 — Exemplos prontos no Custom (instanciar nichos candidatos) — IDEIA do usuário, condicional
 Após o Custom Inteligente, avaliar oferecer "exemplos" prontos para criar instantaneamente os nichos que ficaram de fora (ver NICHOS-CANDIDATOS.md) — ou instruir como criá-los. O usuário disse "se for problemático, esqueça". A reavaliar depois do Custom Inteligente.
 
+---
+
+# Atualização de status — 2026-06-03 (sessão sobre contexto/RAG e transferência)
+
+## i-N9 — Protocolo de transferência entre conversas (contexto vs. RAG + handoff) — ✅ IMPLEMENTADA (v1.21.0)
+**Origem:** do usuário (que sofria com a falta de clareza sobre o que o Claude consegue ou não fazer com arquivos do Projeto vs. anexados) + análise/pesquisa do assistente.
+**O que é:** uma seção transversal no CLAUDE.md gerado (UPDATE_PROTOCOL → todos os nichos) que ensina o assistente a: reconhecer os dois modos do conhecimento do Projeto (in-context vs. RAG/"Modo de pesquisa"); **nunca reconstruir um arquivo a partir de fragmentos** (regra dura anti-arquivo-falso — pedir o anexo); orientar onde colocar cada arquivo (leve→Projeto por upload direto; pesado/em-edição→anexo); e fazer o **handoff ao final** — dizer arquivo-por-arquivo onde colocar para a próxima conversa e montar um PROMPT DE INÍCIO pronto. Mais uma seção de ensino ("Contexto vs. RAG") na view Tokens & Fluxos para o usuário.
+**Por que importava:** o usuário pôs projetos em risco ao transferir confiando cegamente nos arquivos do Projeto em modo de busca. Ver D-015 para o fundamento técnico (docs oficiais + práticas de context engineering: janela = RAM, arquivos = disco; sumarização iterativa ancorada = papel do STATUS).
+**A vigiar (do usuário):** auditar projetos transferidos no passado para detectar corrupção por edição-via-fragmentos.
+
+## i-N10 — Afixo de versão automático / "carimbo de versão do kit" nos downloads (SEMENTE, do usuário)
+**Status:** semente — surgiu de raspão ("um padrão convencional/identificador" na i-N3-B). Vale considerar: o kit poderia oferecer carimbar automaticamente a versão do kit no nome ou no rodapé dos arquivos gerados, ajudando o "canal de atualização" a saber de qual versão um arquivo veio. Não prometido.
+
+---
+
 ## Nichos como ideias FUTURAS (adiados de propósito pelo usuário)
 Ver NICHOS-CANDIDATOS.md (recuperado dos PLANNING). Não fazer agora. Prioridade do assistente se um dia expandir: Educação & Cursos (nº1); Desenvolvimento Pessoal/Journaling (cuidado: sensível); depois Jurídico/Podcast/Tradução. Tradução & Localização foi sugestão do assistente (não estava no PLANNING).

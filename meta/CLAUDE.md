@@ -22,7 +22,8 @@ Detalhes completos: `README.md`, `PLANNING.md`, `meta/STATUS.md`, `meta/CHANGELO
 2. Lê **`meta/STATUS.md`** — descobre a fase atual e o próximo passo.
 3. Lê a última entrada de **`meta/CHANGELOG.md`** — vê o que mudou na sessão anterior.
 4. Consulta sob demanda (não por padrão): `meta/DECISOES.md` (por que as coisas são como são), `meta/IDEIAS.md`, `PLANNING.md`, e o `index.html` em si.
-5. Antes de executar, confirma em uma frase o que entendeu da tarefa.
+5. **Se a tarefa for mexer no `index.html`:** confirme que ele está ANEXADO na conversa (no Projeto ele cai em RAG e eu veria só fragmentos). Sem o arquivo inteiro à vista, NÃO edite — peça o anexo. (Ver «Transferência e fidelidade» abaixo.)
+6. Antes de executar, confirma em uma frase o que entendeu da tarefa.
 
 ---
 
@@ -30,15 +31,27 @@ Detalhes completos: `README.md`, `PLANNING.md`, `meta/STATUS.md`, `meta/CHANGELO
 
 Estes são exatamente os princípios que o kit prega — e que praticamos aqui (dogfooding).
 
-1. **Analisa antes de aceitar.** Não segue cegamente o que o usuário propõe. Avalia viabilidade e se posiciona — a favor, refinando, ou contra — sempre fundamentado. Concordância automática é falha. (Foi assim que decidimos pausar etapas para consolidar a fundação em vez de seguir em frente cegamente.)
+1. **Analisa antes de aceitar.** Não segue cegamente o que o usuário propõe. Avalia viabilidade e se posiciona — a favor, refinando, ou contra — sempre fundamentado. Concordância automática é falha.
 2. **Não desperdiça tokens.** Não pergunta o que já foi decidido; não pede confirmação de plano aprovado; não abre menu para decisões óbvias. Em dúvida entre fazer e perguntar, faz e relata.
 3. **Direto e objetivo.** Sem floreio, sem bajulação.
 4. **Admite incerteza.** Diz quando não verificou. Para fatos que mudam (features da Anthropic, limites técnicos), pesquisa antes de afirmar.
 5. **Explica trade-offs.** Em decisão importante, dá o melhor argumento contrário.
 6. **Instruções sempre cuidadosas.** Qualquer guia/passo a passo ao usuário é completo e detalhado; deixa claro o que é decisão dele vs. passo necessário.
-7. **Estuda o domínio antes de estruturar.** Ao aprofundar um nicho, pesquisa práticas/convenções/armadilhas da área antes de montar a estrutura — não inventa do zero. (Foi o que fez o client ficar bom; é regra, não acaso.)
+7. **Estuda o domínio antes de estruturar.** Ao aprofundar um nicho, pesquisa práticas/convenções/armadilhas da área antes de montar a estrutura — não inventa do zero.
 8. **Verifica antes de pedir arquivo.** Quando o usuário diz «já subi X», a primeira ação é procurar X nos arquivos do projeto/uploads — não perguntar de novo.
 9. **Captura ideias.** Registra no IDEIAS tudo que o usuário mencionar, mesmo solto.
+
+---
+
+## 🔁 Transferência e fidelidade de arquivo (regra dura — descoberta na v1.21.0)
+
+O modo como os arquivos chegam até mim muda o que posso fazer com eles:
+
+- **Conhecimento do Projeto tem 2 modos por tamanho:** *in-context* (pequeno → vejo os arquivos INTEIROS, edito com fidelidade) e *RAG / "Modo de pesquisa"* (grande → vejo só FRAGMENTOS). O nosso `index.html` (~519 KB) faz o Projeto cair em RAG.
+- **Nunca reconstruir um arquivo a partir de fragmentos.** Se eu for editar/reproduzir um arquivo e não tiver o conteúdo COMPLETO e atual à vista, eu PEÇO o anexo — em vez de adivinhar e gerar um arquivo falso/incompleto.
+- **Para editar o `index.html`: ele precisa estar ANEXADO na conversa** (em conversa nova, reanexar). No Projeto ele está em RAG. Os `.md` são pequenos e cabem no Projeto (in-context) — confiáveis para ler/editar de lá enquanto o index não estiver junto.
+- **Anexo** = fidelidade só naquela conversa, custa token a cada turno; some na conversa seguinte. Um arquivo que eu gerei na conversa tem a mesma fidelidade (entrou no histórico), mas só enquanto está na janela viva (conversa longa é compactada e perde o que saiu da janela).
+- **Handoff ao final:** ao fechar uma sessão, eu digo, arquivo por arquivo, onde colocar cada um para a próxima conversa (Projeto, de preferência upload direto, vs. anexo por ser grande) e, quando útil, monto o prompt de início.
 
 ---
 
@@ -47,9 +60,10 @@ Estes são exatamente os princípios que o kit prega — e que praticamos aqui (
 - **Vanilla JS, sem build, sem dependências** (exceto JSZip via CDN, carregado sob demanda só no download em ZIP). Não introduzir framework, bundler, ou npm.
 - **Tudo num único arquivo.** CSS no `<style>`, JS no `<script>` ao final. É assim que o kit é distribuído (GitHub Pages estático).
 - **Sem `localStorage`/`sessionStorage` quebrando**: o kit USA localStorage para persistir nicho e presets — isso é intencional e funciona no destino (não é artifact). Manter.
-- **Estrutura dos nichos**: cada nicho é um objeto `NICHES.{id}` com shape consistente (id, label, icon, group, category, cardColor, cardTags, cardDesc, intro, topbar, behaviors, builderSection, conventions, contextFiles, outputs, promptsExtra, e opcionalmente triggersExtra/isBuilder). Há um **normalizador** (`normNiche`/`normBehaviors`/`normFiles`/etc.) que aceita dois formatos históricos — ao adicionar/editar nicho, não precisa migrar formato, o normalizador resolve.
+- **Estrutura dos nichos**: cada nicho é um objeto `NICHES.{id}` com shape consistente. Há um **normalizador** (`normNiche`/etc.) que aceita dois formatos históricos — ao adicionar/editar nicho, não precisa migrar formato.
 - **Theming** por `[data-niche]` e `[data-group]` no `<html>` (CSS variables). Cor de acento = `--amber` (renomeado por nicho).
 - **Templates `.md`** vivem como strings no campo `content` de cada arquivo do nicho. Cuidado com `${...}` dentro deles: template literal avalia na carga. Use `${today}` (constante), NUNCA `${today()}` — esse foi um bug que travou o boot inteiro.
+- **`UPDATE_PROTOCOL`** (constante perto do topo) gera, no CLAUDE.md de TODO nicho, as seções transversais: protocolo de atualização, commit ao final, canal de atualização, privacidade e **transferência/handoff** (campos `handoffTitulo/handoffIntro/handoffComo`, renderizados em `buildClaudeMd`).
 
 ---
 
@@ -68,6 +82,7 @@ Os arquivos do projeto vivem em `meta/` (mais `README.md`, `PLANNING.md`, `DEPLO
 | `meta/IDEIAS.md` | Segundo cérebro | Ideias capturadas; nunca perde. |
 | `meta/TEMA/MAPA/FILTROS.md` | Estável | Brainstorm de origem (o kit é nicho Brainstorm). |
 | `meta/LOG-TEMPLATE.md` | Referência | Molde de log; nunca substituído. |
+| `meta/NICHOS-CANDIDATOS.md` | Referência | Mapa dos nichos que entraram/ficaram de fora. |
 
 ### Regras de higiene
 - **Referência cruzada, não duplicação**: um dado tem uma fonte de verdade.
@@ -79,27 +94,25 @@ Os arquivos do projeto vivem em `meta/` (mais `README.md`, `PLANNING.md`, `DEPLO
 - As mudanças que decorrem do trabalho do assistente são registradas pelo **próprio assistente** — mexeu em STATUS/CHANGELOG/etc., entrega esses arquivos atualizados sem esperar pedido.
 - **"Atualizar um doc" = entregar o arquivo COMPLETO** em `/mnt/user-data/outputs`, pronto para o usuário baixar e substituir. **Nunca** trechos para colar nem um arquivo de "instruções de atualização".
 - Entregar o **conjunto consistente** de uma vez. Estado meio-atualizado é pior que não mexer.
-- O que o usuário quer acrescentar por conta é decisão dele.
-- `/mnt/project` é somente-leitura para o assistente — isso não é desculpa para não entregar: lê de lá, edita uma cópia, entrega o resultado completo pela pasta de saída.
+- `/mnt/project` é somente-leitura (e pode estar vazio/atrasado): lê de lá quando houver, edita uma cópia, entrega o resultado completo pela pasta de saída.
+- **Fecha com o handoff:** onde colocar cada arquivo na próxima conversa + (quando útil) o prompt de início.
 
 ### Verificar antes de pedir upload (regra dura)
-- Antes de pedir que o usuário suba um arquivo, verifica se ele já não está em `/mnt/project`, nos uploads, ou colado na conversa. Quando o usuário diz «já subi X», procura X primeiro.
+- Antes de pedir que o usuário suba/anexe um arquivo, verifica se ele já não está em `/mnt/project`, nos uploads, ou colado/anexado na conversa. Quando o usuário diz «já subi X», procura X primeiro.
 
 ---
 
 ## 🔬 Como aprofundar um nicho (processo das Etapas)
 
-Sequência que provou funcionar (dev = Etapa 1, client = Etapa 2):
-
-1. **Estudar**: ler o feedback de uso real se houver (ex.: arquivos `__refinado__DEV`, `__GameDataHub2`, BRIEFING) + pesquisar práticas profissionais do domínio na web (casos, convenções, armadilhas, dicas).
-2. **Projetar**: cruzar o feedback + a pesquisa + o padrão de ouro do dev v2. Definir arquivos (núcleo enxuto + opcionais marcados), behaviors específicos, prompts G+, gatilhos próprios.
+1. **Estudar**: ler feedback de uso real se houver + pesquisar práticas profissionais do domínio na web (casos, convenções, armadilhas).
+2. **Projetar**: cruzar feedback + pesquisa + o padrão de ouro do dev v2. Definir arquivos (núcleo enxuto + opcionais), behaviors específicos, prompts G+, gatilhos próprios.
 3. **Construir** o objeto do nicho como arquivo isolado primeiro; validar a sintaxe em Node isoladamente.
 4. **Inserir** no `index.html` via splice por marcadores de comentário do nicho.
-5. **Validar**: `node --check` no script extraído + teste DOM (jsdom) dos 17 nichos (0 erros) + inspeção visual do nicho (templates, prompts, behaviors, tags).
+5. **Validar**: `node --check` no script extraído + teste DOM (jsdom) dos 17 nichos (0 erros) + inspeção visual do nicho.
 6. **Publicar** o `index.html` completo + atualizar `meta/CHANGELOG.md` (nova versão) e `meta/STATUS.md`.
 
 ### Padrão de qualidade de um nicho aprofundado
-- Arquivo "âncora" (CONTEXT/PROJETO/equivalente) com: o que é, como funciona o crítico, **armadilhas**, e o **ângulo próprio do nicho** (produto no dev; relação+escopo no client).
+- Arquivo "âncora" (CONTEXT/PROJETO/equivalente) com: o que é, como funciona o crítico, **armadilhas**, e o **ângulo próprio do nicho**.
 - Arquivo de decisões em formato ADR quando fizer sentido.
 - IDEAS/segundo-cérebro separando origem (usuário × assistente) + concluídas + descartadas.
 - STATUS com seções de estado claras.
@@ -114,11 +127,11 @@ Sequência que provou funcionar (dev = Etapa 1, client = Etapa 2):
 python3 -c "import re; html=open('index.html').read(); m=re.search(r'<script>(.*?)</script>',html,re.S); open('/tmp/c.js','w').write(m.group(1))"
 node --check /tmp/c.js
 
-# 2. Balanceamento de tags HTML (div/section/script/style/body/html)
-# 3. Teste DOM com jsdom: clicar os 17 nichos, conferir 0 erros de JS,
-#    e que cada um renderiza templates + prompts + preview + CLAUDE.md
+# 2. Balanceamento de tags HTML (div/section/script/style/table/tr/td/th)
+# 3. Teste DOM com jsdom: para os 17 nichos, gerar buildClaudeMd + buildInstr,
+#    conferir 0 erros e que cada um renderiza (e que as seções transversais aparecem).
 ```
-Nunca publicar sem o teste DOM passar em 17/17 com 0 erros.
+Nunca publicar sem o teste DOM passar em 17/17 com 0 erros. O "Boot failed: DOMException" no harness é esperado (boot precisa de elementos reais); o teste chama buildClaudeMd/buildInstr direto.
 
 ---
 
@@ -126,9 +139,10 @@ Nunca publicar sem o teste DOM passar em 17/17 com 0 erros.
 
 - Não reescrever os prompts universais A-F (são a "gramática" comum do kit).
 - Não introduzir dependências, build, ou framework.
-- Não refazer vários nichos de uma vez — é uma área por etapa (foi o erro original do MVP).
+- Não refazer vários nichos de uma vez — é uma área por etapa.
 - Não apagar conteúdo dos meta-docs; CHANGELOG/DECISOES/IDEIAS só crescem.
-- Não tratar feedback de outras conversas (GameDataHub etc.) como verdade absoluta: são referência, o assistente avalia e adapta ao que faz sentido para o kit.
+- Não editar o `index.html` a partir de fragmentos (RAG). Sem o arquivo inteiro anexado, peça o anexo.
+- Não tratar feedback de outras conversas (GameDataHub etc.) como verdade absoluta: são referência, o assistente avalia e adapta.
 
 ---
 
@@ -136,7 +150,7 @@ Nunca publicar sem o teste DOM passar em 17/17 com 0 erros.
 
 Sempre que uma entrega inclui código ou conteúdo destinado ao repositório (o `index.html`, os meta-docs, etc.), o assistente fecha a resposta com o **comando de commit completo, pronto para colar no console**, num bloco de código.
 
-**AMBIENTE: o usuário usa CMD do Windows.** Por isso o comando NÃO pode usar a continuação de linha `\` (isso é sintaxe de bash/Linux; no CMD o `\` quebra o comando com erro `'\' is outside repository` / `'-m' não é reconhecido`).
+**AMBIENTE: o usuário usa CMD do Windows.** O comando NÃO pode usar a continuação de linha `\` (sintaxe bash/Linux; no CMD quebra com `'\' is outside repository`).
 
 Formato correto para CMD do Windows — **tudo numa linha só**, repetindo `-m` (cada `-m` vira um parágrafo da mensagem):
 
@@ -144,17 +158,16 @@ Formato correto para CMD do Windows — **tudo numa linha só**, repetindo `-m` 
 git commit -m "tipo(escopo): título curto" -m "- linha 1 do corpo" -m "- linha 2 do corpo"
 ```
 
-Convenção [Conventional Commits](https://www.conventionalcommits.org/) no título (`tipo(escopo): descrição`). Tipos: `feat` (novo recurso), `fix` (correção), `docs` (documentação), `refactor`, `chore`.
+Convenção [Conventional Commits](https://www.conventionalcommits.org/) no título. Tipos: `feat`, `fix`, `docs`, `refactor`, `chore`.
 
 Regras práticas:
-- **Uma linha só, sem `\`.** Sem quebras de linha dentro do comando — o CMD trata cada quebra como um novo comando.
-- Aspas duplas em cada `-m`. Evitar aspas duplas DENTRO do texto (o CMD encerra a string). Se precisar destacar, usar aspas simples ou nada.
+- **Uma linha só, sem `\`.** Sem quebras de linha dentro do comando.
+- Aspas duplas em cada `-m`. Evitar aspas duplas DENTRO do texto. Se precisar destacar, usar aspas simples ou nada.
 - Corpo opcional: para mudanças triviais, basta o título num único `-m`.
-- O objetivo é copiar e colar direto no terminal e funcionar de primeira.
 
 ## Prática: adiantar entrega ao pedir permissão (eficiência de turno)
 
-Quando o usuário levanta uma ideia que exige decisão/permissão dele para prosseguir, e existe trabalho **independente dessa decisão** que já pode ser feito (ex.: a próxima etapa de nicho), o assistente adianta esse trabalho e deixa a pergunta de permissão para o final do mesmo turno — em vez de gastar um turno só perguntando. Só vale quando o que se adianta não depende da resposta pendente; se depender, pergunta primeiro.
+Quando o usuário levanta uma ideia que exige decisão/permissão dele, e existe trabalho **independente dessa decisão** que já pode ser feito, o assistente adianta esse trabalho e deixa a pergunta de permissão para o final do mesmo turno — em vez de gastar um turno só perguntando. Só vale quando o que se adianta não depende da resposta pendente.
 
 ## Idioma
 

@@ -749,6 +749,21 @@
 
       <div class="callout">O <code>LOG-TEMPLATE.md</code> é o único que fica <b>permanente</b> no Projeto sem ser substituído — o Claude o usa de referência para gerar os logs em <code>logs/</code>.</div>
 
+      <h2 class="sec">Contexto vs. RAG — e onde colocar cada arquivo</h2>
+      <p style="color:var(--ink-dim)">Pense na janela de contexto como <b>memória RAM</b>: rápida, mas finita e zerada a cada conversa nova. Os arquivos que você sobe no Projeto são o <b>disco</b>: ficam guardados, mas têm <b>dois modos</b> de leitura, conforme o tamanho total do conhecimento do Projeto.</p>
+      <table>
+        <tr><th>Modo</th><th>Quando</th><th>O que o Claude enxerga</th></tr>
+        <tr><td><b>Em contexto</b></td><td>Conhecimento do Projeto pequeno</td><td>Os arquivos <b>inteiros</b> — pode ler e reescrever com fidelidade</td></tr>
+        <tr><td><b>Pesquisa (RAG)</b></td><td>Conhecimento grande (perto do limite)</td><td>Só <b>fragmentos</b> por relevância — ótimo para ler, arriscado para reproduzir um arquivo inteiro</td></tr>
+      </table>
+      <div class="callout"><b>Como saber em que modo está:</b> a tela do Projeto mostra o rótulo <b>"Modo de pesquisa"</b> quando o RAG está ativo. Sem esse rótulo, está tudo em contexto.</div>
+      <p style="color:var(--ink-dim)">
+        • <b>Leves e de referência</b> (CONTEXT, STATUS, DECISÕES, IDEIAS, scripts pequenos) → <b>sobem no Projeto</b>. Persistem em todas as conversas. Prefira <b>upload direto</b>: a sincronização do GitHub é manual ("Sync now") e às vezes falha silenciosamente.<br>
+        • <b>Arquivos grandes, ou que serão editados na sessão</b> e precisam de fidelidade exata → <b>anexe na conversa</b> (pelo clipe). O anexo vale só naquela conversa, ocupa contexto a cada turno, e basta anexar uma vez (reanexe só se mudar por fora).<br>
+        • <b>Híbrido é o ideal:</b> o pesado da vez vai anexado; o resto fica no Projeto.
+      </p>
+      <div class="callout green"><b>Regra de ouro:</b> o que vai ser <b>editado ou reproduzido</b> precisa estar <b>inteiro</b> à vista do Claude. Em modo de pesquisa, peça para anexar o arquivo — nunca deixe ele reconstruir um arquivo a partir de fragmentos (sai um arquivo falso). Use o GitHub para versão e hospedagem; alimente o Claude pelo Projeto (leves) e pelo anexo (pesados).</div>
+
       <h2 class="sec">Detalhes que importam</h2>
       <p style="color:var(--ink-dim)">
         • <b>Maiúsculas no prompt não fazem diferença técnica.</b> O que importa é estrutura clara,
@@ -756,7 +771,8 @@
         • <b>Instruções vs prompt:</b> instruções para comportamento permanente; prompt para o contexto
         do dia. Complementares, não substitutos.<br>
         • <b>Você nunca precisa colar o conteúdo dos .md no prompt.</b> Suba no Projeto uma vez (ou anexe
-        pelo clipe) e o Claude lê sozinho.<br>
+        pelo clipe) e o Claude lê sozinho — lembrando que, em projetos grandes (modo de pesquisa), ele lê por
+        busca; veja a seção "Contexto vs. RAG" acima.<br>
         • <b>Trocar de nicho no meio do projeto:</b> raramente faz sentido — os arquivos foram pensados
         para o domínio. Se o foco mudou de verdade, melhor criar um Projeto novo.
       </p>
@@ -899,6 +915,16 @@ const UPDATE_PROTOCOL = {
     "Registre o que serve ao projeto (ideias, decisões, estado, preferências de trabalho). Informação pessoal incidental que aparecer de passagem numa conversa e NÃO tiver valor de contexto não vai para os documentos — não por censura, mas por irrelevância. (Ex.: um desabafo pessoal no meio de uma ideia técnica fica fora; a ideia técnica entra.)",
     "Se uma informação claramente pessoal ou sensível PRECISA ser registrada para o projeto funcionar, sinalize isso ao registrá-la e me ofereça a opção de generalizar ou omitir o detalhe — preservando o dado útil e protegendo o que for constrangedor. A decisão final é minha.",
     "Na dúvida entre 'isto é contexto útil' e 'isto é pessoal demais', pergunte antes de gravar — em vez de decidir sozinho num ou noutro sentido."
+  ],
+  handoffTitulo: "Transferência entre conversas: o que vai para o Projeto e o que se anexa",
+  handoffIntro: "Pense na janela de contexto como a memória RAM: rápida, mas finita e zerada a cada conversa nova. Os arquivos do Projeto são o disco: ficam guardados, mas têm dois modos de leitura conforme o tamanho. Saber o que vai para onde é o que evita perder a fidelidade de um arquivo e desperdiçar tokens.",
+  handoffComo: [
+    "Dois modos do conhecimento do Projeto (automáticos): se o total é pequeno, ele entra INTEIRO no contexto — o assistente vê cada arquivo completo e pode reescrevê-lo/editá-lo com fidelidade. Se o total cresce e se aproxima do limite, ativa o modo de busca (RAG) e o assistente passa a ver só FRAGMENTOS recuperados por relevância. Há um indicador visível na tela do Projeto (rótulo 'Modo de pesquisa').",
+    "Regra dura — nunca reconstruir um arquivo a partir de fragmentos: se o assistente for editar, reescrever ou reproduzir um arquivo e NÃO tiver o conteúdo completo e atual à vista (porque o Projeto está em modo de busca, por exemplo), ele PEDE que esse arquivo seja anexado à conversa, em vez de adivinhar o resto e gerar uma versão falsa ou incompleta.",
+    "Onde colocar cada arquivo: leves e de referência — contexto, status, decisões, ideias, scripts pequenos — vão no conhecimento do Projeto (persistem entre todas as conversas; de preferência por upload direto, porque a sincronização do GitHub é manual e às vezes falha silenciosamente). Arquivos grandes, ou os que serão EDITADOS naquela sessão e precisam de fidelidade exata, vão anexados na conversa.",
+    "Como o anexo se comporta: vale só naquela conversa (não passa para a próxima) e ocupa contexto a cada turno enquanto estiver lá. Basta anexar uma vez por conversa — só reanexe se o arquivo mudou por fora (ou descreva exatamente o que mudou). Um arquivo que o próprio assistente gerou dentro da conversa fica com a mesma fidelidade de um anexo, pelo mesmo motivo: passou a fazer parte do histórico daquela conversa.",
+    "Handoff ao final da sessão: o assistente encerra dizendo, arquivo por arquivo, onde colocar cada um para a PRÓXIMA conversa — o que cabe no Projeto (e como subir) e o que terá de ser anexado por ser grande. Quando ajuda, ele já monta um PROMPT DE INÍCIO pronto para colar na conversa nova, listando o que está no Projeto (para ele buscar) e o que precisa ser anexado naquela sessão.",
+    "Verificação de integridade: se houver suspeita de que um arquivo foi corrompido numa transferência anterior (editado a partir de fragmentos), o assistente confere contra a versão íntegra — comparando contagem de linhas e trechos-chave — antes de prosseguir."
   ]
 };
 
@@ -6980,6 +7006,14 @@ function buildClaudeMd(niche){
   L.push(UPDATE_PROTOCOL.privacidadeIntro);
   L.push("");
   UPDATE_PROTOCOL.privacidadeRegras.forEach(x => L.push(`- ${x}`));
+
+  // Transferência entre conversas: contexto/RAG + onde colocar cada arquivo (transversal)
+  L.push("");
+  L.push(`## ${UPDATE_PROTOCOL.handoffTitulo}`);
+  L.push("");
+  L.push(UPDATE_PROTOCOL.handoffIntro);
+  L.push("");
+  UPDATE_PROTOCOL.handoffComo.forEach(x => L.push(`- ${x}`));
 
   L.push("");
   L.push("## Tabela de gatilhos (evento → o que o assistente entrega)");
