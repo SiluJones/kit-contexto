@@ -6717,6 +6717,40 @@ function restoreControlsSkeleton(){
   if(c && CONTROLS_SKELETON !== null) c.innerHTML = CONTROLS_SKELETON;
 }
 
+/* Slug seguro para nome de preset (sem acentos, minúsculo, hífens). */
+function slugifyName(s){
+  return (s||"").toString().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,40);
+}
+
+/* Barra "nicho ativo" para construtores com preset aplicado: permite voltar a
+   editar / trocar de preset (senão o usuário fica preso no nicho ativo, sem
+   acesso ao construtor nem ao dropdown de presets salvos). */
+function injectActiveCustomBar(niche){
+  const controls = document.querySelector(".controls");
+  const old = document.querySelector("#cf-active-bar");
+  if(old) old.remove();
+  const isBuilderActive = STATE.customPreset && (STATE.niche === "custom" || STATE.niche === "customSmart");
+  if(!controls || !isBuilderActive) return;
+  const name = localStorage.getItem(LS_PRESET_CURR) || (niche && niche.label) || "preset";
+  const bar = document.createElement("div");
+  bar.id = "cf-active-bar";
+  bar.style.cssText = "border:1px solid var(--amber);border-radius:8px;padding:10px 12px;margin-bottom:14px;background:var(--grad-a);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap";
+  bar.innerHTML = `
+    <div style="font-size:12.5px"><b>Usando o nicho:</b> ${escapeHTML(name)} <span style="color:var(--ink-faint)">· preset custom ativo</span></div>
+    <div class="btnrow" style="margin:0"><button class="btn ghost sm" id="cf-edit-active">✎ Editar / trocar nicho</button></div>`;
+  controls.insertBefore(bar, controls.firstChild);
+  bar.querySelector("#cf-edit-active").addEventListener("click", () => {
+    const cur = listPresets().find(p => p.name === localStorage.getItem(LS_PRESET_CURR));
+    if(cur){ STATE._cf = fromPreset(cur); STATE._cf._presetName = cur.name; }
+    STATE.customPreset = null;
+    localStorage.removeItem(LS_PRESET_CURR);  // sai do modo ativo SEM apagar o preset salvo
+    delete _normCache["custom"];
+    setNiche("custom");                        // mostra o construtor com o _cf carregado (nome restaurado pelo template)
+  });
+}
+
 function renderBuilder(niche){
   captureControlsSkeleton();
   // se um construtor anterior reescreveu a coluna, restaura o esqueleto antes de pintar
@@ -6739,6 +6773,7 @@ function renderBuilder(niche){
     osSel.value = OSENV.value || "none";
     osSel.onchange = (e) => { OSENV.value = e.target.value; STATE.os = e.target.value; persistState(); updatePreview(); };
   }
+  injectActiveCustomBar(niche);
 }
 
 function renderBehaviors(niche){
@@ -7573,6 +7608,7 @@ function renderSmartCustomForm(){
     const composed = composeFromNiches(picked);
     STATE._cf = composed.cf;
     STATE._cf._importReport = composed.report;   // resumo do dedup, mostrado no editor
+    STATE._cf._presetName = slugifyName(composed.cf.label);  // nome sugerido p/ Ativar/Salvar
     restoreControlsSkeleton();                    // devolve #g-behaviors p/ o editor reescrever a coluna
     renderCustomForm();                           // entra no editor (mesmo motor) já pré-preenchido
   });
@@ -7614,19 +7650,22 @@ function renderCustomForm(){
           <div class="subhead">Carregar preset salvo</div>
           <select class="txt" id="cf-load" style="width:100%;padding:9px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:12px">
             <option value="">— novo preset —</option>
-            ${presets.map(p => `<option value="${escAttr(p.name)}">${escAttr(p.name)}</option>`).join("")}
+            ${presets.map(p => `<option value="${escAttr(p.name)}"${STATE._cf._presetName===p.name?" selected":""}>${escAttr(p.name)}</option>`).join("")}
           </select>
         </div>
         <div>
           <div class="subhead">Nome para salvar</div>
-          <input class="txt" id="cf-name" type="text" placeholder="ex.: pesquisa-jornalística"
+          <input class="txt" id="cf-name" type="text" placeholder="ex.: pesquisa-jornalística" value="${escAttr(STATE._cf._presetName||"")}"
             style="width:100%;padding:9px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:12px"/>
         </div>
       </div>
-      <div class="btnrow" style="margin-bottom:18px">
-        <button class="btn sm" id="cf-save">💾 Salvar preset</button>
-        <button class="btn ghost sm" id="cf-apply">⚡ Aplicar preset atual</button>
+      <div class="btnrow" style="margin-bottom:6px">
+        <button class="btn sm" id="cf-apply">⚡ Ativar este nicho</button>
+        <button class="btn ghost sm" id="cf-save">💾 Salvar preset</button>
         <button class="btn ghost sm" id="cf-delete">🗑 Excluir preset</button>
+      </div>
+      <div style="color:var(--ink-faint);font-size:11.5px;line-height:1.5;margin-bottom:18px">
+        <b>Ativar</b> = usar este nicho agora (Início, Instruções, Prompts e Templates passam a refletir ele; já salva com o nome ao lado, ou um gerado). <b>Salvar</b> = só guarda como preset. <b>Carregar</b> (acima) traz um preset salvo de volta para editar. <b>Excluir</b> remove o preset selecionado.
       </div>
 
       <div class="subhead">Identidade</div>
@@ -7740,7 +7779,7 @@ function renderCustomForm(){
       STATE._cf = { label:"",icon:"⚙️",headline:"",lede:"",ctxBlurb:"",cardColor:"#e7a23f",group:"serif",files:[],behaviors:[],promptsExtra:[],conventions:[],outputs:[] };
     } else {
       const found = listPresets().find(p => p.name === name);
-      if(found){ STATE._cf = fromPreset(found); $("#cf-name").value = name; }
+      if(found){ STATE._cf = fromPreset(found); STATE._cf._presetName = name; }
     }
     renderCustomForm();
   });
@@ -7753,21 +7792,24 @@ function renderCustomForm(){
     if(ix >= 0) ps[ix] = preset; else ps.push(preset);
     savePresets(ps);
     localStorage.setItem(LS_PRESET_CURR, name);
+    STATE._cf._presetName = name;
     alert(`Preset "${name}" salvo.`);
     renderCustomForm();
   });
   $("#cf-apply").addEventListener("click", () => {
-    const name = $("#cf-name").value.trim() || "custom-atual";
+    // nome: o digitado, ou derivado do label, ou "custom-atual"
+    let name = $("#cf-name").value.trim();
+    if(!name) name = slugifyName(STATE._cf.label) || "custom-atual";
+    STATE._cf._presetName = name;
     const preset = toPreset(STATE._cf, name);
-    STATE.customPreset = preset;
+    // SEMPRE persiste (senão o setNiche relê LS_PRESET_CURR, não acha o preset e zera tudo)
+    const ps = listPresets();
+    const ix = ps.findIndex(p => p.name === name);
+    if(ix >= 0) ps[ix] = preset; else ps.push(preset);
+    savePresets(ps);
     localStorage.setItem(LS_PRESET_CURR, name);
-    if($("#cf-name").value.trim()){
-      const ps = listPresets();
-      const ix = ps.findIndex(p => p.name === name);
-      if(ix >= 0) ps[ix] = preset; else ps.push(preset);
-      savePresets(ps);
-    }
-    delete _normCache["custom"]; // limpa cache
+    STATE.customPreset = preset;
+    delete _normCache["custom"];
     setNiche("custom");
   });
   $("#cf-delete").addEventListener("click", () => {
