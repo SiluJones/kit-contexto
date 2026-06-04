@@ -1,6 +1,32 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.21.0**.
+> Histórico de versões. Versão atual: **v1.22.0**.
+
+---
+
+## v1.22.0 — 2026-06-03 — Mount/ferramenta de código no protocolo de transferência + diretrizes refinadas
+
+Refino do protocolo de transferência (continuação da v1.21.0), motivado por (a) uma divergência real entre duas conversas que o usuário trouxe e (b) atritos entre diretrizes que ele identificou. **Verificação empírica nesta sessão:** o `/mnt/project/` é um mount dos arquivos do Projeto que eu leio INTEIRO com a ferramenta de código, **independente de RAG** — li o `index.html` completo (518 KB, byte-idêntico ao entregue) com o Projeto em "Modo de pesquisa".
+
+### Corrigido (estava impreciso na v1.21.0)
+- A seção de transferência (`UPDATE_PROTOCOL.handoffComo`) e a tela "Tokens & Fluxos" diziam "arquivo grande → RAG → anexar", conflando dois mecanismos. **Correção:** existem DOIS canais — o conhecimento do Projeto no chat (in-context/RAG) E o mount `/mnt/project/` (lido inteiro pela ferramenta de código, mesmo em RAG). O que importa é ter o arquivo COMPLETO por algum canal, não o rótulo RAG. Anexar é o caminho do chat comum (sem ferramenta de código).
+
+### Adicionado ao CLAUDE.md gerado (todos os nichos)
+- **Caminho limpo para projetos com código/repo:** deixar tudo no Projeto (inclusive grandes) + ligar a ferramenta de código → leitura/edição pelo mount, sem anexar. **Ritual de início:** o assistente confere se tem o mount; se não tiver (ferramenta desligada), avisa o usuário para ligá-la ANTES de trabalhar. **Projetos multi-pasta** (Next, Svelte): o grosso no Projeto/mount, anexar só o arquivo da tarefa, respeitando o limite de anexos (sem número fixo).
+
+### Diretrizes universais refinadas (`BEHAVIORS_BASE`: 9 → 11)
+- **Princípio 2 (tokens), esclarecido:** economizar token nunca é evitar pedir um arquivo necessário nem inferir para "poupar um turno"; token em trabalho verificável é investimento, inferir arquivo falso é o desperdício maior. (Resolve o atrito que o usuário sentiu.)
+- **Princípio 3 (direto):** + "sem rodeios" — dá a resposta ou o bloqueio claro ("não tenho X completo, me envie").
+- **Princípio 8 (verifica antes de pedir):** + anti-inferir — se não tiver o arquivo completo, faz a parte que dá e pede o resto; nunca reconstrói para "seguir mesmo assim".
+- **Princípio 10 (novo) — Cadência:** trabalho grande em fases auditáveis (plano no ROADMAP/IDEAS/STATUS), cada incremento completo; não fragmenta o trivial. Não afrouxa a regra de doc completo.
+- **Princípio 11 (novo) — Não regride nem mistura versões:** antes de editar, confere se o arquivo bate com a versão mais recente que o assistente gerou (e a coerência interna); se estiver desatualizado/inconsistente, PAUSA e avisa antes de agir. (Resolve o caso relatado dos "2 arquivos incompletos que se completavam".)
+
+### Registros
+- **D-016** (DECISOES): mount/ferramenta de código no protocolo + refino das diretrizes, com a verificação empírica e a reconciliação da divergência.
+- CONTEXT.md (mecanismo dos dois canais + armadilha #7 corrigida), CLAUDE.md (princípios refinados + realidade do mount + ritual) atualizados.
+
+### Validação
+- `node --check` (0 erros) + balanceamento de tags + jsdom: **17/17 nichos, 0 erros**, handoff em todos. Índice ~519 KB / 7703 linhas.
 
 ---
 

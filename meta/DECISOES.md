@@ -290,3 +290,30 @@ Adicionar um protocolo **transversal** (no `UPDATE_PROTOCOL`, portanto no CLAUDE
 - Todos os nichos passam a instruir o assistente a fazer o handoff e a recusar reconstrução por fragmentos. Vale especialmente para dev/game (arquivos grandes).
 - O usuário tem agora um critério visível (o rótulo "Modo de pesquisa") e uma regra de ouro.
 - **A vigiar:** o usuário vai auditar projetos transferidos no passado para detectar corrupção por edição-via-fragmentos.
+
+---
+
+## D-016 — Mount + ferramenta de código no protocolo de transferência; diretrizes refinadas
+
+**Data:** 2026-06-03 · **Status:** aceita e implementada (v1.22.0)
+
+### Contexto
+Continuação da v1.21.0. Dois gatilhos do usuário: (a) ele trouxe **duas conversas** (`Tentativa_1.md` = meu raciocínio; `Analisada.md` = uma conversa de outro projeto, o de scraping) e apontou uma **divergência**: lá o assistente afirmava ler qualquer arquivo do Projeto inteiro pelo mount mesmo em RAG e "não precisar anexar"; aqui eu havia dito que o index "precisa ser anexado porque está em RAG". (b) Ele identificou **atrito entre diretrizes** — o "não desperdiçar tokens" empurrava o assistente a *inferir* um arquivo faltante em vez de pedir, e algumas conversas não pausavam ao receber um arquivo desatualizado, gerando arquivos inconsistentes (relato: "2 arquivos incompletos que se completavam").
+
+### Verificação empírica (decisiva)
+Rodei `ls /mnt/project/` e `cmp` nesta sessão: o `/mnt/project/` é um **mount** dos arquivos do Projeto; li o `index.html` **inteiro** (7700 linhas / 518.033 bytes, terminando em `</html>`, **byte-idêntico** ao v1.21.0) com o Projeto em **"Modo de pesquisa" (RAG)**. Logo: o RAG governa a injeção automática no chat e a busca por fragmentos; **não impede** a leitura completa pelo mount via ferramenta de código. O mount também **atualizou** no meio da conversa quando o usuário re-subiu os arquivos.
+
+### Decisão
+1. **Reconciliação (correção da v1.21.0):** o critério certo NÃO é "está em RAG?", é **"tenho o arquivo COMPLETO por algum canal?"**. Canais: Projeto in-context; **mount `/mnt/project/` (ferramenta de código) — lê inteiro mesmo em RAG**; anexo; ou gerado na conversa. Corrigida a seção de transferência (handoffComo) e a tela "Tokens & Fluxos", que conflavam os mecanismos.
+2. **Caminho limpo para projetos com código/repo:** tudo no Projeto + ferramenta de código ligada → leitura/edição pelo mount, sem anexar. **Ritual de início** confere o mount; se faltar, o assistente pede para ligar a ferramenta antes de trabalhar. Multi-pasta (Next/Svelte): grosso no Projeto/mount, anexar só o arquivo da tarefa; limite de anexos **sem número fixo** (regra robusta independe do número exato, que já mudou).
+3. **Diretrizes refinadas (BEHAVIORS_BASE 9 → 11):** P2 esclarecido (token em trabalho verificável = investimento; inferir arquivo falso = desperdício maior); P3 + "sem rodeios"; P8 + anti-inferir (faz o possível e pede o resto, nunca reconstrói); **P10 Cadência** (fases auditáveis, plano no ROADMAP/IDEAS/STATUS, sem fragmentar o trivial, sem afrouxar a regra de doc completo); **P11 Não regride nem mistura versões** (pausa e avisa se o arquivo recebido estiver desatualizado vs. o que o assistente gerou, ou internamente inconsistente).
+
+### Alternativas consideradas
+- **Manter "anexar por causa do RAG"** — rejeitada: é o erro factual que esta decisão corrige (provado pela leitura do mount em RAG).
+- **Forçar a ferramenta de código por prompt** — impossível: o toggle é do usuário. Resolvido como (a) lembrete no prompt de início e (b) ritual em que o assistente checa e pede para ligar.
+- **Limitar a orientação a "dev lê pelo mount; chat comum anexa"** — o usuário rejeitou a limitação: quis o caminho do mount como padrão, ativável sempre, sem incomodar os nichos que não precisam. Atendido (o caminho do mount é o recomendado; o anexo é o fallback do chat comum).
+
+### Consequências
+- Transferências de projetos com código (dev/game do usuário) ficam limpas: nada de anexar a cada vez; o assistente lê tudo do mount e só pede para ligar a ferramenta se faltar.
+- As diretrizes deixam de colidir: pedir arquivo necessário ≠ desperdício; o assistente para de inferir e passa a pedir; e pausa diante de versão desatualizada.
+- **A vigiar:** confirmar em uso real que o ritual de checar o mount não atrita com nichos sem ferramenta de código (deve ser inócuo — cai no fallback de anexo).

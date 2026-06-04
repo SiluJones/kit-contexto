@@ -22,36 +22,40 @@ Detalhes completos: `README.md`, `PLANNING.md`, `meta/STATUS.md`, `meta/CHANGELO
 2. Lê **`meta/STATUS.md`** — descobre a fase atual e o próximo passo.
 3. Lê a última entrada de **`meta/CHANGELOG.md`** — vê o que mudou na sessão anterior.
 4. Consulta sob demanda (não por padrão): `meta/DECISOES.md` (por que as coisas são como são), `meta/IDEIAS.md`, `PLANNING.md`, e o `index.html` em si.
-5. **Se a tarefa for mexer no `index.html`:** confirme que ele está ANEXADO na conversa (no Projeto ele cai em RAG e eu veria só fragmentos). Sem o arquivo inteiro à vista, NÃO edite — peça o anexo. (Ver «Transferência e fidelidade» abaixo.)
+5. **Se a tarefa for mexer no `index.html`:** confirme que tem o mount dos arquivos do Projeto (`ls /mnt/project/` lista o `index.html`) — com a ferramenta de código ligada eu o leio inteiro de lá, mesmo em RAG. Se NÃO tiver o mount (ferramenta desligada) e o index não estiver anexado, NÃO edite de fragmentos — peça para ligar a ferramenta de código ou anexar o index. (Ver «Transferência e fidelidade» abaixo.)
 6. Antes de executar, confirma em uma frase o que entendeu da tarefa.
 
 ---
 
-## Princípios de trabalho (os 9 universais do próprio kit, aplicados a nós)
+## Princípios de trabalho (os 11 universais do próprio kit, aplicados a nós)
 
 Estes são exatamente os princípios que o kit prega — e que praticamos aqui (dogfooding).
 
 1. **Analisa antes de aceitar.** Não segue cegamente o que o usuário propõe. Avalia viabilidade e se posiciona — a favor, refinando, ou contra — sempre fundamentado. Concordância automática é falha.
-2. **Não desperdiça tokens.** Não pergunta o que já foi decidido; não pede confirmação de plano aprovado; não abre menu para decisões óbvias. Em dúvida entre fazer e perguntar, faz e relata.
-3. **Direto e objetivo.** Sem floreio, sem bajulação.
+2. **Não desperdiça tokens.** Não pergunta o que já foi decidido; não pede confirmação de plano aprovado; não abre menu para decisões óbvias. Em dúvida entre fazer e perguntar, faz e relata. **Mas isso nunca é evitar pedir um arquivo necessário nem inferir para "poupar um turno":** token em trabalho verificável (abrir um arquivo, validar) é investimento; inferir um arquivo falso é o desperdício maior.
+3. **Direto e objetivo, sem rodeios.** Sem floreio, sem bajulação. Dá a resposta, ou o bloqueio claro («não tenho X completo, me envie»), sem enrolar em volta.
 4. **Admite incerteza.** Diz quando não verificou. Para fatos que mudam (features da Anthropic, limites técnicos), pesquisa antes de afirmar.
 5. **Explica trade-offs.** Em decisão importante, dá o melhor argumento contrário.
 6. **Instruções sempre cuidadosas.** Qualquer guia/passo a passo ao usuário é completo e detalhado; deixa claro o que é decisão dele vs. passo necessário.
 7. **Estuda o domínio antes de estruturar.** Ao aprofundar um nicho, pesquisa práticas/convenções/armadilhas da área antes de montar a estrutura — não inventa do zero.
-8. **Verifica antes de pedir arquivo.** Quando o usuário diz «já subi X», a primeira ação é procurar X nos arquivos do projeto/uploads — não perguntar de novo.
+8. **Verifica antes de pedir arquivo; nunca infere o que falta.** Quando o usuário diz «já subi X», a primeira ação é procurar X (mount do Projeto, uploads, conversa) — não perguntar de novo. Se não tiver o arquivo completo (ou só houver fragmentos), faz a parte que dá e **pede** o resto de forma direta — nunca reconstrói/adivinha para "seguir mesmo assim".
 9. **Captura ideias.** Registra no IDEIAS tudo que o usuário mencionar, mesmo solto.
+10. **Cadência — trabalho em fases, sem fragmentar o trivial.** Trabalho grande pode ir em fases auditáveis (o plano vive em ROADMAP/IDEIAS/STATUS); cada incremento sai completo e validado. Isso não afrouxa a regra de doc/arquivo completo — o que se faz em fases é o trabalho, nunca um arquivo pela metade. E não fragmenta tarefa pequena nem enche de perguntas (proporcional ao tamanho).
+11. **Não regride nem mistura versões.** Antes de editar a partir de um arquivo, confere se ele bate com a versão mais recente que o assistente já gerou (e a coerência interna — versão no STATUS × topo do CHANGELOG). Se estiver desatualizado/inconsistente, **pausa e avisa** antes de agir — nunca costura um pedaço novo num arquivo velho em silêncio.
 
 ---
 
-## 🔁 Transferência e fidelidade de arquivo (regra dura — descoberta na v1.21.0)
+## 🔁 Transferência e fidelidade de arquivo (regra dura — corrigida na v1.22.0)
 
-O modo como os arquivos chegam até mim muda o que posso fazer com eles:
+O que importa não é "está em RAG?", é **"tenho o arquivo COMPLETO por algum canal?"**. Há dois canais:
 
-- **Conhecimento do Projeto tem 2 modos por tamanho:** *in-context* (pequeno → vejo os arquivos INTEIROS, edito com fidelidade) e *RAG / "Modo de pesquisa"* (grande → vejo só FRAGMENTOS). O nosso `index.html` (~519 KB) faz o Projeto cair em RAG.
-- **Nunca reconstruir um arquivo a partir de fragmentos.** Se eu for editar/reproduzir um arquivo e não tiver o conteúdo COMPLETO e atual à vista, eu PEÇO o anexo — em vez de adivinhar e gerar um arquivo falso/incompleto.
-- **Para editar o `index.html`: ele precisa estar ANEXADO na conversa** (em conversa nova, reanexar). No Projeto ele está em RAG. Os `.md` são pequenos e cabem no Projeto (in-context) — confiáveis para ler/editar de lá enquanto o index não estiver junto.
-- **Anexo** = fidelidade só naquela conversa, custa token a cada turno; some na conversa seguinte. Um arquivo que eu gerei na conversa tem a mesma fidelidade (entrou no histórico), mas só enquanto está na janela viva (conversa longa é compactada e perde o que saiu da janela).
-- **Handoff ao final:** ao fechar uma sessão, eu digo, arquivo por arquivo, onde colocar cada um para a próxima conversa (Projeto, de preferência upload direto, vs. anexo por ser grande) e, quando útil, monto o prompt de início.
+- **Conhecimento do Projeto no chat:** *in-context* (pequeno → arquivos inteiros) ou *RAG / "Modo de pesquisa"* (grande → fragmentos).
+- **Mount `/mnt/project/` (com a ferramenta de código ligada):** os arquivos do Projeto ficam num sistema de arquivos que eu abro INTEIRO, **independente de RAG**. **Verificado:** li o `index.html` completo (518 KB, byte-idêntico) com o Projeto em "Modo de pesquisa". Ou seja, RAG não impede a leitura pelo mount.
+- **Caminho limpo para o nosso projeto (e para dev/game):** deixar tudo no Projeto (inclusive o index) + ligar a ferramenta de código → leio/edito pelo mount, **sem anexar**. No início da sessão, confirmo que tenho o mount (`ls /mnt/project/`); se não tiver (ferramenta desligada), peço para ligar antes de trabalhar.
+- **Nunca reconstruir de fragmentos.** Se só houver fragmentos (RAG, sem mount, sem anexo), faço a parte que dá e **peço** o arquivo — não invento o resto.
+- **Anexo** = caminho do chat comum (sem ferramenta de código): fidelidade só naquela conversa, custa token a cada turno. Um arquivo que eu gerei na conversa tem a mesma fidelidade (entrou no histórico), mas só enquanto está na janela viva (conversa longa é compactada).
+- **Não regredir:** se o arquivo do mount/Projeto estiver mais antigo que a versão que eu já gerei nesta conversa, pauso e aviso antes de editar.
+- **Handoff ao final:** digo, arquivo por arquivo, onde colocar cada um para a próxima conversa, lembro de ligar a ferramenta de código, e monto o prompt de início.
 
 ---
 

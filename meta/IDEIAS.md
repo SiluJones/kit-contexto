@@ -237,5 +237,13 @@ Após o Custom Inteligente, avaliar oferecer "exemplos" prontos para criar insta
 
 ---
 
+## i-N9 (extensão v1.22.0) — Mount/ferramenta de código no protocolo + diretrizes refinadas — ✅ IMPLEMENTADA
+Continuação da i-N9. O usuário trouxe duas conversas (`Tentativa_1.md`, `Analisada.md`) que expuseram uma divergência (uma dizia "leio do mount em RAG, não precisa anexar"; a outra dizia "anexe por causa do RAG") e atritos entre diretrizes. **Verifiquei empiricamente** que o `/mnt/project/` é um mount lido inteiro pela ferramenta de código mesmo em RAG (li o index completo, byte-idêntico). Resultado: corrigida a seção de transferência (o critério é "tenho o arquivo COMPLETO?", não "está em RAG?"); adicionado o caminho limpo (tudo no Projeto + ferramenta de código → mount, sem anexar) + ritual de checar o mount; e refinadas as diretrizes universais (BEHAVIORS_BASE 9→11): P2 esclarecido, P3 "sem rodeios", P8 anti-inferir, **P10 Cadência**, **P11 Não regride/mistura versões**. Ver D-016.
+
+## i-N11 — "Ativar a ferramenta de código" como passo padrão do handoff (do usuário) — ✅ IMPLEMENTADA (v1.22.0)
+O usuário quis que, para os projetos dele (dev/game), toda transferência já comece com a ferramenta de código ligada e usando o mount — sem ter que pedir a cada vez para verificar se dá para atualizar scripts/metadados, e sem se limitar a "dev lê pelo mount; chat comum anexa". Atendido: o prompt de início gerado lembra de ligar a ferramenta de código; o CLAUDE.md manda o assistente checar o mount no início e pedir para ligar se faltar. (O toggle em si é do usuário — não dá para um prompt ligar sozinho; o kit resolve com lembrete + ritual de verificação.)
+
+---
+
 ## Nichos como ideias FUTURAS (adiados de propósito pelo usuário)
 Ver NICHOS-CANDIDATOS.md (recuperado dos PLANNING). Não fazer agora. Prioridade do assistente se um dia expandir: Educação & Cursos (nº1); Desenvolvimento Pessoal/Journaling (cuidado: sensível); depois Jurídico/Podcast/Tradução. Tradução & Localização foi sugestão do assistente (não estava no PLANNING).
