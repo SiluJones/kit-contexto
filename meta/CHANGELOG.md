@@ -1,6 +1,24 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.24.0**.
+> Histórico de versões. Versão atual: **v1.25.0**.
+
+---
+
+## v1.25.0 — 2026-06-04 — Fluxo de preset: Ativar de verdade, editar/trocar, nome pré-preenchido
+
+Refinamento do fluxo de presets do Custom (e do Custom Inteligente, que o reusa), a partir de teste em navegador: "reutilizar / ativar / excluir" não estava claro e o "Aplicar" tinha um footgun. Sem mudança de arquitetura — conserto + UX sobre o motor existente.
+
+### Conserto + UX de preset
+- **Footgun do "Aplicar" consertado:** ativar sem digitar um nome **zerava** o preset em silêncio (o `setNiche` relia `LS_PRESET_CURR`, não achava o preset não-salvo e anulava). Agora o botão é **"⚡ Ativar este nicho"** (ação primária) e **sempre persiste** o preset antes de ativar — com o nome digitado ou um **derivado do título** (`slugifyName`). Ativar passou a refletir de fato em Início/Instruções/Prompts/Templates.
+- **Sai do "preso":** quando um nicho custom está ativo, uma **barra** ("Usando o nicho: X · ✎ Editar / trocar nicho", via `injectActiveCustomBar`) permite voltar ao construtor com o preset carregado — e de lá trocar para outro salvo pelo dropdown. Antes, com preset ativo, o construtor e o dropdown sumiam (lock-out).
+- **Nome pré-preenchido (item 3 do plano):** ao importar no Custom Inteligente, "Nome para salvar" já vem com um slug do título combinado — "Ativar"/"Salvar" funcionam de primeira.
+- **Nome/seleção persistem:** o nome do preset agora fica em `STATE._cf._presetName`, restaurado pelo template a cada re-render (antes, qualquer rebuild — carregar/dispensar/seletor de conflito — apagava o campo `#cf-name`).
+- **Texto de ajuda** sob os botões explicando Ativar / Salvar / Carregar / Excluir.
+- **Mensagem de vazio da Início** agora é acionável (aponta para o Custom Inteligente / Ativar) em vez de só "crie um preset".
+
+### Validação
+- Novo teste `validate-reuse.js` (16 checagens): ativar com nome vazio (footgun), barra editar/trocar, carregar preset no editor, excluir. Regressão verde: 18/18 nichos, transições, compose, conflito. `node --check` ok; tags balanceadas (div 267/267). Índice ~531 KB / 8066 linhas.
+- Verificado por teste: com preset ativo, a Início lista os arquivos do nicho (não era bug — vazio = nenhum preset ativo; lembrar do `localStorage` por origem: presets do site publicado não aparecem no arquivo local e vice-versa).
 
 ---
 
