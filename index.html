@@ -7920,7 +7920,8 @@ function toPreset(cf, name){
     outputs: cf.outputs || [],
     promptsExtra: (cf.promptsExtra || []).map(p => ({
       id: p.id, title: p.title, when: p.when,
-      body: (function(text){ return function(){ return text; }; })(p.body)
+      // body como STRING: presets vão pro localStorage via JSON.stringify, que descarta funções.
+      body: (typeof p.body === "function") ? (function(){ try{return p.body({},{});}catch(_){return "";} })() : (p.body || "")
     }))
   };
 }
