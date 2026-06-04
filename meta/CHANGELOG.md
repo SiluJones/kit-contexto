@@ -1,6 +1,28 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.23.0**.
+> Histórico de versões. Versão atual: **v1.24.0**.
+
+---
+
+## v1.24.0 — 2026-06-04 — Custom Inteligente (etapa 1): 2º construtor, concatenação, dedup/conflito; re-entrância dos builders
+
+Primeira etapa do **Custom Inteligente** (D-014): um SEGUNDO nicho de construção que parte da **composição assistida** de nichos prontos, mantendo o Custom (Blank) como página em branco. Feito em 4 sub-fases auditáveis (P10), validando a cada passo. Também corrige um **bug latente** dos construtores e os torna re-entrantes. **18 nichos** agora (era 17): 16 de conteúdo + 2 construtores.
+
+### Custom Inteligente — etapa 1
+- **2º construtor (`NICHES.customSmart`):** card ao lado do Blank (`category:"special"`), tema próprio (`data-niche="customSmart"`), hero próprio, `isBuilder:true`. `getCurrentNiche` generalizado para `raw.isBuilder` (ambos os construtores usam `mergeCustom`).
+- **Chips (1.1):** fileira dos 16 nichos de conteúdo com seleção múltipla, contador ao vivo e "limpar seleção" (`renderSmartCustomForm`, `contentNiches`; estado em `STATE._sc`).
+- **Concatenação (1.2):** `composeFromNiches` junta contextFiles + behaviors + promptsExtra + convenções + saídas dos nichos marcados; prompts renumerados G,H,I…; `body` de prompt (função `(p,n)=>str`) é renderizado para string; pré-preenche o editor Blank (`STATE._cf`) e cai no motor existente (`toPreset → mergeCustom → presets`). Banner de resumo no editor.
+- **Dedup com conflito (1.3):** distingue duplicata **idêntica** (unifica em silêncio) de **conflito** (mesmo nome, conteúdo diferente → preserva versões e oferece **seletor de qual manter** por arquivo); comportamento com definição divergente é **sinalizado, não bloqueado** (spec-kit-like). O banner separa "idênticos unificados" de "⚠ conflitos".
+
+### Conserto de bug + robustez
+- **Bug latente (pré-existente, afetava o Blank):** `renderCustomForm` reescrevia a coluna de controles inteira e **nada restaurava o esqueleto** ao sair de um nicho construtor → controles errados/cascata (o próximo construtor também falhava). Conserto: `captureControlsSkeleton`/`restoreControlsSkeleton` + restauração no topo de `renderBuilder` e dos dois formulários construtores.
+- **Re-entrância:** `renderCustomForm` e `renderSmartCustomForm` agora são idempotentes (restauram o esqueleto antes de reescrever) → re-chamadas diretas (cf-load/save/delete, "limpar seleção", "dispensar") param de abortar em silêncio.
+
+### Registros
+- **D-018** (DECISOES): o mount `/mnt/project/` é alimentado por **upload direto**, NÃO pelo conector do GitHub (que alimenta só o RAG/Conhecimento do Projeto); corrige a conclusão de D-016/v1.22.0. O mount chega achatado.
+
+### Validação
+- Harness jsdom **reconstruído** (o ambiente reseta entre sessões), com **boot limpo por nicho** (evita contaminação do construtor que reescreve a coluna). `validate.js` **18/18 nichos, 0 erros**; `validate-switch.js` (5 transições construtor↔normal); `validate-compose.js` (compor dev+pixel, 15 checagens); `validate-conflict.js` (conflito + seletor, 18 checagens). `node --check` (0 erros) + tags balanceadas (div 264/264). Índice ~528 KB / 8024 linhas. **Caso real:** dev+pixel revela 2 conflitos (`STATUS.md`, `LOG-TEMPLATE.md`).
 
 ---
 

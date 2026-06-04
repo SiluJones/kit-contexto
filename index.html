@@ -7364,24 +7364,50 @@ function composeFromNiches(niches){
     prompts: { added:0 }
   };
 
-  // arquivos de contexto — dedup por nome (case-insensitive), mantém a 1ª ocorrência
-  const filesByName = new Map();
+  report.conflicts = { files:[], behaviors:[] };
+
+  // arquivos de contexto — dedup por nome; distingue duplicata IDÊNTICA de CONFLITO (conteúdo difere)
+  const filesByName = new Map(); // key -> { name, versions:[{from,content,cat,role,_norm}] }
   norm.forEach((n, ni) => (n.contextFiles||[]).forEach(f => {
     const key = (f.name||"").trim().toLowerCase(); if(!key) return;
-    if(filesByName.has(key)){ report.files.merged.push({ name:f.name, from:niches[ni].label }); }
-    else { filesByName.set(key, { name:f.name, cat:f.cat, role:f.role, content:f.content }); report.files.added++; }
+    const from = niches[ni].label, _norm = (f.content||"").trim();
+    if(!filesByName.has(key)){
+      filesByName.set(key, { name:f.name, versions:[{ from, content:f.content, cat:f.cat, role:f.role, _norm }] });
+      report.files.added++;
+    } else {
+      const e = filesByName.get(key);
+      if(e.versions.some(v => v._norm === _norm)){ report.files.merged.push({ name:f.name, from, identical:true }); }
+      else { e.versions.push({ from, content:f.content, cat:f.cat, role:f.role, _norm }); report.files.merged.push({ name:f.name, from, identical:false }); }
+    }
   }));
-  const files = [...filesByName.values()];
+  const files = [];
+  for(const e of filesByName.values()){
+    const kept = e.versions[0];
+    files.push({ name:e.name, cat:kept.cat, role:kept.role, content:kept.content });
+    if(e.versions.length > 1){
+      report.conflicts.files.push({
+        name: e.name, keptFrom: kept.from,
+        versions: e.versions.map(v => ({ from:v.from, content:v.content, cat:v.cat, role:v.role }))
+      });
+    }
+  }
 
-  // comportamentos — dedup por id e por rótulo
-  const bhById = new Map(), bhByLabel = new Map(), behaviors = [];
+  // comportamentos — dedup por id/rótulo; se a definição difere, sinaliza conflito (não bloqueia)
+  const bhKept = new Map(), behaviors = [];
   norm.forEach((n, ni) => (n.behaviors||[]).forEach(b => {
-    const idKey = (b.id||"").trim(), lblKey = (b.label||"").trim().toLowerCase();
-    if((idKey && bhById.has(idKey)) || (lblKey && bhByLabel.has(lblKey))){
-      report.behaviors.merged.push({ label:b.label, from:niches[ni].label });
+    const idKey = (b.id||"").trim(), lblKey = (b.label||"").trim().toLowerCase(), from = niches[ni].label;
+    const hit = (idKey && bhKept.get("id:"+idKey)) || (lblKey && bhKept.get("lbl:"+lblKey));
+    if(hit){
+      const sameDef = (hit.item.def||"").trim() === (b.def||"").trim();
+      report.behaviors.merged.push({ label:b.label, from, identical:sameDef });
+      if(!sameDef){
+        let c = report.conflicts.behaviors.find(x => (x.label||"").toLowerCase() === (hit.item.label||"").toLowerCase());
+        if(!c){ c = { label:hit.item.label, kept:{ from:hit.from, def:hit.item.def }, alternatives:[] }; report.conflicts.behaviors.push(c); }
+        c.alternatives.push({ from, def:b.def });
+      }
     } else {
       const item = { id:b.id, label:b.label, def:b.def };
-      if(idKey) bhById.set(idKey, item); if(lblKey) bhByLabel.set(lblKey, item);
+      if(idKey) bhKept.set("id:"+idKey, { item, from }); if(lblKey) bhKept.set("lbl:"+lblKey, { item, from });
       behaviors.push(item); report.behaviors.added++;
     }
   }));
@@ -7429,23 +7455,49 @@ function composeFromNiches(niches){
 
 /* Banner do resumo de importação (deduplicação visível) mostrado no editor. */
 function renderImportReport(r){
-  const fd = r.files.merged.length, bd = r.behaviors.merged.length;
+  const conf = r.conflicts || { files:[], behaviors:[] };
+  const idDup = (r.files.merged||[]).filter(m => m.identical === true).length;
+  const fConf = conf.files.length, bConf = conf.behaviors.length;
+  const W = "color:#fbbf24"; // cor de atenção, independente do tema
   const s = (n, sing, plur) => `<b>${n}</b> ${n === 1 ? sing : plur}`;
   const parts = [
-    s(r.files.added, "arquivo", "arquivos") + (fd ? ` <span style="opacity:.8">(${fd} duplicado${fd===1?"":"s"} unificado${fd===1?"":"s"})</span>` : ""),
-    s(r.behaviors.added, "comportamento", "comportamentos") + (bd ? ` <span style="opacity:.8">(${bd} unificado${bd===1?"":"s"})</span>` : ""),
+    s(r.files.added, "arquivo", "arquivos")
+      + (idDup ? ` <span style="opacity:.8">(${idDup} idêntico${idDup===1?"":"s"} unificado${idDup===1?"":"s"})</span>` : "")
+      + (fConf ? ` · <span style="${W}">⚠ ${fConf} conflito${fConf===1?"":"s"}</span>` : ""),
+    s(r.behaviors.added, "comportamento", "comportamentos")
+      + (bConf ? ` · <span style="${W}">⚠ ${bConf} divergente${bConf===1?"":"s"}</span>` : ""),
     s(r.prompts.added, "prompt G+", "prompts G+"),
     s(r.conventions.added, "convenção", "convenções") + (r.conventions.dups ? ` <span style="opacity:.8">(${r.conventions.dups} repetida${r.conventions.dups===1?"":"s"})</span>` : ""),
     s(r.outputs.added, "saída", "saídas") + (r.outputs.dups ? ` <span style="opacity:.8">(${r.outputs.dups} repetida${r.outputs.dups===1?"":"s"})</span>` : "")
   ];
-  const dupList = fd
-    ? `<div style="margin-top:8px;font-size:11.5px;color:var(--ink-faint);line-height:1.55">Arquivos repetidos unificados (mantida a 1ª ocorrência): ${r.files.merged.map(m => `<code>${escapeHTML(m.name)}</code> <span style="opacity:.7">(de ${escapeHTML(m.from)})</span>`).join(", ")}.</div>`
-    : "";
+
+  let conflictHTML = "";
+  if(fConf){
+    conflictHTML += `<div style="margin-top:10px;font-size:12px;line-height:1.6">
+      <b style="${W}">⚠ ${fConf} conflito${fConf===1?"":"s"} de arquivo</b> <span style="color:var(--ink-faint)">(mesmo nome, conteúdo diferente — escolha qual manter)</span>
+      ${conf.files.map((c, i) => `
+        <div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <code>${escapeHTML(c.name)}</code>
+          <select class="txt" data-conflict-file="${i}" style="padding:4px 8px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:11.5px;width:auto">
+            ${c.versions.map(v => `<option value="${escAttr(v.from)}"${v.from===c.keptFrom?" selected":""}>${escapeHTML(v.from)}${v.from===c.keptFrom?" (mantido)":""}</option>`).join("")}
+          </select>
+        </div>`).join("")}
+    </div>`;
+  }
+  if(bConf){
+    conflictHTML += `<div style="margin-top:10px;font-size:12px;line-height:1.6">
+      <b style="${W}">⚠ ${bConf} comportamento${bConf===1?"":"s"} com definição divergente</b> <span style="color:var(--ink-faint)">(mantida a 1ª — revise no painel abaixo)</span>
+      <div style="margin-top:4px;color:var(--ink-faint);font-size:11.5px;line-height:1.55">
+        ${conf.behaviors.map(c => `“${escapeHTML(c.label)}” <span style="opacity:.7">(${escapeHTML(c.kept.from)} vs ${c.alternatives.map(a=>escapeHTML(a.from)).join(", ")})</span>`).join("; ")}
+      </div>
+    </div>`;
+  }
+
   return `
     <div id="cf-import-report" style="border:1px solid var(--amber);border-radius:8px;padding:11px 12px;margin:0 0 16px;background:var(--grad-a)">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-        <div style="font-size:12.5px;line-height:1.65">
-          <b>Importado de:</b> ${r.niches.map(escapeHTML).join(", ")}.<br>${parts.join(" · ")}${dupList}
+        <div style="font-size:12.5px;line-height:1.65;flex:1 1 auto;min-width:0">
+          <b>Importado de:</b> ${r.niches.map(escapeHTML).join(", ")}.<br>${parts.join(" · ")}${conflictHTML}
         </div>
         <button class="btn ghost sm" id="cf-import-dismiss" title="dispensar" style="flex:0 0 auto;padding:2px 9px">×</button>
       </div>
@@ -7630,6 +7682,21 @@ function renderCustomForm(){
 
   const cfDismiss = $("#cf-import-dismiss");
   if(cfDismiss) cfDismiss.addEventListener("click", () => { delete STATE._cf._importReport; renderCustomForm(); });
+
+  // seletor de versão para arquivos em conflito (mesmo nome, conteúdo diferente)
+  $$("[data-conflict-file]").forEach(sel => {
+    sel.addEventListener("change", () => {
+      const ci = +sel.dataset.conflictFile;
+      const c = STATE._cf._importReport && STATE._cf._importReport.conflicts.files[ci];
+      if(!c) return;
+      const chosen = c.versions.find(v => v.from === sel.value);
+      if(!chosen) return;
+      c.keptFrom = chosen.from;
+      const f = STATE._cf.files.find(x => (x.name||"").toLowerCase() === c.name.toLowerCase());
+      if(f){ f.content = chosen.content; if(chosen.cat) f.cat = chosen.cat; if(chosen.role) f.role = chosen.role; }
+      renderCustomForm();
+    });
+  });
 
   const sync = (sel, key) => {
     const el = $(sel); if(!el) return;

@@ -295,7 +295,7 @@ Adicionar um protocolo **transversal** (no `UPDATE_PROTOCOL`, portanto no CLAUDE
 
 ## D-016 — Mount + ferramenta de código no protocolo de transferência; diretrizes refinadas
 
-**Data:** 2026-06-03 · **Status:** aceita e implementada (v1.22.0)
+**Data:** 2026-06-03 · **Status:** aceita e implementada (v1.22.0) · **parcialmente superada por D-018** (a alimentação do mount é por upload direto, NÃO pelo conector do GitHub)
 
 ### Contexto
 Continuação da v1.21.0. Dois gatilhos do usuário: (a) ele trouxe **duas conversas** (`Tentativa_1.md` = meu raciocínio; `Analisada.md` = uma conversa de outro projeto, o de scraping) e apontou uma **divergência**: lá o assistente afirmava ler qualquer arquivo do Projeto inteiro pelo mount mesmo em RAG e "não precisar anexar"; aqui eu havia dito que o index "precisa ser anexado porque está em RAG". (b) Ele identificou **atrito entre diretrizes** — o "não desperdiçar tokens" empurrava o assistente a *inferir* um arquivo faltante em vez de pedir, e algumas conversas não pausavam ao receber um arquivo desatualizado, gerando arquivos inconsistentes (relato: "2 arquivos incompletos que se completavam").
@@ -350,3 +350,31 @@ Antes de transferir para o Custom, o usuário levantou refinamentos finos (e ped
 - As diretrizes deixam de se chocar entre si (token × pedir arquivo × inferir × versão).
 - Projetos multi-pasta ficam viáveis sem o usuário saber a estrutura (a IA mapeia).
 - **Pendente (teste limpo):** confirmar se o GitHub preserva subpastas no mount — exige conversa só-GitHub. Até lá, prefixo de pasta é a aposta segura para nomes iguais.
+
+---
+
+## D-018 — O mount `/mnt/project/` é alimentado por upload direto, NÃO pelo conector do GitHub
+**Data:** 2026-06-04 · **Status:** ativa (supersede a parte de D-016 sobre alimentação do mount)
+
+### Contexto
+Desde a v1.22.0 (D-016) assumimos "tudo no Projeto + ligar a ferramenta de código → leio os arquivos inteiros pelo mount". Mas aquela verificação foi feita com **uploads diretos presentes**, confundindo a causa. D-017/v1.23.0 já anotava o mount **achatado** e recomendava um **teste limpo** (só-GitHub) para isolar.
+
+### Experimento (controlado, dois estados — prints do usuário)
+- **Estado 1 — só o conector GitHub** ("SiluJones/kit-contexto", Modo de pesquisa/RAG, 12% da capacidade): `ls -R /mnt/project/` → **VAZIO** (0 arquivos).
+- **Estado 2 — uploads diretos dos `.md`** no Projeto: `/mnt/project/` → **POPULADO** (15 arquivos), **achatado** (sem subpastas, mesmo o repo do GitHub tendo `meta/`/`logs/`). Confirmado lendo o `index.html` completo (523.307 bytes) pelo mount.
+
+### Decisão / conclusão
+- O **conector do GitHub alimenta o RAG / Conhecimento do Projeto** (busca semântica funciona; os caminhos de subpasta `meta/`, `logs/` aparecem na busca) **mas NÃO alimenta o mount `/mnt/project/`**.
+- **Só o upload direto** de arquivos no Projeto popula o mount — e eles chegam **achatados** (o upload não carrega estrutura de pasta).
+- O **RAG não bloqueia** a leitura pelo mount: um arquivo que ESTÁ no mount é lido inteiro, RAG ou não. O que estava errado era a **inferência** de que o conector do GitHub populava o mount.
+
+### Corrige
+A conclusão de **D-016** (e as notas da v1.22.0/v1.23.0) de que "tudo no Projeto + ferramenta de código → mount". Isso vale para arquivos **subidos direto**; via conector do GitHub, eles ficam **só no RAG**. A observação empírica de D-016 (ler o index pelo mount em RAG) continua correta — mas porque o index estava lá por **upload direto**, não pelo conector.
+
+### Consequências
+- **Dogfooding:** para eu ler/editar o `index.html` (e os `.md`) pelo mount, o usuário sobe os arquivos **direto** no Projeto, sem depender do conector do GitHub. (GitHub segue ótimo para versão/hospedagem e para a busca por RAG.)
+- **Colisão de nomes:** mount achatado → nomes iguais em pastas diferentes colidem; diferenciar com prefixo de pasta ou confiar no mapa que a IA faz no início.
+- **Pendência gerada:** a orientação de mount/RAG/anexo **gerada pelo kit** (CLAUDE.md / tela "Tokens & Fluxos") ainda diz "tudo no Projeto + ferramenta de código → mount", impreciso para projetos conectados via GitHub — corrigir num passe dedicado (muda conteúdo em todos os nichos; re-validar 18/18). Anotado no STATUS.
+
+### A vigiar
+Se o usuário sincronizar muitos arquivos via GitHub mas precisar deles no mount, lembrar de subir direto os que serão editados/lidos inteiros.

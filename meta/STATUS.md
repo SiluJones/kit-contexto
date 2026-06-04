@@ -1,64 +1,58 @@
-# STATUS — Kit de Contexto Universal — 2026-06-03
+# STATUS — Kit de Contexto Universal — 2026-06-04
 
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
-> Versão atual publicada: **v1.23.0**. Índice em ~519 KB. Teste: 17/17 nichos, 0 erros JS.
+> Versão atual: **v1.24.0**. Índice ~528 KB / 8024 linhas. Teste: **18/18 nichos, 0 erros JS** (boot limpo por nicho).
 
 ## Fase atual
-🏁 **Refinamento área por área COMPLETO** + ideias transversais implementadas (commit ao final, canal de atualização, privacidade e agora **fidelidade/contexto + plano de transferência**). Todos os 16 nichos de conteúdo estão no padrão de ouro.
+🏁 **Custom Inteligente — ETAPA 1 COMPLETA.** O segundo nicho de construção está no ar e validado: chips dos 16 nichos → importação por **concatenação** → **deduplicação visível** → **checagem de conflito** (arquivos com seletor de versão; comportamentos divergentes sinalizados). Tudo cai no motor existente (`toPreset → mergeCustom → presets`). Nesta sessão também consertei um **bug latente** dos construtores (a coluna de controles não voltava ao sair de um nicho construtor) e tornei os formulários **re-entrantes**.
 
-**PRÓXIMO TRABALHO (decidido pelo usuário): o CUSTOM INTELIGENTE.** Ver a seção dedicada abaixo — é o item nº1. Esta sessão (v1.21.0) foi um desvio pedido pelo usuário para resolver uma lacuna de conhecimento sobre contexto/RAG/persistência antes de mexer no custom.
+Agora são **18 nichos**: 16 de conteúdo + **2 construtores** (custom "Blank" + customSmart "Inteligente").
 
-## ✅ Nichos no padrão de ouro (16 de 16 de conteúdo)
-- **Sérios (8):** dev, client, design, narrative, research, product, marketing, business.
-- **Criativos (8):** game, pixel, music, rpg, cuisine, animation, comics, brainstorm.
-- **custom:** gerador de nicho sob medida (formulário em branco — o "Blank"). Funciona, mas será complementado pelo Custom Inteligente.
+## ✅ O que entrou nesta sessão (v1.24.0)
+- **`NICHES.customSmart`** — 2º construtor (card ao lado do Blank, `category:"special"`), tema próprio (`data-niche="customSmart"`), hero próprio, `isBuilder:true`.
+- **Fase 1.1 — chips:** fileira dos 16 nichos de conteúdo com seleção múltipla, contador ao vivo, "limpar seleção".
+- **Fase 1.2 — concatenação:** `composeFromNiches` junta contextFiles + behaviors + promptsExtra + convenções + saídas dos nichos marcados; prompts renumerados G,H,I…; `body` de prompt (função) vira string; pré-preenche o editor Blank (`STATE._cf`) com banner de resumo.
+- **Fase 1.3 — dedup com conflito:** duplicata IDÊNTICA unifica em silêncio; CONFLITO (mesmo nome, conteúdo diferente) preserva versões e mostra **seletor de qual manter** por arquivo; comportamento com def divergente é **sinalizado** (não bloqueia).
+- **Conserto bug A + re-entrância:** `captureControlsSkeleton`/`restoreControlsSkeleton`; restauração no topo de `renderBuilder`, `renderCustomForm` e `renderSmartCustomForm` (corrige sair do construtor e re-chamadas diretas de cf-load/save/delete/limpar/dispensar).
+- **Generalização:** `getCurrentNiche` usa `raw.isBuilder` (não mais `id==="custom"`), então ambos os construtores usam `mergeCustom`.
 
-## 🎯 PRÓXIMO TRABALHO Nº1 — Custom Inteligente (já aprovado pelo usuário)
+## 🔎 ACHADO EMPÍRICO CONFIRMADO → D-018 (corrige D-016/D-017)
+Teste limpo entre dois estados (prints do usuário): **só o conector GitHub → `/mnt/project/` VAZIO**; **upload direto dos .md → mount POPULADO** (15 arquivos, achatado). Conclusão: **o conector do GitHub alimenta o RAG/Conhecimento do Projeto** (busca funciona, com subpastas `meta/`/`logs/` preservadas) **mas NÃO alimenta o mount da ferramenta de código. Só o upload direto popula o mount** (e chega achatado). O RAG por si **não** bloqueia o mount; o que muda é COMO o mount é alimentado. **Corrige a conclusão da v1.22.0/v1.23.0** ("deixar tudo no Projeto + ligar a ferramenta de código → leio pelo mount") — isso só vale se os arquivos foram subidos DIRETO; via conector do GitHub, ficam só no RAG.
 
-**O quê:** um SEGUNDO nicho de construção (mantendo o custom atual como "Blank"), que parte da composição assistida de nichos existentes.
-
-**Arquitetura aprovada (D-014):**
-- Mantém **2 nichos de construção** (não 3): (1) **Custom (Blank)** = o atual, página em branco; (2) **Custom Inteligente** = novo.
-- O Custom Inteligente abre com uma **fileira de chips dos 16 nichos**. Marcar um ou mais **importa o material (CONCATENA, não funde mágico)**: junta contextFiles, behaviors e promptsExtra, já preenchidos e editáveis.
-- **Deduplicação VISÍVEL** dos arquivos repetidos (STATUS/LOG que todos têm) e behaviors muito parecidos.
-- **Sub-painel = granularidade, não mecânica nova:** botão "escolher peças" por nicho marcado (importar inteiro vs. item a item). NÃO é uma terceira opção.
-- **Checagem de conflito (spec-kit-inspired):** avisar sobre behaviors contraditórios; sinalizar, não bloquear.
-- Cai no **motor existente** (mergeCustom + presets em localStorage) → editar e salvar como preset.
-- **NÃO fazer fusão automática opaca.** Composição assistida e revisável.
-
-**Risco:** baixo-médio. UI nova sobre motor existente. Fazer por partes, validando 17/17 a cada passo: (1) importação com concatenação + dedup; (2) sub-painel de seleção fina; (3) checagem de conflito.
-
-**Onde está o custom hoje no código:** `NICHES.custom` tem `isBuilder:true`. Em `renderBuilder`, há `if(niche.isBuilder && !STATE.customPreset)` que chama `renderCustomForm()`. Há `mergeCustom` e `LS_PRESETS` (localStorage) já implementados. O formulário atual é em branco — é o que o usuário achou intimidante.
+## 🎯 PRÓXIMO TRABALHO
+1. **Sub-painel de granularidade (etapa 2 do Custom Inteligente, D-014):** botão "escolher peças" por nicho marcado — importar inteiro vs. item a item (quais arquivos/behaviors/prompts de cada nicho). É refinamento sobre o motor já pronto; NÃO é 3ª opção.
+2. **Pré-preencher o nome do preset no "Aplicar" do Inteligente:** hoje "Aplicar" sem nome zera o preset (comportamento pré-existente do Blank, via round-trip de `LS_PRESET_CURR` no `setNiche`). Sugerir um nome a partir do label combinado, ao importar, fecha o fluxo de ponta a ponta.
+3. **Corrigir a orientação mount/RAG/anexo GERADA pelo kit (à luz de D-018):** o CLAUDE.md / tela "Tokens & Fluxos" ensina "tudo no Projeto + ferramenta de código → mount", impreciso para projetos conectados via GitHub. É mudança de conteúdo em TODOS os nichos → exige re-validação 18/18. Adiado de propósito desta faxina.
 
 ## 🎯 Outras pendências (sem urgência)
-
-1. **Revisar README/PLANNING** — README recebeu nesta sessão a explicação de contexto/RAG/anexos e o plano de transferência (alinhado ao que entrou na UI). PLANNING ainda pendente de uma revisão geral pós-MVP.
-2. **Revisar a qualidade das Instruções geradas** — confirmar se estão polidas/eficientes. Pendente.
+1. **Revisar README/PLANNING** — PLANNING pendente de revisão geral pós-MVP.
+2. **Revisar a qualidade das Instruções geradas** — confirmar polimento/eficiência.
 3. **Reagrupar narrative** (cosmético): hoje `group:"literary"`; é criativo. Só afeta tema visual.
-4. **Nichos novos (FUTURO, adiados de propósito):** ver `NICHOS-CANDIDATOS.md`. Prioridade se expandir: Educação & Cursos (nº1), Desenvolvimento Pessoal/Journaling (sensível), depois Jurídico/Podcast/Tradução.
-5. **spec-kit para dev/game (FUTURO):** quando o usuário tiver mais feedback de uso, pedirá análise do que do spec-kit torna esses nichos mais completos.
-6. **GitHub:** subir a v1.21.0 (e confirmar que v1.17→v1.20 subiram). Lembrete: a sincronização do GitHub é manual; para o que precisa estar fresco no Projeto, preferir upload direto.
+4. **MAPA.md** cita "17 prontos" — atualizar para refletir os 2 construtores (cosmético).
+5. **Nichos novos (FUTURO, adiados de propósito):** ver `NICHOS-CANDIDATOS.md` (Educação nº1, depois Desenvolvimento Pessoal/Journaling, Jurídico/Podcast/Tradução).
+6. **spec-kit para dev/game (FUTURO):** quando o usuário tiver mais feedback de uso.
 
-## 🆕 Funcionalidades do kit (acumuladas — todas validadas)
-- **Afixo nos downloads (v1.9.0):** prefixo/sufixo opcional. Padrão = nome original.
-- **Seletor de SO (v1.11.0):** Windows-CMD/PowerShell/macOS/Linux; injeta sintaxe de comando em Instruções e CLAUDE.md.
-- **fix selects do topbar (v1.11.1):** renderTopbar aceita `options:` e `opts:`; idioma corrigido (pt-BR→pt).
-- **Commit ao final + canal de atualização (v1.19.0):** no UPDATE_PROTOCOL (todos os nichos).
-- **Privacidade i-N2 (v1.20.0):** relevância + marcação, não censura.
-- **Fidelidade/contexto + plano de transferência (v1.21.0):** no UPDATE_PROTOCOL (todos os nichos) + tela "Tokens & Fluxos". Dois canais (Projeto/RAG vs. conversa), regra anti-arquivo-falso, e o plano de onde colocar cada arquivo + prompt de início para a próxima conversa.
-- **9 princípios universais** na fundação; CLAUDE.md separado das Instruções.
+## 🧪 Validação (regra dura: NUNCA publicar sem 18/18 e 0 erros)
+Harness jsdom **reconstruído nesta sessão** (o ambiente reseta entre sessões), com **boot limpo por nicho** (evita contaminação do construtor que reescreve a coluna). Quatro testes no scratchpad `/home/claude/kit/`:
+- `validate.js` — 18/18 nichos (setNiche + buildInstr + buildClaudeMd + controles não-vazios).
+- `validate-switch.js` — 5 transições construtor↔normal (bug A).
+- `validate-compose.js` — Fase 1.2 (compor dev+pixel: 15 checagens).
+- `validate-conflict.js` — Fase 1.3 (conflito + seletor: 18 checagens).
+Mais `node --check` no `<script>` extraído e balanceamento de tags. **Caso real:** dev+pixel revela 2 conflitos de arquivo (`STATUS.md`, `LOG-TEMPLATE.md`).
 
-## 📁 Ritual de nicho (se surgir um novo OU para o custom inteligente)
-1. Estudar (ler nicho atual + pesquisa web do domínio, 2-4 buscas com citações). 2. Projetar (núcleo enxuto + opcionais; behaviors; prompts G-L; triggersExtra). 3. Construir objeto isolado em `/home/claude/<nicho>_v2.js`. 4. Validar isolado. 5. Splice no index via marcadores de comentário. 6. Validar: extrair `<script>`, `node --check`, balanceamento de tags, jsdom 17/17. NUNCA publicar sem 17/17 e 0 erros. 7. Publicar + CHANGELOG (vX.Y.Z no topo) + STATUS (reescrito) + DECISOES (cresce, D-NNN). 8. present_files + git commit (formato CMD Windows).
-
-## ⚠️ Nota de fidelidade para o nosso próprio desenvolvimento (dogfooding) — CORRIGIDA na v1.22.0
-O que importa não é "está em RAG?", é **"tenho o `index.html` COMPLETO por algum canal?"**. **Verificado nesta sessão:** com a ferramenta de código ligada, os arquivos do Projeto ficam montados em `/mnt/project/` e eu os leio INTEIROS — li o `index.html` completo (518 KB, byte-idêntico) com o Projeto em "Modo de pesquisa" (RAG). Ou seja, o RAG **não** impede a leitura pelo mount. Então: o caminho limpo é deixar o index (e tudo) no Projeto + ligar a ferramenta de código, e eu leio/edito pelo mount, sem anexar. Anexar só é necessário no chat comum (sem ferramenta de código) ou se o arquivo não estiver no Projeto. (Correção do que esta nota dizia antes — "precisa anexar porque está em RAG" — que conflava os dois mecanismos. Detalhe em CONTEXT.md e D-016.)
+## 🗺 Onde está no código (v1.24.0; números aproximados, mudam ao editar)
+- `html[data-niche="customSmart"]` (CSS de tema) ~76.
+- `NICHES.customSmart` ~6151; `getCurrentNiche` usa `raw.isBuilder` ~6306; hero `case "customSmart"` ~6611.
+- Esqueleto dos controles: `CONTROLS_SKELETON`/captura/restaura ~6710; `renderBuilder` roteia customSmart ~6725.
+- `contentNiches` ~7347; `composeFromNiches` ~7356; `renderImportReport` ~7457; `renderSmartCustomForm` ~7506; `renderCustomForm` ~7581 (re-entrante; banner + seletor de conflito).
+- `toPreset` ~7865; `fromPreset` ~7885 (shape do preset; `body` de prompt vira função no preset).
 
 ## 🗂 Convenções
 - pt-BR em tudo, inclusive comentários de código. Nomes de template profissionais.
 - Entrega: arquivos completos em outputs/meta; o usuário organiza no repo.
 - Commit ao final: comando completo p/ CMD Windows (UMA linha, `-m` repetido), pronto para colar.
-- Usuário no CMD do Windows (C:\Users\alexk\Arquiteturas\kit-contexto).
+- Usuário no CMD do Windows (`C:\Users\alexk\Arquiteturas\kit-contexto`).
+- **Mount (D-018):** para ler/editar pelo mount, subir os arquivos DIRETO no Projeto (o conector do GitHub só alimenta o RAG). Mount chega achatado; nomes iguais em pastas diferentes colidem.
 
-## 💬 Última sessão (2026-06-03)
-Refino final antes de transferir (v1.23.0), sobre a v1.22.0. O usuário pediu para evitar choque entre diretrizes. **Achado verificado:** o mount `/mnt/project/` está **achatado** (sem subpastas; o repo do GitHub tem `meta/`, mas no mount tudo aparece na raiz) — com uploads diretos + GitHub duplicados não dá para isolar a causa; recomendado teste limpo (só-GitHub, conversa nova, `ls -R`). Refinados: **P8** (anti-inventar, com exceção para inferência PEDIDA), **P11** (usa a versão mais nova que tem, sem parar; só pára e pede quando não tem a que a tarefa exige), **handoff** (a IA mapeia a estrutura do mount no início e informa; multi-pasta = Projeto/mount, anexo é último recurso; aviso de colisão de nomes iguais), **canal de atualização** (preserva a estrutura do projeto ao integrar update; feedback opcional). Registrado **D-017**. Validado 17/17, 0 erros. **Próximo passo: Custom Inteligente** (etapa 1: importação com concatenação + dedup) **em conversa NOVA** com a **ferramenta de código ligada** e tudo no Projeto. Se quiser, naquela conversa, faça o **teste limpo do mount** (só-GitHub, sem uploads diretos) para confirmar se subpastas são preservadas.
+## 💬 Última sessão (2026-06-04)
+Em conversa nova, com a ferramenta de código ligada e os arquivos subidos DIRETO no Projeto. Confirmado **D-018** (mount só via upload direto, achatado; conector do GitHub só RAG). Construído e validado o **Custom Inteligente etapa 1** (1.0 esqueleto → 1.1 chips → 1.2 concatenação → 1.3 dedup/conflito), além do **conserto do bug A** e da **re-entrância** dos construtores. Tudo 18/18, 0 erros. **Próximo:** sub-painel de granularidade (etapa 2) e o pré-preenchimento do nome no "Aplicar".
