@@ -6703,7 +6703,24 @@ function renderTopbar(niche){
 /* =========================================================
    6. BUILDER
    ========================================================= */
+/* Esqueleto estático da coluna de controles, capturado intacto na 1ª renderização
+   (antes de qualquer nicho construtor reescrever a coluna). Restaurá-lo no topo do
+   renderBuilder garante: (a) que um construtor sempre tenha os hosts para reescrever
+   e (b) que um nicho normal recupere #g-behaviors etc. ao voltar de um construtor. */
+let CONTROLS_SKELETON = null;
+function captureControlsSkeleton(){
+  const c = document.querySelector(".controls");
+  if(c && CONTROLS_SKELETON === null) CONTROLS_SKELETON = c.innerHTML;
+}
+function restoreControlsSkeleton(){
+  const c = document.querySelector(".controls");
+  if(c && CONTROLS_SKELETON !== null) c.innerHTML = CONTROLS_SKELETON;
+}
+
 function renderBuilder(niche){
+  captureControlsSkeleton();
+  // se um construtor anterior reescreveu a coluna, restaura o esqueleto antes de pintar
+  if(!document.querySelector("#g-behaviors")) restoreControlsSkeleton();
   if(niche.isBuilder && !STATE.customPreset){
     if(niche.id === "customSmart"){ renderSmartCustomForm(); return; }
     renderCustomForm();
@@ -7331,7 +7348,112 @@ function contentNiches(){
   // todos os nichos que NÃO são construtores (Blank / Inteligente)
   return Object.values(NICHES).filter(n => !n.isBuilder);
 }
+
+/* Concatena os nichos selecionados num único _cf (shape do editor Blank),
+   deduplicando de forma VISÍVEL: arquivos por nome, comportamentos por id/rótulo,
+   convenções e saídas por texto. Prompts G+ são concatenados e renumerados (G,H,I…).
+   Não funde conteúdo: mantém a 1ª ocorrência e relata o que foi unificado. */
+function composeFromNiches(niches){
+  const norm = niches.map(n => normNiche(n));
+  const report = {
+    niches: niches.map(n => n.label),
+    files: { added:0, merged:[] },
+    behaviors: { added:0, merged:[] },
+    conventions: { added:0, dups:0 },
+    outputs: { added:0, dups:0 },
+    prompts: { added:0 }
+  };
+
+  // arquivos de contexto — dedup por nome (case-insensitive), mantém a 1ª ocorrência
+  const filesByName = new Map();
+  norm.forEach((n, ni) => (n.contextFiles||[]).forEach(f => {
+    const key = (f.name||"").trim().toLowerCase(); if(!key) return;
+    if(filesByName.has(key)){ report.files.merged.push({ name:f.name, from:niches[ni].label }); }
+    else { filesByName.set(key, { name:f.name, cat:f.cat, role:f.role, content:f.content }); report.files.added++; }
+  }));
+  const files = [...filesByName.values()];
+
+  // comportamentos — dedup por id e por rótulo
+  const bhById = new Map(), bhByLabel = new Map(), behaviors = [];
+  norm.forEach((n, ni) => (n.behaviors||[]).forEach(b => {
+    const idKey = (b.id||"").trim(), lblKey = (b.label||"").trim().toLowerCase();
+    if((idKey && bhById.has(idKey)) || (lblKey && bhByLabel.has(lblKey))){
+      report.behaviors.merged.push({ label:b.label, from:niches[ni].label });
+    } else {
+      const item = { id:b.id, label:b.label, def:b.def };
+      if(idKey) bhById.set(idKey, item); if(lblKey) bhByLabel.set(lblKey, item);
+      behaviors.push(item); report.behaviors.added++;
+    }
+  }));
+
+  // convenções — array de strings, dedup exato
+  const convSeen = new Set(), conventions = [];
+  norm.forEach(n => (n.conventions||[]).forEach(c => {
+    const k = (c||"").trim(); if(!k) return;
+    if(convSeen.has(k.toLowerCase())){ report.conventions.dups++; }
+    else { convSeen.add(k.toLowerCase()); conventions.push(k); report.conventions.added++; }
+  }));
+
+  // saídas — {id,label}, dedup por rótulo
+  const outSeen = new Set(), outputs = [];
+  norm.forEach(n => (n.outputs||[]).forEach(o => {
+    const label = (typeof o === "string" ? o : (o.label||"")).trim();
+    const k = label.toLowerCase(); if(!k) return;
+    if(outSeen.has(k)){ report.outputs.dups++; }
+    else { outSeen.add(k); outputs.push({ id:"o"+outputs.length, label }); report.outputs.added++; }
+  }));
+
+  // prompts G+ — concatena, renumera ids (G,H,I…); body de função vira string
+  const promptsExtra = [], titleSeen = new Set();
+  norm.forEach(n => (n.promptsExtra||[]).forEach(p => {
+    const tKey = (p.title||"").trim().toLowerCase();
+    if(tKey && titleSeen.has(tKey)) return; if(tKey) titleSeen.add(tKey);
+    const bodyStr = (typeof p.body === "function")
+      ? (function(){ try { return p.body({}, {}); } catch(_){ return ""; } })()
+      : (p.body || "");
+    const id = String.fromCharCode("G".charCodeAt(0) + promptsExtra.length);
+    promptsExtra.push({ id, title:p.title, when:p.when, body:bodyStr });
+    report.prompts.added++;
+  }));
+
+  const labels = niches.map(n => n.label);
+  const label = labels.length === 1 ? labels[0]
+    : labels.slice(0,2).join(" + ") + (labels.length > 2 ? ` +${labels.length-2}` : "");
+  const cf = {
+    label, icon: niches[0].icon || "🧩", headline:"", lede:"", ctxBlurb:"",
+    cardColor: niches[0].cardColor || "#5eead4", group: niches[0].group || "serif",
+    files, behaviors, promptsExtra, conventions, outputs
+  };
+  return { cf, report };
+}
+
+/* Banner do resumo de importação (deduplicação visível) mostrado no editor. */
+function renderImportReport(r){
+  const fd = r.files.merged.length, bd = r.behaviors.merged.length;
+  const s = (n, sing, plur) => `<b>${n}</b> ${n === 1 ? sing : plur}`;
+  const parts = [
+    s(r.files.added, "arquivo", "arquivos") + (fd ? ` <span style="opacity:.8">(${fd} duplicado${fd===1?"":"s"} unificado${fd===1?"":"s"})</span>` : ""),
+    s(r.behaviors.added, "comportamento", "comportamentos") + (bd ? ` <span style="opacity:.8">(${bd} unificado${bd===1?"":"s"})</span>` : ""),
+    s(r.prompts.added, "prompt G+", "prompts G+"),
+    s(r.conventions.added, "convenção", "convenções") + (r.conventions.dups ? ` <span style="opacity:.8">(${r.conventions.dups} repetida${r.conventions.dups===1?"":"s"})</span>` : ""),
+    s(r.outputs.added, "saída", "saídas") + (r.outputs.dups ? ` <span style="opacity:.8">(${r.outputs.dups} repetida${r.outputs.dups===1?"":"s"})</span>` : "")
+  ];
+  const dupList = fd
+    ? `<div style="margin-top:8px;font-size:11.5px;color:var(--ink-faint);line-height:1.55">Arquivos repetidos unificados (mantida a 1ª ocorrência): ${r.files.merged.map(m => `<code>${escapeHTML(m.name)}</code> <span style="opacity:.7">(de ${escapeHTML(m.from)})</span>`).join(", ")}.</div>`
+    : "";
+  return `
+    <div id="cf-import-report" style="border:1px solid var(--amber);border-radius:8px;padding:11px 12px;margin:0 0 16px;background:var(--grad-a)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+        <div style="font-size:12.5px;line-height:1.65">
+          <b>Importado de:</b> ${r.niches.map(escapeHTML).join(", ")}.<br>${parts.join(" · ")}${dupList}
+        </div>
+        <button class="btn ghost sm" id="cf-import-dismiss" title="dispensar" style="flex:0 0 auto;padding:2px 9px">×</button>
+      </div>
+    </div>`;
+}
 function renderSmartCustomForm(){
+  // re-entrante: restaura o esqueleto se um construtor já reescreveu a coluna
+  if(!document.querySelector("#g-behaviors")) restoreControlsSkeleton();
   // esconde os grupos padrão, igual ao Custom (Blank)
   ["#g-conventions","#g-builder-section"].forEach(sel => {
     const el = $(sel); if(el){ el.style.display = "none"; el.innerHTML = ""; }
@@ -7393,16 +7515,20 @@ function renderSmartCustomForm(){
     renderSmartCustomForm();
   });
   $("#sc-import").addEventListener("click", () => {
-    const picked = contentNiches().filter(n => STATE._sc.selected[n.id]).map(n => n.label);
+    const picked = contentNiches().filter(n => STATE._sc.selected[n.id]);
     const note = $("#sc-note");
     if(!picked.length){ if(note) note.textContent = "Selecione ao menos um nicho para importar."; return; }
-    // Fase 1.1: seleção pronta. A concatenação com dedup visível entra na Fase 1.2/1.3.
-    if(note) note.innerHTML = `Selecionados: <b>${picked.map(escapeHTML).join(", ")}</b>. ` +
-      `A concatenação com deduplicação visível será ligada na próxima fase (1.2).`;
+    const composed = composeFromNiches(picked);
+    STATE._cf = composed.cf;
+    STATE._cf._importReport = composed.report;   // resumo do dedup, mostrado no editor
+    restoreControlsSkeleton();                    // devolve #g-behaviors p/ o editor reescrever a coluna
+    renderCustomForm();                           // entra no editor (mesmo motor) já pré-preenchido
   });
 }
 
 function renderCustomForm(){
+  // re-entrante: se um construtor já reescreveu a coluna, restaura o esqueleto antes de reescrever
+  if(!document.querySelector("#g-behaviors")) restoreControlsSkeleton();
   // Hide standard groups
   ["#g-conventions","#g-builder-section"].forEach(sel => {
     const el = $(sel); if(el){ el.style.display = "none"; el.innerHTML = ""; }
@@ -7415,6 +7541,7 @@ function renderCustomForm(){
   };
   const ws = (key, fallback) => (STATE._cf[key] !== undefined && STATE._cf[key] !== null) ? STATE._cf[key] : fallback;
   const presets = listPresets();
+  const importBanner = STATE._cf._importReport ? renderImportReport(STATE._cf._importReport) : "";
 
   // Replace the behaviors group with the whole custom builder UI
   const behaviorsHost = $("#g-behaviors");
@@ -7426,6 +7553,7 @@ function renderCustomForm(){
   // Easier: rebuild the controls column completely
   const controls = container; // .controls div
   controls.innerHTML = `
+    ${importBanner}
     <div class="group">
       <div class="glabel">Custom Builder <span class="gn">· construa seu próprio nicho</span></div>
 
@@ -7499,6 +7627,9 @@ function renderCustomForm(){
   renderCustomFiles();
   renderCustomBehaviors();
   renderCustomPrompts();
+
+  const cfDismiss = $("#cf-import-dismiss");
+  if(cfDismiss) cfDismiss.addEventListener("click", () => { delete STATE._cf._importReport; renderCustomForm(); });
 
   const sync = (sel, key) => {
     const el = $(sel); if(!el) return;
