@@ -317,3 +317,36 @@ Rodei `ls /mnt/project/` e `cmp` nesta sessão: o `/mnt/project/` é um **mount*
 - Transferências de projetos com código (dev/game do usuário) ficam limpas: nada de anexar a cada vez; o assistente lê tudo do mount e só pede para ligar a ferramenta se faltar.
 - As diretrizes deixam de colidir: pedir arquivo necessário ≠ desperdício; o assistente para de inferir e passa a pedir; e pausa diante de versão desatualizada.
 - **A vigiar:** confirmar em uso real que o ritual de checar o mount não atrita com nichos sem ferramenta de código (deve ser inócuo — cai no fallback de anexo).
+
+---
+
+## D-017 — Refino das diretrizes (P8/P11), handoff multi-pasta e canal de atualização
+
+**Data:** 2026-06-03 · **Status:** aceita e implementada (v1.23.0)
+
+### Contexto
+Antes de transferir para o Custom, o usuário levantou refinamentos finos (e pediu para eu analisar/validar, podendo discordar):
+1. **P11 estava bruto demais.** "Pausa e avisa se receber arquivo desatualizado" podia gerar halts desnecessários — uma conversa interromperia um trabalho no meio para pedir atualização de algo que **já tem**. O caso real: a IA tinha a versão nova; a antiga estava nos arquivos do Projeto; bastava usar a nova.
+2. **"Proibir inferir" (P8) era perigoso.** Se o usuário PEDIR para inferir/extrapolar, a diretriz entraria em conflito consigo mesma e com os princípios de token/redundância.
+3. **Multi-pasta:** dúvida se o certo era anexar ou pôr no Projeto; e a experiência do usuário de que arquivos de mesmo nome em pastas diferentes "se sobrepõem".
+4. **Atualizar projetos que já usam o Kit** sem quebrar a estrutura que a IA montou lá; e se valeria um feedback de volta.
+
+### Verificação empírica (sem palpite)
+`find /mnt/project`: o mount está **achatado** — todos os arquivos na raiz, **sem** `meta/`/`logs/`, mesmo o repo do GitHub tendo `meta/`. O `index.html` v1.22.0 está no mount (GitHub alimentando). Com uploads diretos + GitHub **duplicados**, não dá para isolar se o GitHub achata subpastas ou se vejo o upload direto. Conclusão honesta: o achatamento que **observo** torna provável a colisão de nomes iguais; para confirmar o comportamento do GitHub-com-subpastas, é preciso um **teste limpo** (remover uploads diretos, deixar só GitHub, conversa nova, `ls -R`).
+
+### Decisão
+1. **P11 reformulado:** "usa sempre a versão mais recente que tem à vista; se a que gerou/recebeu nesta conversa for mais nova que a do Projeto/mount, usa a sua e avisa em uma linha — **sem parar**; só PARA e pede quando **não tem** a versão que a tarefa exige; nunca interrompe trabalho no meio por algo que já possui; nunca costura pedaço novo em arquivo velho". (Salvo-conduto para usar o que já tem; pare-e-peça só quando falta.)
+2. **P8 escopado:** a regra é contra **inventar silenciosamente** um arquivo que deveria ter; **exceção:** inferência PEDIDA pelo usuário é permitida (transparente, como inferência). Não colide com pedido explícito nem com o P2.
+3. **Handoff:** o assistente **mapeia a estrutura do mount no início** e informa o usuário (resolve o "não sei o que passar" do Svelte). Multi-pasta = tudo no Projeto/mount; anexar é último recurso; aviso sobre colisão de nomes iguais (prefixo de pasta resolve).
+4. **Canal de atualização (i-N3) reforçado:** ao integrar atualização do sistema num projeto montado, preservar a estrutura existente, adaptar só o universal/transversal, e **listar o que muda antes de mudar**. **Feedback opcional** (só sob pedido) — para não sobrecarregar a conversa que recebe a atualização. O usuário prefere trazer os `.md` de feedback manualmente para cá; alinhado.
+
+### Alternativas consideradas
+- **Manter P11 "pausa se desatualizado"** — rejeitada (gera halts no meio do trabalho; o usuário apontou o risco do "monstro").
+- **Manter "nunca inferir" absoluto** — rejeitada (conflita com inferência pedida).
+- **Anexar arquivos multi-pasta** — rejeitada como padrão (o caminho limpo é Projeto + mount; anexo é fallback do chat sem ferramenta).
+- **Relatório de feedback automático na conversa que atualiza** — rejeitada como padrão (sobrecarga); virou opcional sob pedido.
+
+### Consequências
+- As diretrizes deixam de se chocar entre si (token × pedir arquivo × inferir × versão).
+- Projetos multi-pasta ficam viáveis sem o usuário saber a estrutura (a IA mapeia).
+- **Pendente (teste limpo):** confirmar se o GitHub preserva subpastas no mount — exige conversa só-GitHub. Até lá, prefixo de pasta é a aposta segura para nomes iguais.

@@ -1,6 +1,29 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.22.0**.
+> Histórico de versões. Versão atual: **v1.23.0**.
+
+---
+
+## v1.23.0 — 2026-06-03 — Refino das diretrizes (P8/P11), handoff multi-pasta e canal de atualização
+
+Refinamentos pedidos pelo usuário em cima da v1.22.0, **antes de transferir** — para evitar choque/inconsistência/redundância entre diretrizes. **Achado empírico:** o mount `/mnt/project/` está **achatado** (todos os arquivos na raiz; sem subpastas `meta/`/`logs/`), mesmo o repo do GitHub tendo `meta/`. Com uploads diretos + GitHub duplicados não dá para isolar se o GitHub achata as subpastas ou se é o upload que aparece — fica recomendado um **teste limpo** (só-GitHub, conversa nova, `ls -R /mnt/project/`).
+
+### Diretrizes refinadas (`BEHAVIORS_BASE`)
+- **P8 (verifica / não inventa):** escopo corrigido — a regra é contra **inventar silenciosamente** um arquivo que deveria ter; **exceção explícita:** se o usuário PEDIR para inferir/extrapolar/completar, o assistente faz (transparente, como inferência). Resolve o conflito quando o usuário de fato quer inferência.
+- **P11 (versões):** reformulado de "pausa e avisa se desatualizado" para **"usa sempre a versão mais recente que tem; só PARA e pede quando NÃO tem a atualizada que a tarefa exige"** — não interrompe trabalho no meio para pedir algo que já possui (evita o "monstro" de halts desnecessários). Avisa em uma linha quando usa a sua versão em vez da do Projeto.
+
+### Handoff (seção transversal)
+- **Ritual de início:** o assistente **mapeia a estrutura montada** (`/mnt/project/`) e informa ao usuário o que há e onde — útil em projetos multi-pasta (Next/Svelte) onde o usuário pode não saber o que passar.
+- **Multi-pasta:** colocar TUDO no Projeto (GitHub/upload) + ferramenta de código → mount; **anexar é o último recurso** (chat sem ferramenta). Aviso sobre **colisão de nomes iguais** em pastas diferentes (mount achatado): diferenciar com prefixo de pasta ou confiar no mapeamento.
+
+### Canal de atualização (i-N3, reforçado)
+- Ao integrar uma atualização do sistema num projeto já montado: **preserva a estrutura existente** (nichos/docs específicos), adapta só as camadas universal/transversal, e **mostra a lista do que vai mudar antes de mudar**. **Feedback opcional** (só se pedido): resume o que o projeto criou além do Kit, para levar de volta — sem sobrecarregar a conversa que recebe a atualização.
+
+### Registros
+- **D-017** (DECISOES): refino P8/P11 + handoff multi-pasta + canal, com o achado do mount achatado e a recomendação do teste limpo.
+
+### Validação
+- `node --check` (0 erros) + balanceamento de tags + jsdom: **17/17 nichos, 0 erros**, handoff em todos. Índice ~519 KB / 7705 linhas.
 
 ---
 

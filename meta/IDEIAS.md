@@ -243,6 +243,12 @@ Continuação da i-N9. O usuário trouxe duas conversas (`Tentativa_1.md`, `Anal
 ## i-N11 — "Ativar a ferramenta de código" como passo padrão do handoff (do usuário) — ✅ IMPLEMENTADA (v1.22.0)
 O usuário quis que, para os projetos dele (dev/game), toda transferência já comece com a ferramenta de código ligada e usando o mount — sem ter que pedir a cada vez para verificar se dá para atualizar scripts/metadados, e sem se limitar a "dev lê pelo mount; chat comum anexa". Atendido: o prompt de início gerado lembra de ligar a ferramenta de código; o CLAUDE.md manda o assistente checar o mount no início e pedir para ligar se faltar. (O toggle em si é do usuário — não dá para um prompt ligar sozinho; o kit resolve com lembrete + ritual de verificação.)
 
+## i-N9/i-N11 (refino v1.23.0) — diretrizes ajustadas + mount achatado — ✅ IMPLEMENTADA
+Antes de transferir, o usuário pediu refino para evitar choque entre diretrizes. **P8** ganhou exceção para inferência PEDIDA (a regra é contra inventar silenciosamente, não contra inferir quando solicitado). **P11** virou "usa a versão mais nova que tem; só pára e pede quando não tem a que a tarefa exige" (em vez de pausar sempre que algo estiver desatualizado — evitava o "monstro" de halts no meio do trabalho). **Handoff** passou a **mapear a estrutura do mount no início** (resolve "não sei o que passar" em projetos multi-pasta). **Canal de atualização** preserva a estrutura do projeto ao integrar um update + feedback opcional. **Achado:** o mount `/mnt/project/` apareceu **achatado** (sem subpastas). Ver D-017.
+
+## i-N12 — Teste limpo do mount (GitHub-only) — SEMENTE
+Confirmar se o GitHub **preserva subpastas** no mount: numa conversa nova, remover os uploads diretos, deixar **só** o repositório do GitHub, ligar a ferramenta de código e rodar `ls -R /mnt/project/`. Se preservar, projetos multi-pasta (Next/Svelte) dispensam renomear arquivos de mesmo nome. Até confirmar, prefixo de pasta é a aposta segura. (Surgiu da dúvida real do usuário sobre `pages` de mesmo nome em pastas diferentes.)
+
 ---
 
 ## Nichos como ideias FUTURAS (adiados de propósito pelo usuário)
