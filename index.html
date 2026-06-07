@@ -73,7 +73,6 @@
   html[data-niche="animation"]{ --amber:#fb923c; --amber-soft:#fdba74; --green:#f87171; --grad-a:rgba(251,146,60,.09); --grad-b:rgba(248,113,113,.05); }
   html[data-niche="comics"]{ --amber:#e879f9; --amber-soft:#f0abfc; --green:#a78bfa; --grad-a:rgba(232,121,249,.08); --grad-b:rgba(167,139,250,.05); }
   html[data-niche="custom"]{ --amber:#cbd5e1; --amber-soft:#e2e8f0; --green:#a3e635; --grad-a:rgba(203,213,225,.06); --grad-b:rgba(163,230,53,.04); }
-  html[data-niche="customSmart"]{ --amber:#5eead4; --amber-soft:#99f6e4; --green:#fcd34d; --grad-a:rgba(94,234,212,.08); --grad-b:rgba(252,211,77,.05); }
 
   /* trocas de fonte por grupo */
   html[data-group="literary"]{ --disp:'Playfair Display', Georgia, serif; --body:'IBM Plex Serif', Georgia, serif; }
@@ -6108,8 +6107,8 @@ QUADRO 2 — [...]
 /* ---------- CUSTOM (Nicho personalizado pelo usuário) ---------- */
 NICHES.custom = {
   id:"custom", label:"Custom", icon:"⚙️", group:"serif", category:"special",
-  cardColor:"#cbd5e1", cardTags:["Personalizado","Você define","Salva preset","Multi-uso"],
-  cardDesc:"Construa seu próprio nicho: defina os arquivos de contexto, comportamentos e prompts G+. Salve como preset.",
+  cardColor:"#cbd5e1", cardTags:["Compõe de nichos","Ou monta do zero","Dedup visível","Salva preset"],
+  cardDesc:"Componha a partir dos nichos prontos (importa e concatena, com dedup visível) ou monte do zero: arquivos, comportamentos e prompts G+. Salve e ative como preset.",
   intro:{
     headline:"Quando nenhum dos prontos serve.",
     lede:"Use Custom quando seu trabalho não cabe em nenhum dos 17 nichos prontos — ou quando você quer combinar elementos de dois nichos, ou quando seu fluxo é genuinamente único. Defina os arquivos, comportamentos, prompts e cor de acento. O preset fica salvo no navegador para reutilizar.",
@@ -6143,44 +6142,11 @@ NICHES.custom = {
   isBuilder: true
 };
 
-/* ---------- CUSTOM INTELIGENTE (composição assistida de nichos — D-014) ----------
-   Segundo nicho construtor. Mantém o Custom (Blank) acima como "página em branco".
-   Este abre com chips dos nichos de conteúdo: marcar importa/concatena o material
-   (contextFiles + behaviors + promptsExtra), com deduplicação visível, e cai no
-   mesmo motor (toPreset → mergeCustom → presets em localStorage). */
-NICHES.customSmart = {
-  id:"customSmart", label:"Custom Inteligente", icon:"🧩", group:"serif", category:"special",
-  cardColor:"#5eead4", cardTags:["Compõe de nichos","Concatena","Dedup visível","Salva preset"],
-  cardDesc:"Monte um nicho a partir dos prontos: marque os nichos, importe e concatene arquivos, comportamentos e prompts — com deduplicação visível. Depois edite e salve como preset.",
-  intro:{
-    headline:"Componha um nicho a partir dos que já existem.",
-    lede:"Marque um ou mais dos 16 nichos prontos e o Custom Inteligente <strong>concatena</strong> os arquivos de contexto, comportamentos e prompts deles num só — preenchidos e editáveis, sem fusão automática opaca. Arquivos repetidos e comportamentos quase iguais são <strong>deduplicados de forma visível</strong>. Ideal para combinações como “dev + pixel”.",
-    ctxBlurb:"Você parte da <strong>composição</strong> de nichos existentes em vez de uma página em branco: importa, revisa, edita e salva. O resultado é tão estruturado quanto qualquer nicho — montado por você.",
-    hero:"customSmart"
-  },
-  topbar:[
-    { id:"langSel", label:"Idioma do output", type:"select", opts:LANGS, default:"pt" }
-  ],
-  behaviors:[],
-  builderSection:null,
-  conventions:[
-    "Este nicho é composto a partir de outros — as convenções vêm dos nichos importados (editáveis).",
-    "Os comportamentos universais valem; os importados se somam, com conflitos sinalizados.",
-    "Os prompts A-F universais funcionam; os G+ importados se somam a eles."
-  ],
-  contextFiles:[],
-  outputs:[
-    { id:"livre","label":"Saída livre — definida pelos nichos importados" }
-  ],
-  promptsExtra:[],
-  isBuilder: true
-};
-
 /* =========================================================
-   FIM DOS NICHOS — 18 NO TOTAL
+   FIM DOS NICHOS — 17 NO TOTAL
    - 8 core: dev, design, client, narrative, marketing, research, product, business
    - 8 creative: game, pixel, brainstorm, music, rpg, cuisine, animation, comics
-   - 2 construtores (special): custom (Blank) + customSmart (Custom Inteligente)
+   - 1 construtor (special): custom — compõe a partir dos nichos prontos OU monta do zero
    ========================================================= */
 
 /* =========================================================
@@ -6607,12 +6573,7 @@ function heroHTML(id){
       <div class="pn"><small>P3</small>silêncio. silêncio. <i>silêncio.</i></div>`;
     case "custom": return `
       <div class="glyph">⊞</div>
-      <div class="msg">${STATE.customPreset ? "Preset carregado · campos prontos" : "Defina seu nicho — arquivos, comportamentos, prompts, cor"}</div>`;
-    case "customSmart": return `
-      <div style="text-align:center;padding:18px 20px">
-        <div style="font-size:34px;line-height:1">🧩</div>
-        <div style="margin-top:8px;color:var(--ink-dim);font-size:13px">${STATE.customPreset ? "Nicho composto · campos prontos para editar" : "Marque nichos de base → importe e concatene em um só"}</div>
-      </div>`;
+      <div class="msg">${STATE.customPreset ? "Preset carregado · campos prontos" : "Componha de nichos prontos ou monte do zero — arquivos, comportamentos, prompts"}</div>`;
     default: return "<div style='padding:20px;color:var(--ink-faint)'>—</div>";
   }
 }
@@ -6670,12 +6631,39 @@ function renderIntro(niche){
 /* =========================================================
    5. TOPBAR
    ========================================================= */
+// Atalho da barra superior: ativar um nicho salvo (preset) de qualquer lugar.
+function savedNichesShortcutHTML(){
+  const ps = (typeof listPresets === "function") ? listPresets() : [];
+  if(!ps.length) return "";
+  const active = STATE.customPreset && STATE.customPreset.name;
+  const opts = ps.map(pr => `<option value="${escAttr(pr.name)}"${active===pr.name?" selected":""}>${escapeHTML(pr.label||pr.name)}</option>`).join("");
+  return `<div class="field"><span class="tlabel">Nichos salvos</span>
+    <select data-saved-niche>
+      <option value="">${active ? "— em uso —" : "— ativar salvo —"}</option>
+      ${opts}
+    </select></div>`;
+}
+function wireSavedNichesShortcut(){
+  document.querySelectorAll("[data-saved-niche]").forEach(sel => {
+    sel.addEventListener("change", () => {
+      const name = sel.value;
+      if(!name) return;
+      const found = listPresets().find(pr => pr.name === name);
+      if(!found){ sel.value = ""; return; }
+      localStorage.setItem(LS_PRESET_CURR, name);
+      setNiche("custom");
+    });
+  });
+}
+
 function renderTopbar(niche){
   const host = $("#topbar");
   if(!host) return;
   const fields = niche.topbar || [];
+  const _saved = savedNichesShortcutHTML();
   if(fields.length === 0){
-    host.innerHTML = `<div class="sync-note"><i class="dot"></i> ${niche.label}</div>`;
+    host.innerHTML = _saved + `<div class="sync-note"><i class="dot"></i> ${niche.label}</div>`;
+    wireSavedNichesShortcut();
     return;
   }
   host.innerHTML = fields.map(f => {
@@ -6691,13 +6679,14 @@ function renderTopbar(niche){
       return `<div class="field"><span class="tlabel">${escapeHTML(f.label)}</span><select data-tb="${f.id}">${opts}</select></div>`;
     }
     return `<div class="field"><span class="tlabel">${escapeHTML(f.label)}</span><input type="text" data-tb="${f.id}" value="${escAttr(val)}" placeholder="${escAttr(f.placeholder||"")}"/></div>`;
-  }).join("") + `<div class="sync-note"><i class="dot"></i> ${niche.label}</div>`;
+  }).join("") + _saved + `<div class="sync-note"><i class="dot"></i> ${niche.label}</div>`;
 
   host.querySelectorAll("[data-tb]").forEach(el => {
     const handler = () => { STATE.topbar[el.dataset.tb] = el.value; persistState(); updatePreview(); renderPrompts(getCurrentNiche()); };
     el.addEventListener("input", handler);
     el.addEventListener("change", handler);
   });
+  wireSavedNichesShortcut();
 }
 
 /* =========================================================
@@ -6731,7 +6720,7 @@ function injectActiveCustomBar(niche){
   const controls = document.querySelector(".controls");
   const old = document.querySelector("#cf-active-bar");
   if(old) old.remove();
-  const isBuilderActive = STATE.customPreset && (STATE.niche === "custom" || STATE.niche === "customSmart");
+  const isBuilderActive = STATE.customPreset && STATE.niche === "custom";
   if(!controls || !isBuilderActive) return;
   const name = localStorage.getItem(LS_PRESET_CURR) || (niche && niche.label) || "preset";
   const bar = document.createElement("div");
@@ -6756,7 +6745,6 @@ function renderBuilder(niche){
   // se um construtor anterior reescreveu a coluna, restaura o esqueleto antes de pintar
   if(!document.querySelector("#g-behaviors")) restoreControlsSkeleton();
   if(niche.isBuilder && !STATE.customPreset){
-    if(niche.id === "customSmart"){ renderSmartCustomForm(); return; }
     renderCustomForm();
     return;
   }
@@ -7388,8 +7376,10 @@ function contentNiches(){
    deduplicando de forma VISÍVEL: arquivos por nome, comportamentos por id/rótulo,
    convenções e saídas por texto. Prompts G+ são concatenados e renumerados (G,H,I…).
    Não funde conteúdo: mantém a 1ª ocorrência e relata o que foi unificado. */
-function composeFromNiches(niches){
+function composeFromNiches(niches, sel){
   const norm = niches.map(n => normNiche(n));
+  // sel[nicheId] = {files:{nameLower:bool}, behaviors:{id:bool}, prompts:{id:bool}} — ausente ou !==false => incluído
+  const inc = (id, type, key) => { const x = sel && sel[id]; if(!x || !x[type]) return true; return x[type][key] !== false; };
   const report = {
     niches: niches.map(n => n.label),
     files: { added:0, merged:[] },
@@ -7405,6 +7395,7 @@ function composeFromNiches(niches){
   const filesByName = new Map(); // key -> { name, versions:[{from,content,cat,role,_norm}] }
   norm.forEach((n, ni) => (n.contextFiles||[]).forEach(f => {
     const key = (f.name||"").trim().toLowerCase(); if(!key) return;
+    if(!inc(niches[ni].id, "files", key)) return;
     const from = niches[ni].label, _norm = (f.content||"").trim();
     if(!filesByName.has(key)){
       filesByName.set(key, { name:f.name, versions:[{ from, content:f.content, cat:f.cat, role:f.role, _norm }] });
@@ -7430,6 +7421,7 @@ function composeFromNiches(niches){
   // comportamentos — dedup por id/rótulo; se a definição difere, sinaliza conflito (não bloqueia)
   const bhKept = new Map(), behaviors = [];
   norm.forEach((n, ni) => (n.behaviors||[]).forEach(b => {
+    if(!inc(niches[ni].id, "behaviors", b.id)) return;
     const idKey = (b.id||"").trim(), lblKey = (b.label||"").trim().toLowerCase(), from = niches[ni].label;
     const hit = (idKey && bhKept.get("id:"+idKey)) || (lblKey && bhKept.get("lbl:"+lblKey));
     if(hit){
@@ -7466,7 +7458,8 @@ function composeFromNiches(niches){
 
   // prompts G+ — concatena, renumera ids (G,H,I…); body de função vira string
   const promptsExtra = [], titleSeen = new Set();
-  norm.forEach(n => (n.promptsExtra||[]).forEach(p => {
+  norm.forEach((n, ni) => (n.promptsExtra||[]).forEach(p => {
+    if(!inc(niches[ni].id, "prompts", p.id)) return;
     const tKey = (p.title||"").trim().toLowerCase();
     if(tKey && titleSeen.has(tKey)) return; if(tKey) titleSeen.add(tKey);
     const bodyStr = (typeof p.body === "function")
@@ -7538,79 +7531,108 @@ function renderImportReport(r){
       </div>
     </div>`;
 }
-function renderSmartCustomForm(){
-  // re-entrante: restaura o esqueleto se um construtor já reescreveu a coluna
-  if(!document.querySelector("#g-behaviors")) restoreControlsSkeleton();
-  // esconde os grupos padrão, igual ao Custom (Blank)
-  ["#g-conventions","#g-builder-section"].forEach(sel => {
-    const el = $(sel); if(el){ el.style.display = "none"; el.innerHTML = ""; }
-  });
-  if(!STATE._sc) STATE._sc = { selected:{} };
-
-  const behaviorsHost = $("#g-behaviors");
-  if(!behaviorsHost) return;
-  const parent = behaviorsHost.closest(".group");
-  if(!parent) return;
-  const controls = parent.parentElement;
-
+function composerSectionHTML(){
+  if(!STATE._sc) STATE._sc = { selected:{}, expanded:{}, pieces:{} };
+  STATE._sc.expanded = STATE._sc.expanded || {};
+  STATE._sc.pieces   = STATE._sc.pieces   || {};
   const niches = contentNiches();
-  const selCount = () => niches.filter(n => STATE._sc.selected[n.id]).length;
+  const picked = niches.filter(n => STATE._sc.selected[n.id]);
+  const selN = picked.length;
   const plural = n => n === 1 ? "" : "s";
+  const inc = (id,type,key) => { const x = STATE._sc.pieces[id]; if(!x || !x[type]) return true; return x[type][key] !== false; };
 
-  controls.innerHTML = `
-    <div class="group">
-      <div class="glabel">Custom Inteligente <span class="gn">· componha a partir dos nichos prontos</span></div>
+  const chips = niches.map(n => `
+    <button class="chip${STATE._sc.selected[n.id] ? " on" : ""}" data-sc="${escAttr(n.id)}" title="${escAttr(n.cardDesc||"")}" style="display:inline-flex;align-items:center;gap:6px">
+      <span style="font-size:14px">${n.icon||"•"}</span>${escapeHTML(n.label)}
+    </button>`).join("");
+
+  const cb = (id,type,key,label) => `<label style="display:flex;gap:6px;align-items:flex-start;font-size:12px;color:var(--ink-dim);padding:2px 0;cursor:pointer"><input type="checkbox" data-piece="${escAttr(id+"|"+type+"|"+key)}"${inc(id,type,key)?" checked":""} style="margin-top:2px"/> <span>${escapeHTML(label)}</span></label>`;
+
+  const details = picked.map(raw => {
+    const n = normNiche(raw);
+    const files = n.contextFiles||[], bhs = n.behaviors||[], prs = n.promptsExtra||[];
+    const open = !!STATE._sc.expanded[raw.id];
+    const incN = files.filter(f=>inc(raw.id,"files",(f.name||"").trim().toLowerCase())).length
+               + bhs.filter(b=>inc(raw.id,"behaviors",b.id)).length
+               + prs.filter(pp=>inc(raw.id,"prompts",pp.id)).length;
+    const tot = files.length + bhs.length + prs.length;
+    const body = open ? `<div style="padding:8px 10px 10px">
+        ${files.length?`<div class="subhead">Arquivos (${files.length})</div>${files.map(f=>cb(raw.id,"files",(f.name||"").trim().toLowerCase(),f.name||"(sem nome)")).join("")}`:""}
+        ${bhs.length?`<div class="subhead" style="margin-top:8px">Comportamentos (${bhs.length})</div>${bhs.map(b=>cb(raw.id,"behaviors",b.id,b.label||b.id)).join("")}`:""}
+        ${prs.length?`<div class="subhead" style="margin-top:8px">Prompts G+ (${prs.length})</div>${prs.map(pp=>cb(raw.id,"prompts",pp.id,(pp.id?pp.id+" · ":"")+(pp.title||""))).join("")}`:""}
+        <div style="margin-top:8px;display:flex;gap:8px"><button class="btn ghost sm" data-piece-all="${escAttr(raw.id)}">marcar todas</button><button class="btn ghost sm" data-piece-none="${escAttr(raw.id)}">limpar</button></div>
+      </div>` : "";
+    return `<div style="border:1px solid var(--line-soft);border-radius:8px;margin-bottom:6px;overflow:hidden">
+      <button data-expand="${escAttr(raw.id)}" style="width:100%;text-align:left;background:var(--panel2);border:0;color:var(--ink-dim);padding:8px 10px;font-size:12px;cursor:pointer;display:flex;gap:8px;align-items:center">
+        <span style="font-size:13px">${raw.icon||"•"}</span><b style="color:var(--ink)">${escapeHTML(raw.label)}</b>
+        <span style="margin-left:auto">${incN}/${tot} peças · ${open?"▾":"▸"} escolher</span>
+      </button>${body}</div>`;
+  }).join("");
+  const detailsBlock = picked.length
+    ? `<div class="subhead" style="margin-top:4px">Peças por nicho <span class="gn">· opcional — desmarque o que não quer importar</span></div><div style="margin:8px 0 14px">${details}</div>`
+    : "";
+
+  return `
+    <div class="group" id="g-composer">
+      <div class="glabel">Compor a partir de nichos prontos <span class="gn">· opcional — concatena e deduplica</span></div>
       <div style="color:var(--ink-dim);font-size:12.5px;line-height:1.55;margin-bottom:14px">
-        Marque os nichos que servem de base. Ao importar, o conteúdo deles é <b>concatenado</b>
-        (arquivos de contexto, comportamentos e prompts) num só nicho editável — sem fusão automática.
-        Arquivos repetidos e comportamentos quase iguais serão <b>deduplicados de forma visível</b>.
+        Atalho para começar: marque um ou mais nichos prontos e <b>importe</b> — arquivos, comportamentos e prompts deles entram <b>concatenados</b> no construtor abaixo (repetições viram <b>dedup visível</b>; conflitos ficam sinalizados). Por padrão importa tudo; abra <b>"escolher"</b> num nicho para trazer só algumas peças. Ou ignore esta seção e <b>monte do zero</b> abaixo. Importar de novo substitui o conteúdo atual.
       </div>
-
-      <div class="subhead">Nichos de base <span class="gn" id="sc-count">· ${selCount()} selecionado${plural(selCount())}</span></div>
-      <div class="sc-chips" id="sc-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px">
-        ${niches.map(n => `
-          <button class="chip${STATE._sc.selected[n.id] ? " on" : ""}" data-sc="${n.id}" title="${escAttr(n.cardDesc||"")}"
-            style="display:inline-flex;align-items:center;gap:6px">
-            <span style="font-size:14px">${n.icon||"•"}</span>${escapeHTML(n.label)}
-          </button>`).join("")}
-      </div>
-
+      <div class="subhead">Nichos de base <span class="gn" id="sc-count">· ${selN} selecionado${plural(selN)}</span></div>
+      <div class="sc-chips" id="sc-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px">${chips}</div>
+      ${detailsBlock}
       <div class="btnrow" style="margin-bottom:6px">
-        <button class="btn sm" id="sc-import">⬇ Importar e concatenar (${selCount()})</button>
+        <button class="btn sm" id="sc-import">⬇ Importar e concatenar (${selN})</button>
         <button class="btn ghost sm" id="sc-clear">limpar seleção</button>
       </div>
       <div id="sc-note" style="color:var(--ink-faint);font-size:12px;margin-top:8px;line-height:1.5"></div>
     </div>
   `;
+}
 
-  const refreshCounts = () => {
-    const c = selCount();
-    const cn = $("#sc-count"); if(cn) cn.textContent = `· ${c} selecionado${plural(c)}`;
-    const imp = $("#sc-import"); if(imp) imp.textContent = `⬇ Importar e concatenar (${c})`;
-  };
+function refreshComposer(){
+  const el = document.querySelector("#g-composer");
+  if(!el){ if(typeof renderCustomForm === "function") renderCustomForm(); return; }
+  el.outerHTML = composerSectionHTML();
+  wireComposer();
+}
 
-  $$("[data-sc]").forEach(b => {
-    b.addEventListener("click", () => {
-      const id = b.dataset.sc;
-      STATE._sc.selected[id] = !STATE._sc.selected[id];
-      b.classList.toggle("on", !!STATE._sc.selected[id]);
-      refreshCounts();
-    });
-  });
-  $("#sc-clear").addEventListener("click", () => {
-    STATE._sc.selected = {};
-    renderSmartCustomForm();
-  });
-  $("#sc-import").addEventListener("click", () => {
+function wireComposer(){
+  if(!STATE._sc) STATE._sc = { selected:{}, expanded:{}, pieces:{} };
+  const ensure = id => { STATE._sc.pieces[id] = STATE._sc.pieces[id] || { files:{}, behaviors:{}, prompts:{} }; return STATE._sc.pieces[id]; };
+  $$("[data-sc]").forEach(b => b.addEventListener("click", () => {
+    STATE._sc.selected[b.dataset.sc] = !STATE._sc.selected[b.dataset.sc];
+    refreshComposer();
+  }));
+  $$("[data-expand]").forEach(b => b.addEventListener("click", () => {
+    STATE._sc.expanded[b.dataset.expand] = !STATE._sc.expanded[b.dataset.expand];
+    refreshComposer();
+  }));
+  $$("[data-piece]").forEach(c => c.addEventListener("change", () => {
+    const parts = c.dataset.piece.split("|"); const id = parts[0], type = parts[1], key = parts.slice(2).join("|");
+    ensure(id)[type][key] = c.checked;
+    refreshComposer();
+  }));
+  $$("[data-piece-all]").forEach(b => b.addEventListener("click", () => { delete STATE._sc.pieces[b.dataset.pieceAll]; refreshComposer(); }));
+  $$("[data-piece-none]").forEach(b => b.addEventListener("click", () => {
+    const id = b.dataset.pieceNone; const raw = NICHES[id]; if(!raw) return; const n = normNiche(raw); const s = ensure(id);
+    (n.contextFiles||[]).forEach(f => s.files[(f.name||"").trim().toLowerCase()] = false);
+    (n.behaviors||[]).forEach(bh => s.behaviors[bh.id] = false);
+    (n.promptsExtra||[]).forEach(pp => s.prompts[pp.id] = false);
+    refreshComposer();
+  }));
+  const clr = $("#sc-clear");
+  if(clr) clr.addEventListener("click", () => { STATE._sc.selected = {}; STATE._sc.expanded = {}; refreshComposer(); });
+  const imp = $("#sc-import");
+  if(imp) imp.addEventListener("click", () => {
     const picked = contentNiches().filter(n => STATE._sc.selected[n.id]);
     const note = $("#sc-note");
     if(!picked.length){ if(note) note.textContent = "Selecione ao menos um nicho para importar."; return; }
-    const composed = composeFromNiches(picked);
+    const composed = composeFromNiches(picked, STATE._sc.pieces);
     STATE._cf = composed.cf;
-    STATE._cf._importReport = composed.report;   // resumo do dedup, mostrado no editor
-    STATE._cf._presetName = slugifyName(composed.cf.label);  // nome sugerido p/ Ativar/Salvar
-    restoreControlsSkeleton();                    // devolve #g-behaviors p/ o editor reescrever a coluna
-    renderCustomForm();                           // entra no editor (mesmo motor) já pré-preenchido
+    STATE._cf._importReport = composed.report;
+    STATE._cf._presetName = slugifyName(composed.cf.label);
+    renderCustomForm();
   });
 }
 
@@ -7640,10 +7662,12 @@ function renderCustomForm(){
   // Clear all groups before this one (except possibly preview side)
   // Easier: rebuild the controls column completely
   const controls = container; // .controls div
+  if(!STATE._sc) STATE._sc = { selected:{} };
   controls.innerHTML = `
+    ${composerSectionHTML()}
     ${importBanner}
     <div class="group">
-      <div class="glabel">Custom Builder <span class="gn">· construa seu próprio nicho</span></div>
+      <div class="glabel">Custom Builder <span class="gn">· monte do zero (ou edite o que importou acima)</span></div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
         <div>
@@ -7718,6 +7742,7 @@ function renderCustomForm(){
   renderCustomFiles();
   renderCustomBehaviors();
   renderCustomPrompts();
+  wireComposer();
 
   const cfDismiss = $("#cf-import-dismiss");
   if(cfDismiss) cfDismiss.addEventListener("click", () => { delete STATE._cf._importReport; renderCustomForm(); });

@@ -8,7 +8,7 @@
 
 ## O que é este projeto (resumo de 30 segundos)
 
-O **Kit de Contexto Universal** é um único `index.html` autossuficiente (vanilla JS, sem build, sem dependências exceto JSZip via CDN) que ajuda usuários a manter contexto entre conversas com o Claude. Ele tem 17 nichos prontos + 1 custom; cada nicho gera Instruções de Projeto, um CLAUDE.md, e templates `.md` para baixar.
+O **Kit de Contexto Universal** é um único `index.html` autossuficiente (vanilla JS, sem build, sem dependências exceto JSZip via CDN) que ajuda usuários a manter contexto entre conversas com o Claude. Ele tem 16 nichos de conteúdo + 1 construtor (`custom`, unificado: compõe a partir dos prontos OU monta do zero); cada nicho gera Instruções de Projeto, um CLAUDE.md, e templates `.md` para baixar.
 
 O projeto está em **refinamento área por área** após o MVP: a fundação (regras universais) e os nichos vão sendo aprofundados um a um, cada um com pesquisa do domínio + feedback de uso real.
 
@@ -42,6 +42,10 @@ Estes são exatamente os princípios que o kit prega — e que praticamos aqui (
 9. **Captura ideias.** Registra no IDEIAS tudo que o usuário mencionar, mesmo solto.
 10. **Cadência — trabalho em fases, sem fragmentar o trivial.** Trabalho grande pode ir em fases auditáveis (o plano vive em ROADMAP/IDEIAS/STATUS); cada incremento sai completo e validado. Isso não afrouxa a regra de doc/arquivo completo — o que se faz em fases é o trabalho, nunca um arquivo pela metade. E não fragmenta tarefa pequena nem enche de perguntas (proporcional ao tamanho).
 11. **Usa a versão mais recente; não mistura nem regride.** Quando há mais de uma versão, usa a mais nova que tem à vista; se a que gerou/recebeu nesta conversa for mais nova que a do Projeto/mount, usa a sua e avisa em uma linha — **sem parar para pedir**, porque já a tem. Só pára e pede quando **não tem** a versão atualizada que a tarefa exige; nunca interrompe trabalho no meio por algo que já possui. Nunca costura pedaço novo em arquivo velho.
+
+12. **Higiene ao encolher arquivos-chave (P12 — novo).** Ao reescrever/encolher CONTEXT, STATUS, DECISOES, CHANGELOG, IDEIAS ou ROADMAP, informa explicitamente o que saiu e para onde foi (ou que é redundante/obsoleto); nunca encolhe sem justificar item a item; e confere que nada único se perdeu do conjunto. (Ativo para nós já — cada doc reescrito abre com a nota «Mudanças nesta revisão». **A propagar para a ferramenta**: virar o 12º item de `BEHAVIORS_BASE`, aparecendo no CLAUDE.md gerado de todos os nichos — tarefa de código na fila; ver DEC D-020.)
+
+> **Nota relacionada (a decidir, i-N17):** rigor em pesquisa + refutação — pesquisar/aprender sobre a ideia ou solicitação não só para refinar, mas para **refutar e criticar** com base na experiência de outros — hoje é **parcialmente** coberto por P1/P4/P7; falta decidir se vira texto explícito.
 
 ---
 
@@ -90,6 +94,7 @@ Os arquivos do projeto vivem em `meta/` (mais `README.md`, `PLANNING.md`, `DEPLO
 
 ### Regras de higiene
 - **Referência cruzada, não duplicação**: um dado tem uma fonte de verdade.
+- **Encolher com justificativa (P12)**: ao reescrever um arquivo-chave, abre com uma nota «Mudanças nesta revisão» (o que mudou/saiu/por quê, e para onde foi); nunca encolhe sem justificar item a item; confere que nada único se perdeu.
 - **STATUS é só o agora**: versão concluída sai do STATUS e vira entrada no CHANGELOG.
 - **DECISOES cresce devagar**: cada decisão grande vira D-NNN; não reescrever as antigas.
 - **CHANGELOG por versão**: cada sessão que entrega algo ganha um vX.Y.Z no topo.

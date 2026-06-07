@@ -253,3 +253,53 @@ Confirmar se o GitHub **preserva subpastas** no mount: numa conversa nova, remov
 
 ## Nichos como ideias FUTURAS (adiados de propósito pelo usuário)
 Ver NICHOS-CANDIDATOS.md (recuperado dos PLANNING). Não fazer agora. Prioridade do assistente se um dia expandir: Educação & Cursos (nº1); Desenvolvimento Pessoal/Journaling (cuidado: sensível); depois Jurídico/Podcast/Tradução. Tradução & Localização foi sugestão do assistente (não estava no PLANNING).
+
+
+---
+
+# Atualização de status — 2026-06-07 (sessão Custom unificado + consertos)
+
+## i-N6 (Custom Inteligente) — ✅ COMPLETA e EVOLUÍDA
+A composição assistida (concatenação + dedup visível + checagem de conflito) foi entregue nas v1.24.0/v1.25.0; o **sub-painel de granularidade** ("escolher peças" por nicho) entrou na **v1.26.0**. E o conjunto foi **unificado num só card `custom`** (composição no topo + builder abaixo) — ver **D-019** (supersede a parte de D-014 sobre 2 cards). O Custom Inteligente deixou de ser um card separado e virou a seção de composição do próprio Custom.
+
+## P12 (higiene ao encolher docs) — adotada para o projeto; pendente na ferramenta
+Novo princípio pedido pelo usuário (ver DEC **D-020**): ao reescrever/encolher um arquivo-chave, dizer o que saiu/para onde/por quê; não encolher sem justificar item a item; conferir que nada único se perdeu. **Ativa para nós** (CLAUDE.md/CONTEXT). **A propagar para a ferramenta** (BEHAVIORS_BASE 11→12 → CLAUDE.md gerado de todos os nichos) — tarefa de código na fila (STATUS / ROADMAP).
+
+---
+
+## i-N13 — Refator modular do kit (dados de nicho em JSON separados + núcleo central) — A AVALIAR (do usuário)
+**Status:** ativa, decisão em aberto. Ver ROADMAP (Fase 4) e CONTEXT ("questão de arquitetura em aberto").
+**A questão (do usuário):** o HTML único "pesado" dificulta editar/auditar nicho a nicho. O método "profissional" talvez fosse dados de cada nicho em **JSON separado** (estrutura padronizada) + um **arquivo central** para o que muda em todos; assim, ajustar/refinar um nicho mexeria só no arquivo dele, as gerações ficariam mais **auditáveis**, e criar nichos novos seria mais fácil.
+**Avaliação preliminar (trade-offs honestos):**
+- *A favor da modularização:* edição/diff por nicho; menos risco de mexer num nicho e quebrar outro; criar nicho = adicionar um arquivo; testes/validação por arquivo; o JS principal encolhe.
+- *Contra (o que se perde):* hoje é **1 arquivo, sem build, roda via `file://` e em GitHub Pages estático** (D-001). JSON separados exigem ou (a) `fetch()` em runtime — que **não funciona via `file://`** (CORS) e quebra o "abra o arquivo e use", ou (b) um **passo de build** que embute os JSON no HTML final — reintroduz toolchain que o projeto evitou de propósito. Há um meio-termo: manter os nichos como módulos no **repositório** (DX melhor) e gerar um `index.html` "bundled" por um script simples de concatenação (sem framework) — o deploy continua 1 arquivo, o desenvolvimento fica modular.
+- *Recomendação atual:* **não migrar por impulso**; se a manutenção por nicho começar a doer de verdade, o caminho de menor arrependimento é o **bundle por concatenação** (modular no repo, 1 arquivo no deploy), preservando D-001 no produto final. Decidir com calma.
+
+## i-N14 — Nicho/ferramenta de GUIAS, WIKIS e TUTORIAIS — A AVALIAR (do usuário)
+**Status:** ativa. Conecta a "Educação & Cursos" (NICHOS-CANDIDATOS, nº1).
+**A ideia:** algo já preparado para **acelerar e profissionalizar** uma busca/organização padronizada e útil para **aprender ou dominar** ferramentas e técnicas — ex.: platinar/100%-ar um jogo; aprender Aseprite, Unity, Godot, Unreal, Excel, Word, Google Sheets, linguagens de programação; com **referências, dicas, e até cursos/orientações de YouTube e outros**. O usuário acha que um monte de `.md` solto seria "ridículo" para isso, mas que vale ter estrutura pronta.
+**Avaliação preliminar:**
+- Pode ser **um nicho no kit** (ex.: "Aprendizado/Guia": arquivos como OBJETIVO-DE-DOMINIO, MAPA-DE-HABILIDADES, FONTES-E-CURSOS, PROGRESSO/CHECKLIST, GLOSSARIO; behaviors: cita fontes verificadas, separa fato de opinião, monta trilha do básico→avançado, marca pré-requisitos, sugere prática deliberada; prompts: "monte a trilha", "explique X com pré-requisitos", "encontre fontes/cursos confiáveis", "faça um plano de 100%/platina", "me teste").
+- OU **ferramenta separada** se o fluxo for muito diferente (um "companheiro de estudo" que faz pesquisa estruturada e mantém progresso) — o usuário sugeriu que "pelo menos para esses, poderia gerar em uma ferramenta separada".
+- *Risco:* recomendações de curso/links e "como dominar" exigem **rigor de fonte** (não inventar links/cursos; verificar). Casa com a i-N17 (rigor em pesquisa).
+- *Recomendação:* começar como **nicho** (barato, dentro do kit) e, se crescer, considerar a ferramenta dedicada. Decidir depois das pendências de v1.26.x.
+
+## i-N15 — Ferramenta de auto-aplicação de patches ("auto" on/off em todos os nichos) — A AVALIAR (do usuário)
+**Status:** ativa, a avaliar viabilidade/segurança. Ver ROADMAP (Fase 5).
+**A ideia (do usuário):** uma ferramenta externa (ele já iniciou um projeto) que, **dada uma estrutura**, atualiza/modifica scripts e arquivos de metadados **sozinha**. O Claude, em vez de pedir para o usuário aplicar mudanças à mão, **gera arquivos de atualização** (seguindo a estrutura) + o **caminho** onde a ferramenta os encontra; a ferramenta então aplica. Mais automatizado e talvez mais seguro contra erros (se bem feito). Integrado ao kit como um **switch on/off "auto"** que apareceria em **todos os nichos**. Referências citadas a ele por outros projetos: **AutoCoder** e o formato **apply_patch da OpenAI**. Seria como um agente de IA, "sem consumo de tokens diretamente na máquina".
+**Avaliação preliminar (honesta):**
+- *Sobre tokens:* uma ferramenta local que **aplica** patches **não reduz** os tokens que o Claude gasta para **gerar** o conteúdo. **MAS** há um ganho real se o Claude passar a **emitir diffs/patches** (só o que muda) em vez de **arquivos inteiros** — aí caem os **output tokens** (hoje a regra é "entregue o arquivo INTEIRO", que é cara). Esse é o ângulo de economia de verdade — virou a i-N16.
+- *Sobre segurança/erros:* patches no estilo `apply_patch` precisam de **âncoras boas** (contexto ao redor) senão falham quando o arquivo muda; um runner local bem feito valida antes de aplicar. É exatamente o que Claude Code / apply_patch fazem.
+- *Encaixe no kit:* o kit gera **texto**; "aplicar" é da ferramenta externa do usuário. O kit poderia (a) gerar os patches no formato que a ferramenta espera e (b) documentar o caminho. O switch "auto" no kit faria o CLAUDE.md/Instruções instruírem o Claude a **entregar patches** (em vez de arquivos inteiros) quando o projeto usa a ferramenta de auto-aplicação.
+- *Recomendação:* promissor. Tratar em duas frentes: a **ferramenta externa** (projeto do usuário) e, no kit, a **i-N16** (modo "entrega por diff"). Avaliar formato (apply_patch vs unified diff) e como o switch entra sem complicar os nichos.
+
+## i-N16 — Modo "entrega por diff/patch" no kit (economia de output tokens) — A AVALIAR
+**Status:** ativa (derivada da i-N15). 
+**A ideia:** um modo (talvez o switch "auto" da i-N15) em que o Claude, em projetos que usam a ferramenta de auto-aplicação, **entrega patches** (só as mudanças) em vez de arquivos inteiros — reduzindo output tokens nas atualizações (relevante: a sessão anterior consumiu 100% da janela e exigiu 5h de espera). 
+**Tensão a resolver:** isso **conflita** com a regra dura atual "entregue o arquivo INTEIRO, nunca trechos para colar" (que existe porque colar trechos à mão é frágil). A reconciliação: a entrega por diff só vale **quando há uma ferramenta que aplica o patch automaticamente** (não é o usuário colando à mão) — aí o patch é seguro. Sem a ferramenta, continua arquivo inteiro. Precisa de formato robusto + validação. A decidir junto com i-N15.
+
+## i-N17 — Princípio explícito de rigor em pesquisa + refutação fundamentada — A DECIDIR (do usuário)
+**Status:** ativa, a decidir. Ver DEC D-020 (nota relacionada) e STATUS.
+**A ideia:** o usuário perguntou se já existe diretriz para o Claude **pesquisar/aprender** sobre a ideia ou solicitação não só para **refinar de forma profissional**, mas também para **refutar e criticar** com base no sentido e na **experiência de outros**.
+**Situação atual:** **parcialmente** coberto — P1 (analisa antes de aceitar, se posiciona a favor/refina/contra), P4 (admite incerteza; pesquisa o que muda antes de afirmar), P7 (estuda o domínio antes de estruturar; pesquisa práticas/armadilhas). Falta tornar **explícito** o ângulo "buscar a experiência de outros para refutar/criticar, não só para refinar".
+**Opções:** (a) reforçar a redação de P7/P1 incluindo esse ângulo; (b) criar um princípio próprio ("Pesquisa para refinar E para refutar — traz a experiência de outros, inclusive a que contraria a proposta"). Como P1/P4/P7 são universais da ferramenta (BEHAVIORS_BASE), qualquer mexida deve ir junto com a propagação da P12 (i.e., na mesma passada de código nos BEHAVIORS_BASE). Decidir o texto.

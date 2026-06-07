@@ -378,3 +378,87 @@ A conclusão de **D-016** (e as notas da v1.22.0/v1.23.0) de que "tudo no Projet
 
 ### A vigiar
 Se o usuário sincronizar muitos arquivos via GitHub mas precisar deles no mount, lembrar de subir direto os que serão editados/lidos inteiros.
+
+
+---
+
+## D-019 — Unificar os dois construtores num só card Custom (composição + construção na mesma tela)
+
+**Data:** 2026-06-07 · **Status:** aceita e implementada (v1.26.0) · **supersede a parte de D-014** sobre "2 nichos de construção"
+
+### Contexto
+A D-014 definiu 2 cards de construção: `custom` (Blank) e `customSmart` (Inteligente). Em teste de navegador, o usuário apontou um atrito real: para reusar um nicho salvo ele tinha que entrar no Inteligente, marcar qualquer nicho e importar só para revelar o dropdown de presets do builder; e **não havia caminho do builder de volta para o Inteligente** a não ser sair do custom e voltar para "recarregar". Os dois construtores serem "mutuamente exclusivos em espaço" tornava o fluxo confuso.
+
+### A decisão
+**Fundir os dois construtores em UM card `custom`.** A tela do construtor passa a ter, de cima para baixo: (1) a seção "Compor a partir de nichos prontos" (os chips dos 16 nichos, antes o Inteligente) e (2) o "Custom Builder" (identidade, arquivos, comportamentos, prompts, presets). Importar pelos chips **preenche o builder na mesma tela**, sem trocar de view. O nicho `customSmart` foi removido (objeto, CSS de tema, hero, branch de roteamento, função `renderSmartCustomForm`). Contagem de nichos: **18 → 17**.
+
+### Por que (o racional)
+- Resolve o atrito apontado: composição e construção ficam juntas; some o "beco sem saída" builder→inteligente.
+- "Um abaixo do outro" foi a preferência explícita do usuário (alternativa aceitável seria botões de alternância; a fusão é mais simples e definitiva).
+- O Inteligente virou uma **seção** (o chip composer no topo), não um card separado — menos superfície, menos confusão.
+
+### Como (implementação)
+- `renderSmartCustomForm` → dividido em `composerSectionHTML()` (markup dos chips + granularidade) + `wireComposer()` (handlers) + `refreshComposer()` (re-render só de `#g-composer`). `renderCustomForm` passou a renderizar o composer no topo e chamar `wireComposer()`.
+- `composeFromNiches(niches)` ganhou 2º parâmetro `sel` (granularidade — ver D-014 item 4, agora entregue: "escolher peças" por nicho).
+- Removido tudo de `customSmart`. `getCurrentNiche` já usava `raw.isBuilder` (genérico) — sem efeito colateral.
+- Testes atualizados: `validate-compose/conflict/reuse` passaram a usar `setNiche("custom")`; `validate-switch` virou "transições + coexistência (chips e builder juntos no custom)"; contagem esperada 18 → 17.
+
+### Alternativas consideradas
+- **Manter 2 cards com botões de alternância** entre eles — rejeitada: ainda são duas telas; a fusão é mais simples e elimina a navegação.
+- **Manter 2 cards e só adicionar cross-links** — rejeitada pelo mesmo motivo.
+
+### Consequências
+- Fluxo do Custom muito mais direto; o atalho "Nichos salvos" na barra superior (mesma sessão) complementa o acesso a presets.
+- **A vigiar:** o card único acumula muita coisa numa tela (composer + builder). Se ficar longo demais, considerar recolher o composer por padrão. Por ora, em teste, ficou aceitável.
+
+---
+
+## D-020 — Princípio P12: higiene ao encolher arquivos-chave
+
+**Data:** 2026-06-07 · **Status:** aceita; **ativa para o nosso projeto**; **propagação para a ferramenta pendente** (tarefa de código)
+
+### Contexto
+Ao longo do projeto, vários arquivos-chave são reescritos/encolhidos entre sessões (CONTEXT, STATUS, DECISOES, CHANGELOG, IDEIAS, ROADMAP). O risco real: uma reescrita "enxugar" e **perder conteúdo único** sem ninguém perceber. O usuário pediu uma diretriz explícita contra isso — **tanto para o nosso projeto quanto para a ferramenta** (o kit, que gera os docs de outros projetos).
+
+### A decisão (o princípio)
+> **Ao reescrever/encolher qualquer arquivo-chave (CONTEXT, STATUS, DECISIONS, CHANGELOG, IDEAS, ROADMAP), informar explicitamente o que saiu e para onde foi (ou que é redundante/obsoleto); nunca encolher sem justificar item a item, e conferir que nada único se perdeu do conjunto.**
+
+Na prática: cada reescrita abre com uma nota "Mudanças nesta revisão" listando o que mudou/saiu/por quê (e para onde foi). É o que esta própria leva de docs faz.
+
+### Escopo / estado
+- **Nosso projeto (governança):** ativo já — registrado no CLAUDE.md (como P12 das regras de trabalho) e no CONTEXT.md. Esta entrega de docs o aplica.
+- **A ferramenta (a fazer):** virar o **12º item de `BEHAVIORS_BASE`** no `index.html`, para aparecer no CLAUDE.md gerado de TODOS os nichos. É tarefa de código (edita BEHAVIORS_BASE + re-valida 17/17). Não feito nesta sessão (era wrap-up de contexto; evitar mudança de código não validada com a janela cheia). Anotado em STATUS e ROADMAP.
+
+### Relação com diretrizes existentes
+Complementa P8 ("não inventa o que falta") e as regras de higiene ("DECISOES/CHANGELOG/IDEIAS só crescem"; "STATUS é só o agora"). P8 protege contra **inventar**; P12 protege contra **perder** ao encolher.
+
+### Nota relacionada (não decidida ainda) — rigor em pesquisa + refutação
+O usuário perguntou se já há diretriz para o Claude **pesquisar/aprender sobre a ideia ou solicitação** não só para refinar de forma profissional, mas também para **refutar e criticar** com base no sentido e na experiência de outros. Hoje isso é **parcialmente** coberto por P1 (analisa antes de aceitar), P4 (admite incerteza / pesquisa o que muda) e P7 (estuda o domínio antes de estruturar). Proposta em aberto (i-N17): tornar o ângulo "refutar/criticar fundamentado na experiência de outros" explícito — reforçando P7/P1 ou criando um princípio próprio. A decidir.
+
+---
+
+# FIXES — bugs graves resolvidos (formato sintoma/causa/solução/lição)
+
+> Decisões são "por que as coisas são assim"; FIXES são "o que quebrou feio e como consertamos". Não apagar.
+
+## FIX-001 — Construtor reescrevia a coluna de controles sem restaurar o esqueleto
+**Versão:** v1.24.0 · **Gravidade:** alta (afetava o Custom Blank desde antes; silencioso)
+- **Sintoma:** ao entrar num nicho construtor e depois sair (ou re-chamar o formulário), os controles ficavam errados; o próximo construtor também falhava, em cascata.
+- **Causa raiz:** `renderCustomForm` reescrevia `.controls` inteiro (removendo os hosts estáticos `#g-behaviors` etc.) e **nada restaurava o esqueleto**.
+- **Solução:** `let CONTROLS_SKELETON` capturado intacto na 1ª renderização (`captureControlsSkeleton`) e restaurado no topo de `renderBuilder` e dos formulários construtores (`restoreControlsSkeleton`) → re-entrância (idempotência).
+- **Lição:** quem reescreve a coluna de controles tem que poder restaurá-la; render deve ser idempotente.
+
+## FIX-002 — "Aplicar preset" sem nome zerava o preset (footgun)
+**Versão:** v1.25.0 · **Gravidade:** alta (perda de trabalho silenciosa)
+- **Sintoma:** ativar um nicho recém-montado **sem digitar um nome** apagava o preset; o nicho ativado vinha vazio.
+- **Causa raiz:** `setNiche("custom")` relê `LS_PRESET_CURR`; sem o preset salvo com nome, não achava nada e setava `customPreset=null`.
+- **Solução:** o botão (renomeado "⚡ Ativar este nicho", primário) **sempre persiste** o preset antes de ativar — com o nome digitado ou um derivado do título (`slugifyName`). Mais a barra "Editar / trocar" (`injectActiveCustomBar`) para sair do modo ativo sem perder o preset.
+- **Lição:** ações que dependem de estado persistido têm que **garantir** esse estado antes; nunca confiar que o usuário preencheu um pré-requisito implícito.
+
+## FIX-003 — Corpo dos prompts sumia depois de Ativar (função descartada pelo JSON)
+**Versão:** v1.25.1 · **Gravidade:** alta (saída gerada incompleta)
+- **Sintoma:** prompts importados/compostos apareciam **com o corpo vazio** na aba Prompts depois de Ativar (e o CLAUDE.md/Prompts gerado saía sem os corpos). No editor (Instruções) o corpo aparecia.
+- **Causa raiz:** `toPreset` guardava o `body` do prompt como **função** (`function(){return texto}`). Ativar salva o preset via `savePresets` → `JSON.stringify` no `localStorage`, **que descarta funções** → ao reler (`listPresets`/`JSON.parse`), `body` virava `undefined`. No editor funcionava porque ali o `_cf` ainda tinha o body como string.
+- **Solução:** `toPreset` passa a guardar `body` como **STRING** (`typeof p.body==="function" ? p.body({},{}) : (p.body||"")`). A view, os geradores e o `fromPreset` já lidam com string. Prompts compostos ficam com corpo estático (template com `[placeholders]`), sem `fill` dinâmico — aceitável (função não sobrevive ao localStorage de qualquer forma).
+- **Confirmado por design:** o CLAUDE.md gerado lista só **título** dos prompts (corpo NÃO) — igual aos nichos prontos; os corpos vivem na aba Prompts.
+- **Lição:** **nada que vá para o `localStorage` pode ser função.** Serializável = string/número/objeto simples.

@@ -1,6 +1,40 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.25.0**.
+> Histórico de versões. Versão atual: **v1.26.0**.
+
+---
+
+## v1.26.0 — 2026-06-07 — Custom unificado: composição + construção numa só tela; atalho de nichos salvos; granularidade
+
+Reforma da área Custom a partir de teste em navegador. **Supersede a parte de D-014 sobre "2 cards de construção"** (vira **D-019**). **17 nichos** agora (era 18): os dois construtores viraram um. Três itens, cada um validado antes do seguinte (P10).
+
+### 1 — Unificar Inteligente + Builder num só card `custom` (D-019)
+- O card de construção passou a ser **um só**. A tela tem a seção **"Compor a partir de nichos prontos"** (os chips dos 16 nichos, antes o Inteligente) **no topo** e o **"Custom Builder"** logo abaixo. Importar pelos chips **preenche o builder na mesma tela**, sem trocar de view — acaba o vai-e-volta e o beco sem saída builder→inteligente que o usuário relatou.
+- Removido o nicho `customSmart` (objeto, CSS de tema `data-niche="customSmart"`, hero, branch de roteamento em `renderBuilder`, função `renderSmartCustomForm`). `renderSmartCustomForm` → `composerSectionHTML()` + `wireComposer()` + `refreshComposer()` (re-render só de `#g-composer`). `renderCustomForm` renderiza o composer no topo. `NICHES.custom` ganhou cardDesc/cardTags de composição.
+
+### 2 — Atalho "Nichos salvos" na barra superior
+- `savedNichesShortcutHTML()` + `wireSavedNichesShortcut()` (injetados por `renderTopbar`): quando há presets salvos, aparece um dropdown na barra do topo; **selecionar ativa** o nicho salvo de qualquer lugar (`localStorage.setItem(LS_PRESET_CURR, name)` + `setNiche("custom")`). Resolve "não tinha acesso fácil aos nichos salvos".
+
+### 3 — Granularidade por nicho (a etapa 2 do Custom Inteligente, i-N6/D-014 item 4)
+- Cada nicho marcado nos chips tem **"escolher peças"**: expande checkboxes de **arquivos / comportamentos / prompts** daquele nicho (padrão = tudo marcado; "marcar todas" / "limpar" por nicho). `composeFromNiches(niches, sel)` ganhou o 2º parâmetro `sel` e um filtro `inc(id,type,key)` que pula as peças desmarcadas.
+
+### Validação
+- Suíte: `validate.js` **17/17, 0 erros**; `validate-switch` (transições + **coexistência** chips/builder no custom); `validate-compose`/`validate-conflict`/`validate-reuse` (atualizados p/ `setNiche("custom")`); `t-prompt` (corpos preservados); `t-shortcut` (atalho ativa de qualquer lugar); `t-granular` (peça desmarcada some do import; "marcar todas" reinclui). `node --check` ok; tags balanceadas (div 273/273). Índice ~546 KB / 8092 linhas.
+
+---
+
+## v1.25.1 — 2026-06-07 — fix: corpo dos prompts sumia depois de Ativar
+
+Bugfix sobre a v1.25.0, achado em teste de navegador.
+
+### Corrigido (FIX-003)
+- **Corpo dos prompts importados/compostos vinha vazio depois de Ativar** (na aba Prompts e no CLAUDE.md/Prompts gerado). **Causa:** `toPreset` guardava o `body` do prompt como **função**; ao Ativar, o preset vai para o `localStorage` via `JSON.stringify`, **que descarta funções** → ao reler, `body` virava `undefined`. (No editor de Instruções funcionava porque ali o `_cf` ainda tinha o body como string.)
+- **Conserto:** `toPreset` passa a guardar `body` como **STRING** (`typeof p.body==="function" ? p.body({},{}) : (p.body||"")`). A view, os geradores e o `fromPreset` já aceitam string. Prompts compostos no custom têm corpo estático (template com `[placeholders]`), sem `fill` dinâmico.
+- **Confirmado por design:** o CLAUDE.md gerado lista só **título** dos prompts (corpo NÃO) — igual aos nichos prontos; os corpos vivem na aba Prompts (para copiar).
+- **Lição registrada (armadilha #8 do CONTEXT):** nada que vá para o `localStorage` pode ser função.
+
+### Validação
+- `t-prompt.js` (novo): após Ativar (com round-trip de localStorage), os 18 prompts do nicho composto mostram o corpo na view; preset salvo guarda `body` como string. Regressão verde (18/18 à época; depois 17/17 com a unificação).
 
 ---
 
