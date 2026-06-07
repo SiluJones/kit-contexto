@@ -4,11 +4,13 @@
 
 > **Criado em 2026-06-07.** Primeira versão. Consolida o que já foi feito (Fases 0–2) e organiza o que está por decidir/fazer (Fases 3–5 + Futuro), a partir das discussões desta sessão.
 
+> **Mudanças nesta revisão (v1.27.0):** a Fase 3 avançou — os itens 1 (propagar P12) e 2 (decidir o princípio de pesquisa/refutação, i-N17) foram **concluídos**; o antigo item 3 (mount/RAG, D-018) passou a ser o próximo. Ver D-020, D-021 e CHANGELOG v1.27.0. Nada removido — itens concluídos ficam visíveis como ✅.
+
 ---
 
 ## ✅ Fase 0 — MVP + fundação (CONCLUÍDA)
 - 18 nichos em página única (v1.0.0); heros distintos; Custom como construtor real; theming por CSS vars; persistência em localStorage.
-- Fundação transversal: princípios universais (chegaram a 11), CLAUDE.md separado das Instruções, filosofia rolante/estável/cresce, regras de higiene, tabela de gatilhos, UPDATE_PROTOCOL. (D-012; v1.1.x–v1.4.0.)
+- Fundação transversal: princípios universais (chegaram a 11; **hoje 13** com P12/P13 — v1.27.0), CLAUDE.md separado das Instruções, filosofia rolante/estável/cresce, regras de higiene, tabela de gatilhos, UPDATE_PROTOCOL. (D-012; v1.1.x–v1.4.0.)
 
 ## ✅ Fase 1 — Refinamento área por área (CONCLUÍDA)
 - Os 16 nichos de conteúdo (8 sérios + 8 criativos) reconstruídos no "padrão de ouro", cada um com pesquisa de domínio própria. (D-013; v1.5.0–v1.18.0.)
@@ -22,12 +24,16 @@
 
 ---
 
-## ▶ Fase 3 — Higiene & consistência (PRÓXIMA — barato, alto valor)
-Itens de código pequenos e de doc, sem arquitetura nova:
-1. **Propagar P12 (higiene ao encolher) para a ferramenta** — virar o 12º item de `BEHAVIORS_BASE` (aparece no CLAUDE.md gerado de todos os nichos). Re-validar 17/17. (DEC D-020.) — *o mais direto; começar por aqui.*
-2. **Decidir o princípio de rigor em pesquisa + refutação** (i-N17): reforçar P7/P1 ou criar um princípio próprio; aplicar na mesma passada de `BEHAVIORS_BASE`.
-3. **Corrigir a orientação mount/RAG/anexo gerada pelo kit** (D-018) — o CLAUDE.md / "Tokens & Fluxos" ainda diz "tudo no Projeto + ferramenta de código → mount"; precisa refletir "só upload direto popula o mount; conector do GitHub = só RAG". Muda conteúdo em todos os nichos → re-validar 17/17.
-4. **Cosméticos:** MAPA.md ("17 prontos" → 16 de conteúdo + 1 construtor); reagrupar `narrative` (group literary → tema criativo); revisar README/PLANNING; revisar qualidade das Instruções geradas.
+## ▶ Fase 3 — Higiene & consistência (EM ANDAMENTO — barato, alto valor)
+Itens de código pequenos e de doc, sem arquitetura nova.
+
+**✅ Concluído (v1.27.0):**
+- ✅ **P12 (higiene ao encolher) propagado à ferramenta** — 12º item de `BEHAVIORS_BASE` (`shrink_hygiene`), aparece no CLAUDE.md gerado de todos os nichos. Re-validado 17/17. (DEC D-020.)
+- ✅ **Princípio de rigor em pesquisa + refutação decidido** (i-N17) — criado o princípio próprio **P13** (`research_refute`), 13º item de `BEHAVIORS_BASE`, em vez de reforçar P1/P7. (DEC D-021.)
+
+**Restante:**
+1. **Corrigir a orientação mount/RAG/anexo gerada pelo kit** (D-018) — o CLAUDE.md / "Tokens & Fluxos" ainda diz "tudo no Projeto + ferramenta de código → mount"; precisa refletir "só upload direto popula o mount; conector do GitHub = só RAG". Muda conteúdo em todos os nichos → re-validar 17/17. — *próximo.*
+2. **Cosméticos:** MAPA.md ("17 prontos" → 16 de conteúdo + 1 construtor); reagrupar `narrative` (group literary → tema criativo); revisar README/PLANNING; revisar qualidade das Instruções geradas.
 
 ## ⏸ Fase 4 — Arquitetura (EM AVALIAÇÃO — não mexer sem decisão)
 - **Refator modular** (i-N13): dados de nicho em JSON separados + núcleo central, vs. manter o HTML único (D-001).

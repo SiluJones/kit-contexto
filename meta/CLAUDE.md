@@ -4,6 +4,8 @@
 > O QUE o projeto é fica no `README.md`/`PLANNING.md`; o estado atual no `meta/STATUS.md`.
 > Este arquivo é o primeiro a ler em cada sessão — ele carrega as regras que descobrimos ao longo do desenvolvimento, para que cada conversa nova continue de onde a anterior parou, sem regredir.
 
+> **Mudanças nesta revisão (v1.27.0):** os princípios de trabalho passaram de **11 → 13** itens — P12 (higiene ao encolher) deixou de ser "a propagar" e agora é o 12º item de `BEHAVIORS_BASE` da ferramenta; P13 (pesquisa para refinar E refutar) foi adicionado como 13º, decidindo a i-N17 (antes era só "nota relacionada a decidir"). Ver DEC D-020 e D-021. Nada mais mudou aqui; nada perdido.
+
 ---
 
 ## O que é este projeto (resumo de 30 segundos)
@@ -27,7 +29,7 @@ Detalhes completos: `README.md`, `PLANNING.md`, `meta/STATUS.md`, `meta/CHANGELO
 
 ---
 
-## Princípios de trabalho (os 11 universais do próprio kit, aplicados a nós)
+## Princípios de trabalho (os 13 universais do próprio kit, aplicados a nós)
 
 Estes são exatamente os princípios que o kit prega — e que praticamos aqui (dogfooding).
 
@@ -43,9 +45,9 @@ Estes são exatamente os princípios que o kit prega — e que praticamos aqui (
 10. **Cadência — trabalho em fases, sem fragmentar o trivial.** Trabalho grande pode ir em fases auditáveis (o plano vive em ROADMAP/IDEIAS/STATUS); cada incremento sai completo e validado. Isso não afrouxa a regra de doc/arquivo completo — o que se faz em fases é o trabalho, nunca um arquivo pela metade. E não fragmenta tarefa pequena nem enche de perguntas (proporcional ao tamanho).
 11. **Usa a versão mais recente; não mistura nem regride.** Quando há mais de uma versão, usa a mais nova que tem à vista; se a que gerou/recebeu nesta conversa for mais nova que a do Projeto/mount, usa a sua e avisa em uma linha — **sem parar para pedir**, porque já a tem. Só pára e pede quando **não tem** a versão atualizada que a tarefa exige; nunca interrompe trabalho no meio por algo que já possui. Nunca costura pedaço novo em arquivo velho.
 
-12. **Higiene ao encolher arquivos-chave (P12 — novo).** Ao reescrever/encolher CONTEXT, STATUS, DECISOES, CHANGELOG, IDEIAS ou ROADMAP, informa explicitamente o que saiu e para onde foi (ou que é redundante/obsoleto); nunca encolhe sem justificar item a item; e confere que nada único se perdeu do conjunto. (Ativo para nós já — cada doc reescrito abre com a nota «Mudanças nesta revisão». **A propagar para a ferramenta**: virar o 12º item de `BEHAVIORS_BASE`, aparecendo no CLAUDE.md gerado de todos os nichos — tarefa de código na fila; ver DEC D-020.)
+12. **Higiene ao encolher arquivos-chave (P12).** Ao reescrever/encolher CONTEXT, STATUS, DECISOES, CHANGELOG, IDEIAS ou ROADMAP, informa explicitamente o que saiu e para onde foi (ou que é redundante/obsoleto); nunca encolhe sem justificar item a item; e confere que nada único se perdeu do conjunto. (Ativo para nós — cada doc reescrito abre com a nota «Mudanças nesta revisão» — **e propagado para a ferramenta na v1.27.0**: é o 12º item de `BEHAVIORS_BASE` (id `shrink_hygiene`), no CLAUDE.md gerado de todos os nichos. Ver DEC D-020.)
 
-> **Nota relacionada (a decidir, i-N17):** rigor em pesquisa + refutação — pesquisar/aprender sobre a ideia ou solicitação não só para refinar, mas para **refutar e criticar** com base na experiência de outros — hoje é **parcialmente** coberto por P1/P4/P7; falta decidir se vira texto explícito.
+13. **Pesquisa para refinar E para refutar (P13).** Pesquisa a experiência de outros (casos reais, post-mortems, críticas, convenções) não só para refinar a proposta, mas para REFUTÁ-LA quando a evidência aponta contra; procura ativamente onde a ideia já falhou para os outros — não só o que a apoia — e traz o contraponto com lastro na prática alheia, não apenas na própria análise; não conclui "parece bom" sem antes confrontar com o que o mundo já tentou. (Decide a i-N17; complementa P1 "analisa antes de aceitar" e P5 "explica trade-offs" — aqui o contra-argumento vem de fora, não só do raciocínio interno. Propagado à ferramenta na v1.27.0: 13º item de `BEHAVIORS_BASE`, id `research_refute`. Por que princípio próprio e não reforço de P1/P7: ver DEC D-021.)
 
 ---
 

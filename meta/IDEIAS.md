@@ -262,8 +262,8 @@ Ver NICHOS-CANDIDATOS.md (recuperado dos PLANNING). Não fazer agora. Prioridade
 ## i-N6 (Custom Inteligente) — ✅ COMPLETA e EVOLUÍDA
 A composição assistida (concatenação + dedup visível + checagem de conflito) foi entregue nas v1.24.0/v1.25.0; o **sub-painel de granularidade** ("escolher peças" por nicho) entrou na **v1.26.0**. E o conjunto foi **unificado num só card `custom`** (composição no topo + builder abaixo) — ver **D-019** (supersede a parte de D-014 sobre 2 cards). O Custom Inteligente deixou de ser um card separado e virou a seção de composição do próprio Custom.
 
-## P12 (higiene ao encolher docs) — adotada para o projeto; pendente na ferramenta
-Novo princípio pedido pelo usuário (ver DEC **D-020**): ao reescrever/encolher um arquivo-chave, dizer o que saiu/para onde/por quê; não encolher sem justificar item a item; conferir que nada único se perdeu. **Ativa para nós** (CLAUDE.md/CONTEXT). **A propagar para a ferramenta** (BEHAVIORS_BASE 11→12 → CLAUDE.md gerado de todos os nichos) — tarefa de código na fila (STATUS / ROADMAP).
+## P12 (higiene ao encolher docs) — ✅ adotada para o projeto E propagada à ferramenta (v1.27.0)
+Novo princípio pedido pelo usuário (ver DEC **D-020**): ao reescrever/encolher um arquivo-chave, dizer o que saiu/para onde/por quê; não encolher sem justificar item a item; conferir que nada único se perdeu. **Ativa para nós** (CLAUDE.md/CONTEXT) **e propagada à ferramenta na v1.27.0** — é o 12º item de `BEHAVIORS_BASE` (`shrink_hygiene`), no CLAUDE.md gerado de todos os nichos. Ver CHANGELOG v1.27.0.
 
 ---
 
@@ -298,8 +298,8 @@ Novo princípio pedido pelo usuário (ver DEC **D-020**): ao reescrever/encolher
 **A ideia:** um modo (talvez o switch "auto" da i-N15) em que o Claude, em projetos que usam a ferramenta de auto-aplicação, **entrega patches** (só as mudanças) em vez de arquivos inteiros — reduzindo output tokens nas atualizações (relevante: a sessão anterior consumiu 100% da janela e exigiu 5h de espera). 
 **Tensão a resolver:** isso **conflita** com a regra dura atual "entregue o arquivo INTEIRO, nunca trechos para colar" (que existe porque colar trechos à mão é frágil). A reconciliação: a entrega por diff só vale **quando há uma ferramenta que aplica o patch automaticamente** (não é o usuário colando à mão) — aí o patch é seguro. Sem a ferramenta, continua arquivo inteiro. Precisa de formato robusto + validação. A decidir junto com i-N15.
 
-## i-N17 — Princípio explícito de rigor em pesquisa + refutação fundamentada — A DECIDIR (do usuário)
-**Status:** ativa, a decidir. Ver DEC D-020 (nota relacionada) e STATUS.
-**A ideia:** o usuário perguntou se já existe diretriz para o Claude **pesquisar/aprender** sobre a ideia ou solicitação não só para **refinar de forma profissional**, mas também para **refutar e criticar** com base no sentido e na **experiência de outros**.
-**Situação atual:** **parcialmente** coberto — P1 (analisa antes de aceitar, se posiciona a favor/refina/contra), P4 (admite incerteza; pesquisa o que muda antes de afirmar), P7 (estuda o domínio antes de estruturar; pesquisa práticas/armadilhas). Falta tornar **explícito** o ângulo "buscar a experiência de outros para refutar/criticar, não só para refinar".
-**Opções:** (a) reforçar a redação de P7/P1 incluindo esse ângulo; (b) criar um princípio próprio ("Pesquisa para refinar E para refutar — traz a experiência de outros, inclusive a que contraria a proposta"). Como P1/P4/P7 são universais da ferramenta (BEHAVIORS_BASE), qualquer mexida deve ir junto com a propagação da P12 (i.e., na mesma passada de código nos BEHAVIORS_BASE). Decidir o texto.
+## i-N17 — Princípio explícito de rigor em pesquisa + refutação fundamentada — ✅ DECIDIDA (v1.27.0)
+**Status:** **concluída** — virou o princípio **P13** (`research_refute`), 13º item de `BEHAVIORS_BASE`. Ver **DEC D-021** e CHANGELOG v1.27.0.
+**A ideia (registro):** o usuário perguntou se já existe diretriz para o Claude **pesquisar/aprender** sobre a ideia ou solicitação não só para **refinar de forma profissional**, mas também para **refutar e criticar** com base no sentido e na **experiência de outros**.
+**Situação na época:** **parcialmente** coberto — P1 (analisa antes de aceitar), P4 (admite incerteza; pesquisa o que muda), P7 (estuda o domínio antes de estruturar). Faltava tornar **explícito** o ângulo "buscar a experiência de outros para refutar/criticar, não só para refinar".
+**Opções consideradas:** (a) reforçar a redação de P7/P1; (b) criar um princípio próprio. **Escolhida a (b)** — o ângulo (ir buscar fora o contraponto, com lastro na prática alheia) cruza P1/P5/P7 sem ser nenhum, e a reversão para (a) seria de uma linha. Racional e contra-argumento completos em **D-021**. Texto final propagado à ferramenta na mesma passada de código que levou a P12.

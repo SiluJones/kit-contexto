@@ -3,11 +3,17 @@
 > O **passaporte** do projeto. Leia primeiro para se ambientar. Estável — muda pouco.
 > Objetivo deste arquivo: uma nova conversa entende o projeto inteiro sem precisar de mais nada.
 
+> **Mudanças nesta revisão (v1.26.0 → v1.27.0):**
+> - **P12 e P13 propagados à ferramenta.** `BEHAVIORS_BASE` foi de **11 → 13** princípios: +P12 (higiene ao encolher, `shrink_hygiene`) +P13 (pesquisa para refinar E para refutar, `research_refute`). Aparecem no CLAUDE.md gerado de todos os nichos (e como bullet curto nas Instruções). Toda menção a "11 princípios" e "P12 a propagar / na fila" foi atualizada abaixo. Ver **D-020**, **D-021** e CHANGELOG v1.27.0.
+> - **i-N17 decidida** — virou o P13 (princípio próprio, não reforço de P1/P7). Ver D-021.
+> - Versão/tamanho atualizados (~548 KB / 8095 linhas); validado **17/17, 0 erros**.
+> - A nota da revisão anterior (v1.26.0) fica preservada logo abaixo (nada perdido).
+>
 > **Mudanças nesta revisão (pós-v1.25.0 → v1.26.0):**
 > - **Contagem de nichos 18 → 17.** Os dois construtores (`custom` "Blank" + `customSmart` "Inteligente") foram **fundidos em um só** card `custom` (composição + construção do zero na mesma tela). Ver **D-019** (supersede D-014). Toda menção a "2 construtores / customSmart" foi atualizada.
 > - **Mapa do JS atualizado:** `renderSmartCustomForm` saiu; entraram `composerSectionHTML` / `wireComposer` / `refreshComposer` (composição dentro do `renderCustomForm`) e `savedNichesShortcutHTML` / `wireSavedNichesShortcut` (atalho de nichos salvos na barra superior).
 > - **Suíte de validação** ampliada (lista atualizada na seção de validação).
-> - **Novo princípio de higiene de docs (P12)** anotado — ver «Idioma e convenções» e DECISOES D-020. (Vale para nós já; a **propagação para a ferramenta** — `BEHAVIORS_BASE` 11→12 — está na fila, é tarefa de código.)
+> - **Novo princípio de higiene de docs (P12)** anotado — ver «Idioma e convenções» e DECISOES D-020. (Já valia para nós; **propagado para a ferramenta na v1.27.0** — `BEHAVIORS_BASE` 11→12, depois 13 com o P13.)
 > - Acrescentado ponteiro para a **questão de arquitetura em aberto** (refator modular) — detalhe em IDEIAS (i-N13) e ROADMAP.
 > - Versão/tamanho atualizados (~546 KB / 8092 linhas).
 > - **Nada único foi removido** — só atualização de fatos que mudaram. O conteúdo sobre contexto/RAG/mount, armadilhas e produto permanece integral.
@@ -31,7 +37,7 @@ O kit é, ele mesmo, uma aplicação da própria filosofia (dogfooding): este pr
 - **Questão de arquitetura em aberto (não decidida):** se vale migrar de um HTML único "pesado" para uma estrutura **modular** (dados de cada nicho em JSON separado + um núcleo central), para tornar a edição/auditoria por nicho mais fácil. Hoje a escolha é o HTML único (D-001), pelo deploy estático sem build e por rodar via `file://`. Trade-offs e caminho possível em **IDEIAS i-N13** e no **ROADMAP** (Fase 4 — em avaliação). Não mexer sem decisão explícita.
 
 ### Estrutura do JS (mapa mental)
-1. **Constantes de fundação** (topo do `<script>`): `LANGS` (idiomas — valor "pt", "en", "es", "other"), `BEHAVIORS_BASE` (**11** princípios universais — ver nota P12 abaixo), `FILE_PHILOSOPHY`, `HYGIENE_RULES`, `TRIGGERS_BASE`, `UPDATE_PROTOCOL` (protocolo de atualização — inclui commit, canal de atualização, privacidade E o plano de transferência/handoff), `AFFIX` (afixo de download), `OSENV`/`OS_LABELS`/`OS_CMDNOTE` (seletor de SO).
+1. **Constantes de fundação** (topo do `<script>`): `LANGS` (idiomas — valor "pt", "en", "es", "other"), `BEHAVIORS_BASE` (**13** princípios universais — inclui P12 e P13, ver lista abaixo), `FILE_PHILOSOPHY`, `HYGIENE_RULES`, `TRIGGERS_BASE`, `UPDATE_PROTOCOL` (protocolo de atualização — inclui commit, canal de atualização, privacidade E o plano de transferência/handoff), `AFFIX` (afixo de download), `OSENV`/`OS_LABELS`/`OS_CMDNOTE` (seletor de SO).
 2. **Objetos `NICHES.<id>`** — um por nicho (16 de conteúdo + `custom`). Cada um é um objeto grande com a forma descrita abaixo. Delimitados por comentários `/* ---------- NOME ---------- */`.
 3. **Normalizadores** — `normNiche`, `normConventions`, `normBuilderSection`, `fileTag` (consolidado). Aceitam 2 formatos históricos de dados.
 4. **Funções de render** — `renderTopbar` (aceita `opts` de pares E `options` de strings — corrigido na v1.11.1; **inclui agora o atalho "Nichos salvos"**), `renderBehaviors`, `renderBuilder` (roteia o `custom` para o construtor unificado), `renderCustomForm` (o construtor: **composição no topo + builder manual abaixo**), `updatePreview`, `buildInstr` (gera as Instruções), `buildClaudeMd` (gera o CLAUDE.md completo).
@@ -52,7 +58,7 @@ O kit é, ele mesmo, uma aplicação da própria filosofia (dogfooding): este pr
   cardColor, cardTags[], cardDesc,             // o card na tela de seleção
   intro:{ headline, lede, ctxBlurb, hero },    // a tela "Início" do nicho
   topbar:[ {id,label,placeholder?} | {id,label,type:"select",options:[...] | opts:[[v,l]], default?} ],
-  behaviors:[ [id, titulo, descrição], ... ],  // os behaviors ESPECÍFICOS do nicho (somam aos 11 universais)
+  behaviors:[ [id, titulo, descrição], ... ],  // os behaviors ESPECÍFICOS do nicho (somam aos 13 universais)
   builderSection:{ title, hint, items:[...] | groups:[...]/type:"chips" },  // o "Construir instrução"
   conventions:[ ... ] | true | false,          // bloco de convenções (true = naming/idioma default)
   triggersExtra:[ [evento, ação], ... ],        // gatilhos específicos (somam aos TRIGGERS_BASE)
@@ -64,10 +70,12 @@ O kit é, ele mesmo, uma aplicação da própria filosofia (dogfooding): este pr
 ```
 Cada nicho tem **12 prompt cards**: 6 universais (A-F) + 6 específicos (G-L). Os A-F são gerados pela fundação; os G-L vêm de `promptsExtra`. **Nota:** o CLAUDE.md gerado lista só **título** dos prompts; os **corpos** vivem na aba Prompts (para copiar). Prompts compostos no custom têm corpo **estático** (template com `[placeholders]`), sem campo `fill` dinâmico.
 
-### Os 11 princípios universais (BEHAVIORS_BASE — em todos os nichos)
-1. Analisa antes de aceitar. 2. Não desperdiça tokens (mas pedir arquivo necessário ≠ desperdício; inventar arquivo falso = desperdício maior). 3. Direto e objetivo, sem rodeios. 4. Admite incerteza (pesquisa o que muda antes de afirmar). 5. Explica trade-offs. 6. Instruções sempre cuidadosas. 7. Estuda o domínio antes de estruturar. 8. Verifica antes de pedir arquivo; não inventa o que falta (mas inferência PEDIDA pelo usuário é permitida). 9. Captura ideias. 10. Cadência (fases auditáveis; não fragmenta o trivial). 11. Usa a versão mais recente que tem; só pára e pede quando não tem a que a tarefa exige.
+### Os 13 princípios universais (BEHAVIORS_BASE — em todos os nichos)
+1. Analisa antes de aceitar. 2. Não desperdiça tokens (mas pedir arquivo necessário ≠ desperdício; inventar arquivo falso = desperdício maior). 3. Direto e objetivo, sem rodeios. 4. Admite incerteza (pesquisa o que muda antes de afirmar). 5. Explica trade-offs. 6. Instruções sempre cuidadosas. 7. Estuda o domínio antes de estruturar. 8. Verifica antes de pedir arquivo; não inventa o que falta (mas inferência PEDIDA pelo usuário é permitida). 9. Captura ideias. 10. Cadência (fases auditáveis; não fragmenta o trivial). 11. Usa a versão mais recente que tem; só pára e pede quando não tem a que a tarefa exige. 12. Higiene ao encolher arquivos-chave (não encolhe em silêncio; abre com «Mudanças nesta revisão»; confere que nada único se perdeu). 13. Pesquisa para refinar E para refutar (busca a experiência de outros, inclusive onde a ideia já falhou; o contraponto vem com lastro na prática alheia, não só na própria análise).
 
-> **P12 (novo nesta sessão) — Higiene ao encolher arquivos-chave.** Ao reescrever/encolher qualquer arquivo-chave (CONTEXT, STATUS, DECISOES, CHANGELOG, IDEIAS, ROADMAP), informar explicitamente o que saiu e para onde foi (ou que é redundante/obsoleto); nunca encolher sem justificar item a item, e conferir que nada único se perdeu do conjunto. **Estado:** ativo para o nosso projeto (este arquivo já o aplica na nota do topo); **a propagar para a ferramenta** (virar o 12º item de `BEHAVIORS_BASE`, aparecendo no CLAUDE.md gerado de todos os nichos) — tarefa de código na fila (ver STATUS / ROADMAP / DEC D-020).
+> **P12 — Higiene ao encolher arquivos-chave.** Ao reescrever/encolher qualquer arquivo-chave (CONTEXT, STATUS, DECISOES, CHANGELOG, IDEIAS, ROADMAP), informar explicitamente o que saiu e para onde foi (ou que é redundante/obsoleto); nunca encolher sem justificar item a item, e conferir que nada único se perdeu do conjunto. **Estado:** ativo para o nosso projeto (este arquivo o aplica na nota do topo) **e propagado para a ferramenta na v1.27.0** — é o 12º item de `BEHAVIORS_BASE` (id `shrink_hygiene`), no CLAUDE.md gerado de todos os nichos. Ver DEC D-020.
+
+> **P13 — Pesquisa para refinar E para refutar.** Pesquisa a experiência de outros (casos reais, post-mortems, críticas, convenções) não só para refinar a proposta, mas para REFUTÁ-LA quando a evidência aponta contra; procura ativamente onde a ideia já falhou para os outros e traz o contraponto com lastro na prática alheia, não só na própria análise. **Estado:** decidido na v1.27.0 (resolve a i-N17) e propagado à ferramenta — 13º item de `BEHAVIORS_BASE` (id `research_refute`). Por que princípio próprio e não reforço de P1/P7: ver DEC D-021.
 
 ### O UPDATE_PROTOCOL (transversal — aparece no CLAUDE.md de TODOS os nichos)
 Contém: o protocolo de atualização de arquivos (assistente faz / usuário faz / nota sobre arquivos read-only), e 4 seções adicionadas ao longo das sessões:
@@ -139,3 +147,4 @@ Por razões históricas, os nichos existem em 2 formatos. `renderTopbar` aceita 
 - Commit ao final no formato CMD Windows (uma linha, `-m` repetido, sem acentos), pronto para colar.
 - **Handoff ao final:** dizer ao usuário, arquivo por arquivo, onde colocar cada um na próxima conversa (Projeto vs. anexo) e, quando útil, montar o prompt de início.
 - **P12 (higiene ao encolher):** ao reescrever um arquivo-chave, abrir com uma nota do que mudou/saiu/por quê; nunca encolher sem justificar item a item; conferir que nada único se perdeu.
+- **P13 (pesquisa para refinar E refutar):** ao avaliar uma ideia/solicitação, buscar a experiência de outros — inclusive onde já falhou — e trazer o contraponto fundamentado na prática alheia, não só no raciocínio interno; não concluir "parece bom" sem confrontar com o que o mundo já tentou.

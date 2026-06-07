@@ -1,6 +1,24 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.26.0**.
+> Histórico de versões. Versão atual: **v1.27.0**.
+
+---
+
+## v1.27.0 — 2026-06-07 — Princípios universais 11 → 13: higiene ao encolher (P12) + pesquisa para refinar/refutar (P13)
+
+Propaga para a **ferramenta** dois princípios que até aqui valiam só na nossa governança, virando o **12º e o 13º itens de `BEHAVIORS_BASE`** — agora aparecem nas Instruções (versão curta) e no CLAUDE.md (versão completa) gerados de **todos os 17 nichos**. Mudança **só de dados** (a array `BEHAVIORS_BASE`); nenhuma alteração de fluxo, render ou DOM.
+
+### 1 — P12: Higiene ao encolher arquivos-chave (`shrink_hygiene`) — DEC D-020
+- 12º item de `BEHAVIORS_BASE`. Ao reescrever/encolher um arquivo-chave (CONTEXT, STATUS, DECISIONS, CHANGELOG, IDEAS, ROADMAP), o assistente informa o que saiu e para onde foi (ou que é redundante/obsoleto), justifica **item a item** (nota «Mudanças nesta revisão») e confere que nada único se perdeu. Protege contra **PERDER** conteúdo ao enxugar — o par de «verifica antes de pedir arquivo», que protege contra **INVENTAR** o que falta. Conclui a propagação que estava na fila desde a v1.26.0.
+
+### 2 — P13: Pesquisa para refinar E para refutar (`research_refute`) — DEC D-021 (decide a i-N17)
+- 13º item de `BEHAVIORS_BASE`. Resolve a **i-N17**, que estava em aberto: em vez de só reforçar P1/P7, optou-se por um **princípio próprio**. O assistente pesquisa a experiência de outros (casos, post-mortems, críticas, convenções) não só para **refinar** a proposta, mas para **REFUTÁ-LA** quando a evidência aponta contra — busca ativamente onde a ideia já falhou para os outros e traz o contraponto com lastro externo. Complementa P1 (a posição) e P5 (o melhor argumento contrário), agora com fonte na experiência de fora, não só no raciocínio interno.
+
+### Nomes genéricos do kit (não os nossos pt-BR)
+- No texto dos dois princípios usei os nomes **genéricos** que o kit gera (CONTEXT, STATUS, DECISIONS, CHANGELOG, IDEAS, ROADMAP), e **não** os nossos (DECISOES/IDEIAS), para casar com `HYGIENE_RULES` / `TRIGGERS_BASE` / `UPDATE_PROTOCOL`, que já usam os nomes genéricos no artefato gerado.
+
+### Validação
+- Harness jsdom **recriado** (o ambiente reseta entre sessões), construindo cada nicho via `normNiche(NICHES[id])` — como `getCurrentNiche` faz (normaliza os behaviors de nicho de array para objeto; sem isso eles sairiam com label `undefined`, que é artefato de harness, não bug). `validate.js` **17/17 nichos, 0 erros**: Instruções + CLAUDE.md gerados; **P12 e P13 presentes nos dois artefatos** de cada nicho (bullet `- **Label.**` nas Instruções; `### 12.` / `### 13.` no CLAUDE.md); guarda extra confirma que **nenhum** princípio sai com label `undefined`. `node --check` ok; tags balanceadas (div **273/273**, inalterado — confirma que não houve mudança estrutural). Índice ~548 KB / 8095 linhas.
 
 ---
 

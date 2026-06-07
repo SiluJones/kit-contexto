@@ -415,7 +415,7 @@ A D-014 definiu 2 cards de construção: `custom` (Blank) e `customSmart` (Intel
 
 ## D-020 — Princípio P12: higiene ao encolher arquivos-chave
 
-**Data:** 2026-06-07 · **Status:** aceita; **ativa para o nosso projeto**; **propagação para a ferramenta pendente** (tarefa de código)
+**Data:** 2026-06-07 · **Status:** aceita; **ativa para o nosso projeto**; **propagada para a ferramenta (v1.27.0)** — é o 12º item de `BEHAVIORS_BASE`
 
 ### Contexto
 Ao longo do projeto, vários arquivos-chave são reescritos/encolhidos entre sessões (CONTEXT, STATUS, DECISOES, CHANGELOG, IDEIAS, ROADMAP). O risco real: uma reescrita "enxugar" e **perder conteúdo único** sem ninguém perceber. O usuário pediu uma diretriz explícita contra isso — **tanto para o nosso projeto quanto para a ferramenta** (o kit, que gera os docs de outros projetos).
@@ -427,13 +427,39 @@ Na prática: cada reescrita abre com uma nota "Mudanças nesta revisão" listand
 
 ### Escopo / estado
 - **Nosso projeto (governança):** ativo já — registrado no CLAUDE.md (como P12 das regras de trabalho) e no CONTEXT.md. Esta entrega de docs o aplica.
-- **A ferramenta (a fazer):** virar o **12º item de `BEHAVIORS_BASE`** no `index.html`, para aparecer no CLAUDE.md gerado de TODOS os nichos. É tarefa de código (edita BEHAVIORS_BASE + re-valida 17/17). Não feito nesta sessão (era wrap-up de contexto; evitar mudança de código não validada com a janela cheia). Anotado em STATUS e ROADMAP.
+- **A ferramenta (feito, v1.27.0):** virou o **12º item de `BEHAVIORS_BASE`** (id `shrink_hygiene`) no `index.html`, aparecendo no CLAUDE.md gerado de TODOS os nichos (e como bullet curto nas Instruções, via `shortDef`). Re-validado 17/17, 0 erros. Ver CHANGELOG v1.27.0.
 
 ### Relação com diretrizes existentes
 Complementa P8 ("não inventa o que falta") e as regras de higiene ("DECISOES/CHANGELOG/IDEIAS só crescem"; "STATUS é só o agora"). P8 protege contra **inventar**; P12 protege contra **perder** ao encolher.
 
-### Nota relacionada (não decidida ainda) — rigor em pesquisa + refutação
-O usuário perguntou se já há diretriz para o Claude **pesquisar/aprender sobre a ideia ou solicitação** não só para refinar de forma profissional, mas também para **refutar e criticar** com base no sentido e na experiência de outros. Hoje isso é **parcialmente** coberto por P1 (analisa antes de aceitar), P4 (admite incerteza / pesquisa o que muda) e P7 (estuda o domínio antes de estruturar). Proposta em aberto (i-N17): tornar o ângulo "refutar/criticar fundamentado na experiência de outros" explícito — reforçando P7/P1 ou criando um princípio próprio. A decidir.
+### Nota relacionada — rigor em pesquisa + refutação → **resolvida em D-021**
+O usuário perguntou se já há diretriz para o Claude **pesquisar/aprender sobre a ideia ou solicitação** não só para refinar de forma profissional, mas também para **refutar e criticar** com base no sentido e na experiência de outros. Era a i-N17. **Decidida na v1.27.0 (ver D-021):** virou um princípio próprio (P13, `research_refute`), em vez de só reforçar P1/P7.
+
+---
+
+## D-021 — Princípio P13: pesquisa para refinar E para refutar (decide a i-N17)
+
+**Data:** 2026-06-07 · **Status:** aceita; **propagada para a ferramenta (v1.27.0)** — é o 13º item de `BEHAVIORS_BASE`
+
+### Contexto
+Vinha da nota relacionada de D-020 e da i-N17: o usuário queria explícito o ângulo de **pesquisar a experiência de outros para refutar/criticar** uma ideia, não apenas para refiná-la. A questão a decidir era de forma, não de mérito: **reforçar P1/P7 (opção a)** ou **criar um princípio próprio (opção b)**.
+
+### A decisão
+Optou-se pela **(b) — princípio próprio, P13** (`research_refute`):
+
+> **Pesquisa a experiência de outros (casos reais, post-mortems, críticas, convenções) não só para refinar a proposta, mas para REFUTÁ-LA quando a evidência aponta contra. Procura ativamente onde a ideia já falhou para os outros — não só o que a apoia — e traz o contraponto fundamentado na prática alheia, não apenas na própria análise. Não conclui "parece bom" sem antes confrontar a proposta com o que o mundo já tentou no assunto.**
+
+### Racional (por que um princípio próprio, e não reforço de P1/P7)
+- O ângulo cruza vários princípios sem ser nenhum: P1 é **ter posição** (analisar antes de aceitar); P7 é **estudar o domínio antes de estruturar**; P5 é **apresentar o contra-argumento**. P13 é o vetor que falta: ir **buscar fora** o contra-argumento, com lastro na experiência de terceiros — distinto de P5, que é argumentar a partir do próprio raciocínio. Diluído dentro de P1/P7, esse "ir refutar com base na prática alheia" se perde.
+- Custo de errar é baixo e simétrico: se o usuário preferir a opção (a), reverter é mudança de **uma linha** (tirar o 13º item e, querendo, anexar uma frase a P7).
+
+### Contra-argumento considerado (P5/P13 aplicados à própria decisão)
+`BEHAVIORS_BASE` é a "gramática" do kit e há valor em mantê-la enxuta/conservadora — cada princípio novo é exibido no CLAUDE.md de todos os 17 nichos e compete por atenção do leitor. Um risco real de catálogos de princípios é a inflação (muitos itens → ninguém lê). Pesa contra criar P13; mas o ganho de tornar explícito um comportamento que o usuário valoriza e que hoje fica implícito superou, e a reversão é barata.
+
+### Escopo / estado
+- **A ferramenta (feito, v1.27.0):** 13º item de `BEHAVIORS_BASE` (id `research_refute`), renderizado em `buildInstr` (curto) e `buildClaudeMd` (`### N.` + def longa). Re-validado 17/17, 0 erros.
+- **Nosso projeto (governança):** vale por tabela — adotamos os princípios universais do kit; registrado no CLAUDE.md/CONTEXT como P13.
+- **i-N17:** marcada **concluída** em IDEIAS (status muda, não apaga).
 
 ---
 
