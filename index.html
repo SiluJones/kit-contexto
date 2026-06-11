@@ -6198,16 +6198,18 @@ function normTopbar(arr){
   });
 }
 function normBuilderSection(sec){
-  // Aceita o formato antigo (groups:[{label,items:[str]}]) ou o novo
+  // Aceita o formato antigo (groups:[{label,items}]) ou o novo (items:[{kind,...}]).
+  // Em groups, cada item pode ser uma STRING (rótulo = valor) ou um PAR [código, rótulo].
   if(!sec) return null;
   if(Array.isArray(sec.items)) return sec; // já está no formato novo
   if(Array.isArray(sec.groups)){
-    // Converte groups → items (kind:"chips")
+    // Converte groups → items (kind:"chips"/"radios")
     const items = sec.groups.map(g => ({
       kind: sec.type === "radios" ? "radios" : "chips",
       label: g.label,
       name: g.label.toLowerCase().replace(/[^a-z0-9]+/g,"_"),
-      opts: g.items.map(it => [it, it])
+      // string → [it, it]; par [código,rótulo] já vem pronto (não re-embrulhar)
+      opts: g.items.map(it => Array.isArray(it) ? it : [it, it])
     }));
     return { title: sec.title, hint: sec.hint, items };
   }

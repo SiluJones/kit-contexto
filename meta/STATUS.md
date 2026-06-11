@@ -1,9 +1,11 @@
-# STATUS — Kit de Contexto Universal — 2026-06-07
+# STATUS — Kit de Contexto Universal — 2026-06-11
 
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
-> Versão atual: **v1.27.0**. Índice ~548 KB / 8095 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + suíte de fluxos.
+> Versão atual: **v1.27.1**. Índice ~548 KB / 8097 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + **integridade dos chips de todos os nichos** (FIX-004) + suíte de fluxos.
 
-> **Mudanças nesta revisão (v1.27.0):** os itens 1 e 2 do "PRÓXIMO TRABALHO" (propagar P12 à ferramenta; decidir o princípio de pesquisa/refutação) foram **feitos** e saíram daqui — P12 virou o 12º item de `BEHAVIORS_BASE` (D-020) e a i-N17 virou o 13º, **P13** (D-021). O antigo item 3 (mount/RAG, D-018) subiu para item 1. Linha de versão/métricas atualizada para v1.27.0. "Onde está no código" ganhou a nota de `BEHAVIORS_BASE` 11→13. "Última sessão" reescrita para a v1.27.0. Nada único perdido: o que saiu daqui virou entrada de CHANGELOG (v1.27.0), atualização de status em D-020, o novo D-021, e a i-N17 marcada concluída em IDEIAS.
+> **Mudanças nesta revisão (v1.27.1):** consertado o bug dos chips de Cliente/Narrativa (não selecionáveis) — ver CHANGELOG v1.27.1 e **FIX-004**. O harness ganhou checagem de chips. Cinco ideias novas dos primeiros testes reais foram capturadas (i-N18 a i-N22): três diretrizes a redigir (manifesto no upload achatado; verificar estado antes de repetir STATUS velho; formato do commit) e duas maiores a avaliar (comando de feedback; estrutura flexível). O "PRÓXIMO TRABALHO" foi reordenado. Nada perdido: as ideias estão em IDEIAS, o conserto no CHANGELOG/DECISOES. (A nota da v1.27.0 abaixo fica preservada.)
+
+> **Mudanças na revisão anterior (v1.27.0):** os itens 1 e 2 do "PRÓXIMO TRABALHO" (propagar P12 à ferramenta; decidir o princípio de pesquisa/refutação) foram **feitos** — P12 virou o 12º item de `BEHAVIORS_BASE` (D-020) e a i-N17 virou o 13º, **P13** (D-021). "Onde está no código" ganhou a nota de `BEHAVIORS_BASE` 11→13.
 
 ## Fase atual
 🏁 **Custom unificado — composição + construção numa só tela, e fluxo de reuso completo.** No ar e validado:
@@ -15,9 +17,13 @@
 São **17 nichos**: 16 de conteúdo + **1 construtor** (`custom`).
 
 ## 🎯 PRÓXIMO TRABALHO (decidir/fazer)
-1. **Corrigir a orientação mount/RAG/anexo GERADA pelo kit (à luz de D-018):** o CLAUDE.md / tela "Tokens & Fluxos" ainda diz "tudo no Projeto + ferramenta de código → mount", impreciso para projetos conectados via GitHub. Muda conteúdo em TODOS os nichos → exige re-validação 17/17. **Tarefa de código.**
+1. **Redigir e embutir as 3 diretrizes novas** (numa passada só, com re-validação 17/17): **(i-N18)** ler manifesto/índice para o nome certo no upload achatado; **(i-N19)** verificar o estado real antes de repetir pendência de STATUS velho (refino de P8 + nota no `UPDATE_PROTOCOL`); **(i-N20)** template de commit em 3 linhas + nota sobre `git add .`. *Decidir antes a redação exata (são comportamentais/operacionais — tratar com o mesmo cuidado de P12/P13).*
+2. **Corrigir a orientação mount/RAG/anexo GERADA pelo kit (à luz de D-018):** o CLAUDE.md / tela "Tokens & Fluxos" ainda diz "tudo no Projeto + ferramenta de código → mount", impreciso para projetos conectados via GitHub. Muda conteúdo em TODOS os nichos → re-validação 17/17. **Tarefa de código.** (Pode ir junto com o item 1.)
+3. **Avaliar as 2 ideias maiores** (i-N21 comando de feedback; i-N22 estrutura flexível / módulos de doc opcionais) — pesquisa já anotada em IDEIAS, com os contrapontos. Decidir escopo antes de qualquer código.
 
-✅ **Concluído nesta sessão (v1.27.0):** P12 (higiene ao encolher) **propagado à ferramenta** — 12º item de `BEHAVIORS_BASE`, agora aparece no CLAUDE.md gerado de todos os nichos (D-020). i-N17 **decidida**: virou o princípio próprio **P13** ("pesquisa para refinar E para refutar"), 13º item de `BEHAVIORS_BASE` (D-021). Validado 17/17, 0 erros.
+✅ **Concluído nesta sessão (v1.27.1):** conserto dos chips de Cliente/Narrativa (FIX-004) + teste de regressão de chips no harness; captura e refino das 5 ideias novas (i-N18 a i-N22) com lastro de pesquisa. Validado 17/17, 0 erros.
+
+✅ **Concluído antes (v1.27.0):** P12 propagado à ferramenta (12º de `BEHAVIORS_BASE`, D-020); i-N17 decidida → **P13** (13º, D-021).
 
 ## 🧭 Decisões maiores em avaliação (ver ROADMAP / IDEIAS)
 - **Refator modular do kit (i-N13):** migrar dados de nicho para JSON separados + núcleo central, vs. manter o HTML único. Prós (edição/auditoria por nicho, criar nicho mais fácil) × contras (perde o "1 arquivo via `file://` sem build"; precisa loader/embed). **Não mexer sem decisão.**
@@ -37,7 +43,7 @@ O conector do GitHub alimenta **só o RAG/Conhecimento do Projeto** (busca, com 
 
 ## 🧪 Validação (regra dura: NUNCA publicar sem 17/17 e 0 erros)
 Harness jsdom **boot limpo por nicho** (o ambiente reseta entre sessões — recriar os testes a cada sessão). No scratchpad `/home/claude/kit/`:
-- `validate.js` — **17/17** nichos (setNiche + buildInstr + buildClaudeMd + controles não-vazios).
+- `validate.js` — **17/17** nichos (buildInstr + buildClaudeMd + P12/P13 + sem `undefined`) **+ integridade dos chips do `builderSection`** (nenhum opt `[array,array]`) **+ round-trip seleção→saída** (FIX-004). Provado que reprova o código com o bug.
 - `validate-switch.js` — transições construtor↔normal + **coexistência** (no `custom`, chips `#sc-chips` E builder `#cf-save`/`#cf-load` juntos). Guarda o bug A / re-entrância.
 - `validate-compose.js` — Fase 1.2 (compor dev+pixel; usa `setNiche("custom")`).
 - `validate-conflict.js` — Fase 1.3 (conflito + seletor; `setNiche("custom")`).
@@ -47,7 +53,8 @@ Harness jsdom **boot limpo por nicho** (o ambiente reseta entre sessões — rec
 - `t-granular.js` — granularidade (desmarcar peça → some do import; "marcar todas" reinclui).
 Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao remover/renomear coisas no código, atualizar os testes (foi o que aconteceu ao remover `customSmart`: trocar `setNiche("customSmart")` → `setNiche("custom")`).
 
-## 🗺 Onde está no código (v1.27.0; números aproximados, mudam ao editar)
+## 🗺 Onde está no código (v1.27.1; números aproximados, mudam ao editar)
+- **`normBuilderSection`** (≈linha 6200) converte `builderSection.groups → items`. **FIX-004:** `opts: g.items.map(it => Array.isArray(it) ? it : [it,it])` — aceita item **string** OU **par `[código,rótulo]`**. Os chips renderizam em `renderBuilderSection` (≈6788; `data-chip`/`data-val`, wire em ≈6826) e a escolha entra na saída via finder `o[0]===val` (≈6924). Só `client` e `narrative` usam o formato par.
 - **`BEHAVIORS_BASE` agora 13 itens** (era 11): +`shrink_hygiene` (P12) +`research_refute` (P13), no fim do array (ordem do array = ordem de exibição). Renderizam em `buildInstr` (curto: bullet com a 1ª frase, via `shortDef`) e `buildClaudeMd` (completo: `### N. Label` + def longa). Behaviors de nicho entram **depois**, sempre via `normBehaviors`. Não há count "11"/"13" hardcoded em parte alguma.
 - `getCurrentNiche` usa `raw.isBuilder` (genérico). Não há mais `customSmart` (CSS/hero/branch/objeto removidos).
 - `NICHES.custom` (único construtor) — `isBuilder:true`; cardDesc/cardTags mencionam composição.
@@ -67,10 +74,9 @@ Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao rem
 - Commit ao final: comando completo p/ CMD Windows (UMA linha, `-m` repetido), pronto para colar. Mensagem **sem acentos** (CMD corrompe acentos em `-m`).
 - Usuário no CMD do Windows (`C:\Users\alexk\Arquiteturas\kit-contexto`). Repo: `index.html` na raiz, `.md` em `meta\`.
 
-## 💬 Última sessão (2026-06-07 — v1.27.0)
-Fase 3 (higiene & consistência), tudo verde. Só dados, sem código de feature:
-- **P12 propagado à ferramenta** (D-020): "higiene ao encolher arquivos-chave" virou o 12º item de `BEHAVIORS_BASE` — antes valia só para a governança do nosso projeto; agora aparece no CLAUDE.md gerado de todos os 17 nichos (e como bullet curto nas Instruções).
-- **i-N17 decidida → P13** (D-021): em vez de reforçar P1/P7, criou-se um princípio próprio, "pesquisa para refinar E para refutar" (procura ativamente onde a ideia já falhou para os outros e traz o contraponto com lastro na experiência alheia, não só no raciocínio interno). É o 13º item de `BEHAVIORS_BASE`.
-- **Validação:** 17/17 nichos, 0 erros; P12 e P13 presentes nos dois artefatos (Instruções + CLAUDE.md) de cada nicho; `div` 273/273 (inalterado vs v1.26.0).
-- As versões **v1.25.1** e **v1.26.0** (do mesmo dia) já estão registradas no CHANGELOG; saíram do STATUS.
-**Próximo de fato:** item 1 do "PRÓXIMO TRABALHO" — corrigir a orientação mount/RAG gerada pelo kit (D-018), que muda todos os nichos e exige re-validação 17/17.
+## 💬 Última sessão (2026-06-11 — v1.27.1)
+Conserto de bug a partir de teste real, mais captura/refino de ideias. Tudo verde:
+- **FIX-004 — chips de Cliente/Narrativa não selecionáveis.** O conversor `normBuilderSection` tratava todo item de `groups` como string; esses dois nichos usam o par `[código,rótulo]`, então o chip nunca acendia e a escolha não entrava no texto. Conserto de 1 linha (`Array.isArray(it) ? it : [it,it]`). O **harness agora testa a integridade dos chips de todos os nichos** + round-trip seleção→saída, e provei que reprova o código com o bug.
+- **5 ideias novas dos primeiros testes** (game design narrativo, música, pixel art, dev, design visual) capturadas e refinadas em IDEIAS, com pesquisa de fundo: **i-N18** (manifesto p/ nome certo no upload achatado), **i-N19** (verificar estado antes de repetir STATUS velho), **i-N20** (commit em 3 linhas + `git add .`), **i-N21** (comando de feedback), **i-N22** (estrutura flexível / módulos de doc opcionais).
+- **Não implementado de propósito:** a redação das diretrizes na ferramenta (i-N18/19/20) ficou para a próxima passada — são comportamentais e merecem o mesmo cuidado de decisão que P12/P13; melhor decidir a redação antes de espalhar por 17 nichos.
+**Próximo de fato:** item 1 do "PRÓXIMO TRABALHO" — redigir e embutir as 3 diretrizes (pode ir junto com a correção mount/RAG, item 2), re-validando 17/17.

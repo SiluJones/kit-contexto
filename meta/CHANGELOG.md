@@ -1,6 +1,19 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.27.0**.
+> Histórico de versões. Versão atual: **v1.27.1**.
+
+---
+
+## v1.27.1 — 2026-06-11 — Correção: chips de campo de Cliente/Narrativa não selecionáveis (FIX-004)
+
+Conserto de bug em produção: nos nichos **Atendimento ao Cliente** e **Narrativa & Ficção**, os chips do bloco "específico do nicho" (Gênero, Formato, Pessoa narrativa, Canal, etc.) mostravam o rótulo grudado ("fantasy,Fantasia") e **não acendiam ao clicar** — pareciam não selecionáveis. Mudança de **uma linha** no conversor `normBuilderSection` + teste de regressão; nenhuma alteração de fluxo, layout ou DOM (`div` 273/273 inalterado).
+
+### Causa e correção (FIX-004)
+- `normBuilderSection` convertia `groups → items` assumindo que cada item era uma **string** (`it => [it, it]`). Esses dois nichos usam o formato **par `[código, rótulo]`**, então cada item já era um array e virava `[["fantasy","Fantasia"],["fantasy","Fantasia"]]`. O `data-val` saía como a string `"fantasy,Fantasia"`, que nunca batia com o array ao marcar o estado `.on` — e o finder da saída (`o[0]===val`) também falhava, então a escolha nem aparecia no texto gerado. Os nichos que usam strings (dev, design, marketing…) não eram afetados.
+- Correção: `it => Array.isArray(it) ? it : [it, it]` — par passa direto, string é embrulhada. Compatível com os dois formatos, ponta a ponta (seleção, `.on` e texto gerado).
+
+### Validação
+- Harness estendido: além de 17/17 + P12/P13, agora checa a **integridade dos chips** de todos os nichos (nenhum opt pode ser `[array,array]`) e faz um **round-trip seleção→saída** (seleciona o 1º chip de cada nicho e confirma que o **rótulo** aparece no texto gerado, não o código). Provado que o teste **reprova** o código com o bug e **aprova** o corrigido. 17/17, 0 erros; ~548 KB / 8097 linhas.
 
 ---
 

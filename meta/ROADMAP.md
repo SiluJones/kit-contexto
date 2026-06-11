@@ -4,7 +4,9 @@
 
 > **Criado em 2026-06-07.** Primeira versão. Consolida o que já foi feito (Fases 0–2) e organiza o que está por decidir/fazer (Fases 3–5 + Futuro), a partir das discussões desta sessão.
 
-> **Mudanças nesta revisão (v1.27.0):** a Fase 3 avançou — os itens 1 (propagar P12) e 2 (decidir o princípio de pesquisa/refutação, i-N17) foram **concluídos**; o antigo item 3 (mount/RAG, D-018) passou a ser o próximo. Ver D-020, D-021 e CHANGELOG v1.27.0. Nada removido — itens concluídos ficam visíveis como ✅.
+> **Mudanças nesta revisão (v1.27.1):** FIX-004 (chips de Cliente/Narrativa) consertado e validado — ver CHANGELOG. A Fase 3 ganhou 3 diretrizes novas a redigir (i-N18/19/20) e a Fase 5 ganhou 2 ideias maiores (i-N21 feedback, i-N22 estrutura flexível), todas com pesquisa de fundo em IDEIAS. Itens concluídos seguem visíveis como ✅.
+
+> **Mudanças na revisão anterior (v1.27.0):** a Fase 3 avançou — os itens 1 (propagar P12) e 2 (decidir o princípio de pesquisa/refutação, i-N17) foram **concluídos**; o antigo item 3 (mount/RAG, D-018) passou a ser o próximo. Ver D-020, D-021 e CHANGELOG v1.27.0.
 
 ---
 
@@ -27,13 +29,17 @@
 ## ▶ Fase 3 — Higiene & consistência (EM ANDAMENTO — barato, alto valor)
 Itens de código pequenos e de doc, sem arquitetura nova.
 
+**✅ Concluído (v1.27.1):**
+- ✅ **FIX-004** — chips de Cliente/Narrativa não selecionáveis (conversor tratava par como string). Conserto de 1 linha + teste de regressão de chips no harness. (Ver CHANGELOG/DECISOES.)
+
 **✅ Concluído (v1.27.0):**
 - ✅ **P12 (higiene ao encolher) propagado à ferramenta** — 12º item de `BEHAVIORS_BASE` (`shrink_hygiene`), aparece no CLAUDE.md gerado de todos os nichos. Re-validado 17/17. (DEC D-020.)
 - ✅ **Princípio de rigor em pesquisa + refutação decidido** (i-N17) — criado o princípio próprio **P13** (`research_refute`), 13º item de `BEHAVIORS_BASE`, em vez de reforçar P1/P7. (DEC D-021.)
 
 **Restante:**
-1. **Corrigir a orientação mount/RAG/anexo gerada pelo kit** (D-018) — o CLAUDE.md / "Tokens & Fluxos" ainda diz "tudo no Projeto + ferramenta de código → mount"; precisa refletir "só upload direto popula o mount; conector do GitHub = só RAG". Muda conteúdo em todos os nichos → re-validar 17/17. — *próximo.*
-2. **Cosméticos:** MAPA.md ("17 prontos" → 16 de conteúdo + 1 construtor); reagrupar `narrative` (group literary → tema criativo); revisar README/PLANNING; revisar qualidade das Instruções geradas.
+1. **Redigir e embutir 3 diretrizes novas** (decidir a redação primeiro; depois 1 passada com re-validação 17/17): **i-N18** manifesto/índice para o nome certo no upload achatado; **i-N19** verificar o estado real antes de repetir pendência de STATUS velho (refino de P8 + nota no `UPDATE_PROTOCOL`); **i-N20** template de commit em 3 linhas + nota sobre `git add .`. — *próximo; pode ir junto com o item 2.*
+2. **Corrigir a orientação mount/RAG/anexo gerada pelo kit** (D-018) — o CLAUDE.md / "Tokens & Fluxos" ainda diz "tudo no Projeto + ferramenta de código → mount"; precisa refletir "só upload direto popula o mount; conector do GitHub = só RAG". Muda conteúdo em todos os nichos → re-validar 17/17.
+3. **Cosméticos:** MAPA.md ("17 prontos" → 16 de conteúdo + 1 construtor); reagrupar `narrative` (group literary → tema criativo); revisar README/PLANNING; revisar qualidade das Instruções geradas.
 
 ## ⏸ Fase 4 — Arquitetura (EM AVALIAÇÃO — não mexer sem decisão)
 - **Refator modular** (i-N13): dados de nicho em JSON separados + núcleo central, vs. manter o HTML único (D-001).
@@ -44,6 +50,8 @@ Itens de código pequenos e de doc, sem arquitetura nova.
 ## 🌱 Fase 5 — Novas capacidades (IDEIAS a maturar)
 - **Guias/tutoriais/wikis** (i-N14): nicho "Aprendizado/Guia" (trilhas, fontes/cursos verificados, progresso, glossário) — começar como nicho dentro do kit; virar ferramenta dedicada só se o fluxo pedir. Conecta a "Educação" (NICHOS-CANDIDATOS, nº1). Exige rigor de fonte (casa com i-N17).
 - **Auto-aplicação de patches** (i-N15) + **entrega por diff** (i-N16): ferramenta externa (projeto do usuário) que aplica patches que o Claude gera; no kit, um modo "auto" que faz o Claude **entregar diffs** (em vez de arquivos inteiros) quando há a ferramenta que aplica — economiza output tokens. Avaliar formato (apply_patch vs unified diff) e segurança (âncoras/validação). Reconciliar com a regra "arquivo inteiro" (só vale diff quando algo aplica automaticamente, não o usuário colando à mão).
+- **Comando/template de feedback** (i-N21): captura leve de fricção de uso → roteada para os docs que já existem (não um `FEEDBACK.md` morto). Casa com a i-N18 (manifesto) para saber quais arquivos custom pedir/comparar. Risco medido: template pesado vira cerimônia ignorada — manter leve e terminado em ação. Avaliar se precisa formalizar ou se P9 já basta.
+- **Estrutura flexível / módulos de doc opcionais** (i-N22): autorizar o assistente a dispensar template que não serve e propor `.md` extras úteis (por projeto ou grupo) — com a trava de **não duplicar o óbvio** (estudos: doc gerado por LLM piorou sucesso em 5/8 cenários e subiu custo ~23% por duplicação). Provável forma segura: um **cardápio curado** de módulos opcionais por grupo (ex.: `WORLDBUILDING.md`, `ASSET-LIST.md`), não geração livre. Tensão com a identidade "estrutura pronta e consistente" do kit: padrão forte + desvio justificado.
 
 ## 🔭 Futuro (adiado de propósito)
 - **Nichos novos** (NICHOS-CANDIDATOS.md): Educação & Cursos (nº1), depois Desenvolvimento Pessoal/Journaling (sensível), Jurídico/Podcast/Tradução.
