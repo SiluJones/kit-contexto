@@ -1,6 +1,24 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.27.1**.
+> Histórico de versões. Versão atual: **v1.28.0**.
+
+## v1.28.0 — 2026-06-11 — Lote de diretrizes D-022 embutido + orientação mount/RAG corrigida (D-018)
+
+Passada de código única que embute as **5 diretrizes validadas pelo usuário** (D-022) no conteúdo gerado de todos os nichos, e corrige a orientação mount/RAG/anexo (D-018) no CLAUDE.md gerado **e** na tela "Tokens & Fluxos". Sem mudança de layout/DOM (`div` 273/273 inalterado).
+
+### O que entrou (e onde)
+- **i-N18 — Manifesto de achatamento (detecção automática):** novo item em `UPDATE_PROTOCOL.handoffComo` — se existir `_MANIFEST.md` (ex.: FlatDrop), é a fonte de verdade de nomes/estrutura (sufixo `__pasta` = colisão; entrega sempre pelo nome real); se não existir, segue normal **sem travar**; ausência de arquivo pode ser filtragem deliberada da ferramenta de achatamento.
+- **i-N19 — STATUS é pista, não fato (refino de P8):** frase nova na def do princípio `check_before_ask` + bullet na seção dedicada «Verifica antes de pedir um arquivo» — antes de repetir pendência do STATUS, conferir o estado real; se resolvida, dizer e atualizar o STATUS.
+- **i-N20 — Commit em 3 linhas:** `commitIntro` agora especifica TRÊS linhas separadas (`git add` **listando os arquivos** — `.` a critério quando pequeno/limpo —, `git commit`, `git push`); a parte de 3 linhas saiu do `commitNota` (que só renderiza com SO definido) para o `commitIntro` (incondicional) — a regra é universal, não detalhe de shell. `commitNota` fica só com a sintaxe por SO (CMD: 1 linha por comando, `-m` repetido, **sem acentos**).
+- **i-N21 — Gatilho «Feedback para o Kit»:** linha nova em `TRIGGERS_BASE` — feedback **dito OU feito** (desvio estrutural: diretriz nova no CLAUDE.md do projeto, template alterado/dispensado, arquivo novo) → registra na hora no IDEAS, seção «Feedback para o Kit».
+- **i-N22 — Válvula de desvio registrado:** nova regra em `HYGIENE_RULES` (texto aprovado): templates são **ponto de partida, não contrato**; adapte e **registre** o desvio (DECISIONS + «Feedback para o Kit»); desviar sem registrar é o erro; não duplicar o que a estrutura cobre.
+- **D-018 — mount/RAG:** `handoffComo` (3 itens reescritos) e os callouts da tela "Tokens & Fluxos" agora dizem o certo: **só o upload direto popula o mount** (e ele chega **achatado**, sem subpastas); o **conector do GitHub alimenta só a busca (RAG)** e não aparece no mount.
+
+### Validação
+- Harness ganhou **6 checagens de conteúdo por nicho** (manifesto, gatilho de feedback, válvula, refino de P8, commit 3 linhas, correção mount/RAG no CLAUDE.md gerado). **Anti-teste:** numa cópia com o lote removido, 34 reprovações (17×2) — as checagens separam certo do errado.
+- **17/17 nichos, 0 erros**; chips íntegros (FIX-004); `div` 273/273; ~551 KB / 8101 linhas.
+
+---
 
 ---
 

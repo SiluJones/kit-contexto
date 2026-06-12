@@ -354,7 +354,7 @@ Antes de transferir para o Custom, o usuário levantou refinamentos finos (e ped
 ---
 
 ## D-018 — O mount `/mnt/project/` é alimentado por upload direto, NÃO pelo conector do GitHub
-**Data:** 2026-06-04 · **Status:** ativa (supersede a parte de D-016 sobre alimentação do mount)
+**Data:** 2026-06-04 · **Status:** ativa (supersede a parte de D-016 sobre alimentação do mount) · **orientação GERADA pelo kit corrigida na v1.28.0** (CLAUDE.md gerado + tela "Tokens & Fluxos": só upload direto popula o mount, achatado; conector do GitHub = só busca/RAG)
 
 ### Contexto
 Desde a v1.22.0 (D-016) assumimos "tudo no Projeto + ligar a ferramenta de código → leio os arquivos inteiros pelo mount". Mas aquela verificação foi feita com **uploads diretos presentes**, confundindo a causa. D-017/v1.23.0 já anotava o mount **achatado** e recomendava um **teste limpo** (só-GitHub) para isolar.
@@ -465,7 +465,7 @@ Optou-se pela **(b) — princípio próprio, P13** (`research_refute`):
 
 ## D-022 — Lote de diretrizes do CLAUDE.md gerado fechado (i-N18 a i-N22): escopo e redação
 
-**Data:** 2026-06-11 · **Status:** aceita; **a embutir na ferramenta** na próxima passada de código (junto com a correção mount/RAG, D-018) — re-validação 17/17 obrigatória
+**Data:** 2026-06-11 · **Status:** aceita; **embutida na ferramenta (v1.28.0)**, junto com a correção mount/RAG (D-018) — re-validado 17/17, com checagens de conteúdo novas no harness
 
 ### Contexto
 Os primeiros pilotos reais (game design, pixel art, enredo, música, dev, design visual) geraram cinco propostas de diretriz (i-N18 a i-N22). Nesta data o usuário validou o lote, com ajustes de escopo. Esta entrada congela as decisões para a passada de código não reabrir a discussão.
@@ -481,7 +481,7 @@ Os primeiros pilotos reais (game design, pixel art, enredo, música, dev, design
 Pilotos são a **fase de validação**; rigidez agora gera resistência e perda de sinal (i-N22). Diretrizes condicionais e auto-detectáveis evitam que o kit imponha ferramentas (FlatDrop) que nem todo projeto usa. A triagem protege contra generalizar cedo demais (risco medido: doc gerado por LLM piorou sucesso em 5/8 cenários por duplicação) e contra remover do template o que só UM projeto dispensou.
 
 ### Pendência
-Redigir o texto final curto de cada diretriz dentro do `index.html` (P8 refinado; `UPDATE_PROTOCOL`/seção de transferência; template de commit; gatilho de feedback; válvula), embutir, re-validar 17/17. Os itens de template do pixel (i-N23) seguem **fora** desta passada — aguardam o lote dos pilotos fechar.
+~~Redigir o texto final curto de cada diretriz dentro do `index.html`, embutir, re-validar 17/17.~~ **Feita (v1.28.0):** i-N18 → item novo no `handoffComo`; i-N19 → def do P8 + bullet na seção dedicada; i-N20 → `commitIntro` (a parte universal das 3 linhas migrou da nota condicional para o intro incondicional); i-N21 → linha nova em `TRIGGERS_BASE`; i-N22 → regra nova em `HYGIENE_RULES`. Os itens de template do pixel (i-N23) seguem **fora** — aguardam o lote dos pilotos fechar.
 
 ---
 

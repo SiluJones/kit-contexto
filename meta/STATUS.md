@@ -1,7 +1,9 @@
 # STATUS — Kit de Contexto Universal — 2026-06-11
 
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
-> Versão atual: **v1.27.1**. Índice ~548 KB / 8097 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + **integridade dos chips de todos os nichos** (FIX-004) + suíte de fluxos.
+> Versão atual: **v1.28.0**. Índice ~551 KB / 8101 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + integridade dos chips (FIX-004) + **6 checagens de conteúdo do lote D-022/D-018** + suíte de fluxos.
+
+> **Mudanças nesta revisão (v1.28.0):** os itens 1 e 2 do "PRÓXIMO TRABALHO" foram **executados** — as 5 diretrizes do lote **D-022 embutidas** na ferramenta (i-N18 manifesto auto-detectado; i-N19 refino de P8; i-N20 commit 3 linhas listando; i-N21 gatilho «Feedback para o Kit»; i-N22 válvula) e a **orientação mount/RAG corrigida** no CLAUDE.md gerado + tela "Tokens & Fluxos" (D-018). Harness ganhou 6 checagens de conteúdo + anti-teste (34 reprovações na cópia sem o lote). O que saiu daqui está no CHANGELOG v1.28.0, em D-022/D-018 e nos títulos de i-N18..22 (✅ EMBUTIDA). Nada perdido. (Notas anteriores preservadas abaixo.)
 
 > **Mudanças nesta revisão (v1.27.1):** consertado o bug dos chips de Cliente/Narrativa (não selecionáveis) — ver CHANGELOG v1.27.1 e **FIX-004**. O harness ganhou checagem de chips. Cinco ideias novas dos primeiros testes reais foram capturadas (i-N18 a i-N22) e o "PRÓXIMO TRABALHO" foi reordenado. **Segunda leva do mesmo dia (só docs, sem código):** regra do **manifesto FlatDrop** adotada para o nosso projeto (CLAUDE.md — consultar `_MANIFEST.md`, entregar pelo nome real); i-N18/i-N21/i-N22 **alinhadas com o usuário** (manifesto esclarecido; fluxo do feedback desenhado; texto da válvula de desvio proposto); capturadas **i-N23** (4 melhorias do nicho Pixel vindas do piloto) e **i-N24** (protocolo multi-projeto, 4 frentes do mesmo jogo). **Terceira leva (validações do usuário):** FlatDrop definido como **não-padrão** (detecção automática via `_MANIFEST.md`; filtragem anotada); **i-N19, i-N20 e i-N22 validadas** e **i-N21 fechada com escopo ampliado** (desvio estrutural = feedback; autonomia do piloto; triagem em 3 destinos) — lote congelado em **D-022**; **passada de código liberada**. Nada perdido: tudo em IDEIAS/CLAUDE/DECISOES/ROADMAP.
 
@@ -17,13 +19,13 @@
 São **17 nichos**: 16 de conteúdo + **1 construtor** (`custom`).
 
 ## 🎯 PRÓXIMO TRABALHO (decidir/fazer)
-1. **Redigir e embutir as diretrizes novas no CLAUDE.md gerado** (numa passada só, com re-validação 17/17): **(i-N18)** manifesto de achatamento **condicional/auto-detectado** — *"se houver `_MANIFEST.md`, use-o (sufixo `__pasta` = colisão; entregue pelo nome real); se não houver, siga normal sem travar"* (já vale para o nosso projeto); **(i-N19)** verificar o estado real antes de repetir pendência de STATUS velho (refino de P8 + nota no `UPDATE_PROTOCOL`); **(i-N20)** commit em 3 linhas, **listando arquivos** (`.` a critério quando pequeno/limpo); **(i-N21)** gatilho de feedback → seção «Feedback para o Kit» no IDEAS do piloto, **incluindo desvios estruturais**; **(i-N22)** válvula de desvio registrado. **✅ Lote todo validado pelo usuário (2026-06-11) — ver D-022. Passada de código LIBERADA.**
-2. **Corrigir a orientação mount/RAG/anexo GERADA pelo kit (à luz de D-018):** o CLAUDE.md / tela "Tokens & Fluxos" ainda diz "tudo no Projeto + ferramenta de código → mount", impreciso para projetos conectados via GitHub. Muda conteúdo em TODOS os nichos → re-validação 17/17. **Tarefa de código.** (Pode ir junto com o item 1.)
-3. **Fechar o lote de feedback dos pilotos** (i-N23 já tem 4 itens do pixel; mais por vir das outras frentes) e **avaliar a i-N24** (multi-projeto, 4 frentes) quando a dor concreta aparecer. Sem código até o lote fechar.
+1. **Fechar o lote de feedback dos pilotos e aplicar** (i-N23 já tem 4 itens do pixel: paleta global×bioma no ESTILO, prioridade visual interna no SPRITES, efeitos especiais no ANIMACAO, estado "aguardando design"; mais por vir das outras frentes — game design, enredo, música). Gate: decisão do usuário de fechar o lote. Triagem D-022 (base / módulo de grupo / específico). Re-validar 17/17.
+2. **Avaliar a i-N24** (protocolo multi-projeto, 4 frentes do mesmo jogo) quando a dor concreta aparecer nos pilotos. Sem código até lá.
+3. **Cosméticos** (ver ROADMAP Fase 3): MAPA.md, reagrupar `narrative`, revisar README/PLANNING e a qualidade das Instruções geradas.
 
-✅ **Concluído nesta sessão (v1.27.1):** conserto dos chips de Cliente/Narrativa (FIX-004) + teste de regressão de chips no harness; captura e refino das 5 ideias novas (i-N18 a i-N22) com lastro de pesquisa. Validado 17/17, 0 erros.
+✅ **Concluído nesta sessão (v1.28.0):** lote **D-022 embutido** (5 diretrizes em `BEHAVIORS_BASE`/P8, `HYGIENE_RULES`, `TRIGGERS_BASE`, `UPDATE_PROTOCOL`) + **D-018 corrigida** no conteúdo gerado e na tela. Harness com 6 checagens novas + anti-teste. 17/17, 0 erros.
 
-✅ **Concluído antes (v1.27.0):** P12 propagado à ferramenta (12º de `BEHAVIORS_BASE`, D-020); i-N17 decidida → **P13** (13º, D-021).
+✅ **Concluído antes (v1.27.x):** FIX-004 (chips de Cliente/Narrativa) + teste de regressão; P12/P13 propagados (D-020/D-021); D-022 decidido.
 
 ## 🧭 Decisões maiores em avaliação (ver ROADMAP / IDEIAS)
 - **Refator modular do kit (i-N13):** migrar dados de nicho para JSON separados + núcleo central, vs. manter o HTML único. Prós (edição/auditoria por nicho, criar nicho mais fácil) × contras (perde o "1 arquivo via `file://` sem build"; precisa loader/embed). **Não mexer sem decisão.**
@@ -44,7 +46,7 @@ O conector do GitHub alimenta **só o RAG/Conhecimento do Projeto** (busca, com 
 
 ## 🧪 Validação (regra dura: NUNCA publicar sem 17/17 e 0 erros)
 Harness jsdom **boot limpo por nicho** (o ambiente reseta entre sessões — recriar os testes a cada sessão). No scratchpad `/home/claude/kit/`:
-- `validate.js` — **17/17** nichos (buildInstr + buildClaudeMd + P12/P13 + sem `undefined`) **+ integridade dos chips do `builderSection`** (nenhum opt `[array,array]`) **+ round-trip seleção→saída** (FIX-004). Provado que reprova o código com o bug.
+- `validate.js` — **17/17** nichos (buildInstr + buildClaudeMd + P12/P13 + sem `undefined`) **+ integridade dos chips** + round-trip seleção→saída (FIX-004) **+ 6 checagens de conteúdo do lote v1.28.0** (manifesto, feedback, válvula, P8 refinado, commit 3 linhas, mount/RAG). Anti-testes provam que reprova código com bug/sem lote.
 - `validate-switch.js` — transições construtor↔normal + **coexistência** (no `custom`, chips `#sc-chips` E builder `#cf-save`/`#cf-load` juntos). Guarda o bug A / re-entrância.
 - `validate-compose.js` — Fase 1.2 (compor dev+pixel; usa `setNiche("custom")`).
 - `validate-conflict.js` — Fase 1.3 (conflito + seletor; `setNiche("custom")`).
@@ -54,10 +56,11 @@ Harness jsdom **boot limpo por nicho** (o ambiente reseta entre sessões — rec
 - `t-granular.js` — granularidade (desmarcar peça → some do import; "marcar todas" reinclui).
 Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao remover/renomear coisas no código, atualizar os testes (foi o que aconteceu ao remover `customSmart`: trocar `setNiche("customSmart")` → `setNiche("custom")`).
 
-## 🗺 Onde está no código (v1.27.1; números aproximados, mudam ao editar)
-- **`normBuilderSection`** (≈linha 6200) converte `builderSection.groups → items`. **FIX-004:** `opts: g.items.map(it => Array.isArray(it) ? it : [it,it])` — aceita item **string** OU **par `[código,rótulo]`**. Os chips renderizam em `renderBuilderSection` (≈6788; `data-chip`/`data-val`, wire em ≈6826) e a escolha entra na saída via finder `o[0]===val` (≈6924). Só `client` e `narrative` usam o formato par.
-- **`BEHAVIORS_BASE` agora 13 itens** (era 11): +`shrink_hygiene` (P12) +`research_refute` (P13), no fim do array (ordem do array = ordem de exibição). Renderizam em `buildInstr` (curto: bullet com a 1ª frase, via `shortDef`) e `buildClaudeMd` (completo: `### N. Label` + def longa). Behaviors de nicho entram **depois**, sempre via `normBehaviors`. Não há count "11"/"13" hardcoded em parte alguma.
-- `getCurrentNiche` usa `raw.isBuilder` (genérico). Não há mais `customSmart` (CSS/hero/branch/objeto removidos).
+## 🗺 Onde está no código (v1.28.0; números aproximados, mudam ao editar)
+- **Lote D-022 (v1.28.0):** i-N19 = frase final na def de `check_before_ask` (P8, BEHAVIORS_BASE ~845) + bullet na seção «Verifica antes de pedir um arquivo» do buildClaudeMd (~7145); i-N22 = 5ª regra em `HYGIENE_RULES` (~868); i-N21 = 5ª linha em `TRIGGERS_BASE` (~877); i-N20 = `commitIntro` (3 linhas, incondicional) e `commitNota` (só sintaxe por SO); i-N18 = item novo (penúltimo) em `handoffComo`. **D-018:** 3 itens do `handoffComo` reescritos + 2 callouts da tela "Tokens & Fluxos" (~760, ~766).
+- **`normBuilderSection`** (≈linha 6200) converte `builderSection.groups → items`. **FIX-004:** `opts: g.items.map(it => Array.isArray(it) ? it : [it,it])` — aceita item **string** OU **par `[código,rótulo]`**. Os chips renderizam em `renderBuilderSection` (≈6788) e a escolha entra na saída via finder `o[0]===val` (≈6924). Só `client` e `narrative` usam o formato par.
+- **`BEHAVIORS_BASE` com 13 itens**: +`shrink_hygiene` (P12) +`research_refute` (P13) no fim. Renderizam em `buildInstr` (curto, via `shortDef`) e `buildClaudeMd` (`### N.` + def longa). Behaviors de nicho entram depois, via `normBehaviors`. Sem count hardcoded.
+- `getCurrentNiche` usa `raw.isBuilder` (genérico). Não há mais `customSmart`.
 - `NICHES.custom` (único construtor) — `isBuilder:true`; cardDesc/cardTags mencionam composição.
 - `renderTopbar` — injeta o atalho `savedNichesShortcutHTML()` + `wireSavedNichesShortcut()`.
 - `composerSectionHTML` / `wireComposer` / `refreshComposer` — a seção de composição (chips + granularidade) no topo do `renderCustomForm`.
@@ -75,11 +78,10 @@ Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao rem
 - Commit ao final: comando completo p/ CMD Windows (UMA linha, `-m` repetido), pronto para colar. Mensagem **sem acentos** (CMD corrompe acentos em `-m`).
 - Usuário no CMD do Windows (`C:\Users\alexk\Arquiteturas\kit-contexto`). Repo: `index.html` na raiz, `.md` em `meta\`.
 
-## 💬 Última sessão (2026-06-11 — v1.27.1)
-Conserto de bug a partir de teste real, mais captura/refino de ideias. Tudo verde:
-- **FIX-004 — chips de Cliente/Narrativa não selecionáveis.** O conversor `normBuilderSection` tratava todo item de `groups` como string; esses dois nichos usam o par `[código,rótulo]`, então o chip nunca acendia e a escolha não entrava no texto. Conserto de 1 linha (`Array.isArray(it) ? it : [it,it]`). O **harness agora testa a integridade dos chips de todos os nichos** + round-trip seleção→saída, e provei que reprova o código com o bug.
-- **5 ideias novas dos primeiros testes** (game design narrativo, música, pixel art, dev, design visual) capturadas e refinadas em IDEIAS, com pesquisa de fundo: **i-N18** (manifesto p/ nome certo no upload achatado), **i-N19** (verificar estado antes de repetir STATUS velho), **i-N20** (commit em 3 linhas + `git add .`), **i-N21** (comando de feedback), **i-N22** (estrutura flexível / módulos de doc opcionais).
-- **Segunda leva (mesmo dia, só docs):** alinhamento com o usuário — **manifesto = `_MANIFEST.md` do FlatDrop** (regra adotada já no nosso CLAUDE.md: consultar manifesto, entregar pelo nome real, sufixo `__pasta` = colisão); **fluxo do feedback desenhado** (i-N21: seção «Feedback para o Kit» no IDEAS do piloto → usuário transporta → kit roteia); **válvula de desvio registrado** proposta (i-N22: "templates são ponto de partida, não contrato; desviar registrando é como o kit aprende"); **i-N23** capturada (4 melhorias do nicho Pixel vindas do piloto: paleta global×bioma, prioridade visual interna, efeitos especiais, estado "aguardando design"); **i-N24** capturada (multi-projeto: 4 frentes do mesmo jogo). Redações de i-N21/i-N22 **aguardam validação do usuário**.
-- **Terceira leva (validações do usuário, D-022):** FlatDrop = **detecção automática, não padrão** (presença do `_MANIFEST.md`; filtragem: tipos não aceitos, `node_modules`/`venv`/`.git`, `.gitignore` opcional — ausência pode ser deliberada); **i-N19 ✓** (refino de P8), **i-N20 ✓** (`git add` listando; `.` a critério quando pequeno), **i-N22 ✓** (válvula aprovada), **i-N21 fechada com escopo ampliado** (desvio estrutural — diretriz nova no CLAUDE do piloto, `.md` novo, template alterado/dispensado — conta como feedback; **sem pré-aprovação** para o piloto criar `.md`; triagem no kit: absorver no base / módulo de grupo / específico do projeto). **Passada de código liberada.**
-- **Não implementado de propósito:** a redação das diretrizes na ferramenta ficou para a próxima passada — são comportamentais e merecem o mesmo cuidado de decisão que P12/P13; com o lote agora validado (D-022), não há mais bloqueio.
-**Próximo de fato:** executar a passada (itens 1+2 do "PRÓXIMO TRABALHO") com re-validação 17/17.
+## 💬 Última sessão (2026-06-11 — v1.28.0)
+Passada de código única, liberada pelo D-022. Tudo verde:
+- **Lote D-022 embutido** no conteúdo gerado de todos os nichos: **i-N18** manifesto de achatamento com detecção automática (item novo no `handoffComo` — se há `_MANIFEST.md`, rigor de nomes e entrega pelo nome real; sem ele, fluxo normal; ausência pode ser filtragem); **i-N19** "STATUS é pista, não fato" (def do P8 + bullet na seção dedicada); **i-N20** commit em 3 linhas listando arquivos (movido do `commitNota` condicional para o `commitIntro` incondicional — a regra é universal, não detalhe de shell); **i-N21** gatilho «Feedback para o Kit» em `TRIGGERS_BASE` (dito OU desvio estrutural); **i-N22** válvula de desvio registrado em `HYGIENE_RULES`.
+- **D-018 corrigida** onde o kit ensina errado: `handoffComo` (3 itens) e tela "Tokens & Fluxos" (2 callouts) — só upload direto popula o mount (achatado); conector do GitHub = só busca.
+- **Validação:** 17/17, 0 erros; harness com 6 checagens de conteúdo novas; **anti-teste** com 34 reprovações na cópia sem o lote; `div` 273/273; ~551 KB / 8101 linhas.
+- As sessões v1.27.x (FIX-004, decisões) estão no CHANGELOG; saíram daqui.
+**Próximo de fato:** acumular os pilotos — item 1 do "PRÓXIMO TRABALHO" (fechar o lote i-N23 e aplicar com triagem).
