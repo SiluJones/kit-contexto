@@ -463,6 +463,28 @@ Optou-se pela **(b) — princípio próprio, P13** (`research_refute`):
 
 ---
 
+## D-022 — Lote de diretrizes do CLAUDE.md gerado fechado (i-N18 a i-N22): escopo e redação
+
+**Data:** 2026-06-11 · **Status:** aceita; **a embutir na ferramenta** na próxima passada de código (junto com a correção mount/RAG, D-018) — re-validação 17/17 obrigatória
+
+### Contexto
+Os primeiros pilotos reais (game design, pixel art, enredo, música, dev, design visual) geraram cinco propostas de diretriz (i-N18 a i-N22). Nesta data o usuário validou o lote, com ajustes de escopo. Esta entrada congela as decisões para a passada de código não reabrir a discussão.
+
+### As decisões
+1. **FlatDrop NÃO é padrão — detecção automática (i-N18).** Nem todo projeto usa o FlatDrop; o assistente não pode travar pela ausência do manifesto. Diretriz condicional: ao mapear o mount, verificar se existe `_MANIFEST.md`; **se existe**, é a fonte de verdade de nomes/estrutura (sufixo `__pasta` = colisão; referir-se e **entregar sempre pelo nome real**; aproveitar para entender a estrutura do projeto); **se não existe**, seguir normal — nunca travar, pedir ou estranhar. O FlatDrop **filtra** o upload (tipos que o Projeto não aceita, como imagens; ignorados fixos planejados `node_modules/`, `venv/`, `.git/`; `.gitignore` opcional): **ausência de arquivo pode ser deliberada, não erro**; se algo necessário faltar, vale P8 (pedir, não assumir).
+2. **i-N19 = refino de P8, não P14.** "STATUS é pista, não fato": antes de repetir uma pendência do STATUS, conferir o estado real (mount/arquivos); então (a) confirmar que falta de fato, ou (b) constatar feito e **atualizar o STATUS** — nunca só ecoar o texto velho. Entra como refino na redação de P8 + nota no `UPDATE_PROTOCOL`.
+3. **Commit: 3 linhas, listando arquivos (i-N20).** Padrão = `git add` com os **arquivos listados**; o assistente **pode** usar `git add .` a critério quando o conjunto é pequeno e a árvore é conhecida/limpa. `add` / `commit` / `push` em **linhas separadas**; mensagem **sem acentos** (CMD).
+4. **Feedback inclui desvios estruturais; piloto tem autonomia; triagem em 3 destinos (i-N21).** Feedback não é só menção em conversa: diretriz adicionada ao CLAUDE do piloto, `.md` novo, estrutura de `.md` alterada ou template dispensado — tudo é **desvio registrado** (DECISIONS do piloto + seção «Feedback para o Kit» no IDEAS). **Sem pré-aprovação do kit** para o piloto criar/testar um `.md` novo (pré-aprovação = gargalo que mata o sinal da fase de validação); o material vem ao kit quando o usuário quiser — inclusive subindo o arquivo no projeto do kit para análise. No kit, **triagem em 3 destinos**: (1) absorver no template base do nicho; (2) virar módulo opcional do grupo; (3) ficar específico do projeto (registrado, **não generaliza**). Dispensa de um `.md` quase sempre é (3); só vira mudança de base se o padrão se repetir no lote.
+5. **Válvula de desvio registrado aprovada (i-N22).** Texto aprovado como está (ver i-N22): templates são **ponto de partida, não contrato**; adaptar é permitido; o erro é desviar **sem registrar**; não duplicar o que a estrutura já cobre.
+
+### Por quê (compacto)
+Pilotos são a **fase de validação**; rigidez agora gera resistência e perda de sinal (i-N22). Diretrizes condicionais e auto-detectáveis evitam que o kit imponha ferramentas (FlatDrop) que nem todo projeto usa. A triagem protege contra generalizar cedo demais (risco medido: doc gerado por LLM piorou sucesso em 5/8 cenários por duplicação) e contra remover do template o que só UM projeto dispensou.
+
+### Pendência
+Redigir o texto final curto de cada diretriz dentro do `index.html` (P8 refinado; `UPDATE_PROTOCOL`/seção de transferência; template de commit; gatilho de feedback; válvula), embutir, re-validar 17/17. Os itens de template do pixel (i-N23) seguem **fora** desta passada — aguardam o lote dos pilotos fechar.
+
+---
+
 # FIXES — bugs graves resolvidos (formato sintoma/causa/solução/lição)
 
 > Decisões são "por que as coisas são assim"; FIXES são "o que quebrou feio e como consertamos". Não apagar.
