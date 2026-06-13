@@ -534,6 +534,27 @@ Pilotos mostraram dois problemas: (a) nichos de produção tratados como "suport
 
 ---
 
+## D-026 — HUB inspirado no CANON.md (Cânone Central + códigos + precedência) + diretriz de Instruções + log técnico
+
+**Data:** 2026-06-13 · **Status:** aceita; **embutida (v1.32.0)** · Origem: erro-260613 + ideia-260613_-_2 + o CANON.md que o projeto em grupo (CINZEIRO) montou sozinho
+
+### Contexto
+O piloto em grupo, usando o HUB, evoluiu por conta própria um `CANON.md` mais maduro que o template do kit: identificadores de área (`[GAME]`/`[ART]`/…), uma seção **Cânone Central** de fatos travados, princípios de precedência e tarefas com `[ORIGEM-ID]`. É o loop de feedback (i-N21/i-N22) entregando uma versão melhor — que volta para o kit.
+
+### Decisões
+1. **HUB absorve o CANON.md (genérico, não o conteúdo do jogo):** `buildHub` passa a gerar tabela de **identificadores das áreas** (código por frente, opcional, derivado do nome se vazio), seção **Cânone Central** (fatos travados — nomes/identidade/dimensões/marcos), diretriz **D4 "Cânone Central tem precedência"** (mudança exige aprovação do usuário) e caixa de entrada no formato **`[ORIGEM-NNN]`** com refutação `[REFUTACAO-ID]`.
+2. **Construtor por botões + estilo do kit:** fileira de chips dos 16 nichos (clicar adiciona uma frente, estilo "add"; o select por linha fica para trocar/editar). `<select>` e campos (código/nome/responsabilidade) passam a usar o visual padrão do kit (resolve a inconsistência apontada nos prints). O código entrou como campo curto opcional por linha.
+3. **Diretriz de personalização das Instruções:** o CLAUDE.md gerado autoriza o assistente a adaptar as Instruções do Projeto a cada projeto (encurtar/trocar/remover/acrescentar), respeitando o teto de caracteres e registrando o desvio. É a i-N22 aplicada às Instruções — atende o pedido do usuário.
+4. **Log técnico no game (responde ao erro-260613):** LOG-TEMPLATE do nicho game ganha `## Código / build` (removível se o projeto é só design). O erro mostrou a válvula funcionando (o Fando preservou sua seção `## Código`); a causa de fundo era o log do game não prever trabalho de código. Fix aplicado só ao game (dev já registra código em Feito/Bugs; demais nichos não precisam).
+
+### Cosmético adiado / não feito
+- **HUB com "entrada própria" tipo nicho (TROCAR):** mantido o modelo atual (página dedicada 06 + toggle "Projeto em grupo?" por projeto). O toggle tem função real — marcar cada projeto do grupo para o CLAUDE.md dele ganhar a seção do HUB; transformá-lo num "nicho" traria retrabalho sem ganho claro. Reabrir se o uso mostrar atrito.
+
+### Alternativas rejeitadas
+- Copiar o conteúdo específico do jogo (Vasha/#C84800) para o template (seria conteúdo, não estrutura); manter o HUB sem Cânone Central (perderia a maior contribuição do piloto); log técnico genérico em todos os nichos (bloat para cozinha/música/etc.).
+
+---
+
 # FIXES — bugs graves resolvidos (formato sintoma/causa/solução/lição)
 
 > Decisões são "por que as coisas são assim"; FIXES são "o que quebrou feio e como consertamos". Não apagar.

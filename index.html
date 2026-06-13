@@ -223,9 +223,13 @@
   .hubrow .moves{display:flex;flex-direction:column;gap:2px;flex:0 0 auto}
   .hubrow .moves button{font-size:10px;line-height:1;padding:2px 5px;border:1px solid var(--line);background:var(--panel2);color:var(--ink-dim);border-radius:5px;cursor:pointer}
   .hubrow .moves button:hover{color:var(--amber);border-color:var(--amber)}
+  .hubrow select, .hubrow input{background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:12.5px;padding:7px 11px;border-radius:8px;transition:.15s}
+  .hubrow select:focus, .hubrow input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(231,162,63,.13)}
   .hubrow select{flex:0 0 auto;min-width:150px}
+  .hubrow .hub-code{flex:0 0 64px;min-width:54px;text-transform:uppercase}
   .hubrow .hub-name{flex:1 1 130px;min-width:110px}
   .hubrow .hub-resp{flex:2 1 220px;min-width:140px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:6px}
   .hubrow .rm{flex:0 0 auto;border:1px solid var(--line);background:transparent;color:var(--ink-faint);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px}
   .hubrow .rm:hover{color:#f87171;border-color:#f87171}
 
@@ -735,17 +739,16 @@
       </div>
 
       <p class="kicker" style="margin-bottom:8px">Frentes do grupo</p>
-      <div id="hub-rows"></div>
-      <div class="btnrow" style="margin:6px 0 20px">
-        <button class="btn" id="hub-add">+ Adicionar frente</button>
-      </div>
+      <p class="hint" style="margin:0 0 8px">Clique num nicho para adicionar uma frente (pode repetir o mesmo nicho). Depois ajuste nicho, código, nome e responsabilidade em cada linha.</p>
+      <div id="hub-niche-chips" class="chiprow"></div>
+      <div id="hub-rows" style="margin-bottom:20px"></div>
 
       <div class="out-head"><span class="kicker" style="margin:0">Preview — HUB.md</span></div>
       <pre id="hub-preview" style="margin-top:8px"></pre>
       <div class="btnrow" style="margin-top:12px">
         <button class="btn" id="hub-dl">↓ Baixar HUB.md</button>
       </div>
-      <div class="callout" style="margin-top:18px">A <b>responsabilidade</b> de cada frente entra junto do bloco da frente (seção 2 do HUB), não numa seção à parte — é o que cada conversa atualiza para as outras frentes saberem o que aquela frente faz/possui agora. Cole o <code>HUB.md</code> idêntico em cada projeto do grupo e sincronize quando mudar.</div>
+      <div class="callout" style="margin-top:18px">O HUB gerado traz uma seção <b>Cânone Central</b> (fatos travados que toda frente respeita — nomes, paleta, dimensões, regras), além da <b>responsabilidade</b> por frente e da <b>caixa de entrada</b> com código de origem (<code>[CÓDIGO-NNN]</code>). Cole o <code>HUB.md</code> idêntico em cada projeto do grupo e sincronize quando mudar.</div>
     </section>
 
     <!-- ============ VIEW: TOKENS & FLUXOS ============ -->
@@ -4001,6 +4004,9 @@ SAÍDA: [o que mudou no mundo/estado ao fim da cena]
 ## Decisões de design
 - [O que virou DEC em MECANICAS.md (com a intenção por trás).]
 
+## Código / build
+- [Quando o projeto CONSTRÓI o jogo (não só projeta): o que foi implementado/refatorado no protótipo, arquivos e sistemas tocados, bugs técnicos resolvidos. Apague esta seção se este projeto é só design.]
+
 ## Sistemas / balanceamento
 - [Números ajustados + a intenção; efeito sistêmico observado.]
 
@@ -7146,6 +7152,7 @@ function buildClaudeMd(niche){
   L.push("> Arquivo **estável**. Define COMO o assistente age (não O QUE o projeto é — isso é o CONTEXT).");
   L.push("> É consultado quando o comportamento precisa ser lembrado; edite quando quiser ajustar tom, ritual ou regras.");
   L.push("> As Instruções do Projeto trazem uma versão curta deste arquivo, lida em toda mensagem.");
+  L.push("> **Você pode adaptar as Instruções do Projeto a ESTE projeto.** A versão que o kit gera é ponto de partida, não contrato: se fizer sentido, proponha encurtar, trocar exemplos, remover um princípio que não se aplica aqui ou acrescentar uma regra específica deste projeto — sempre respeitando o teto de caracteres (elas são lidas em toda mensagem, cada palavra custa). Registre a mudança no DECISIONS e na seção «Feedback para o Kit» do IDEAS.");
   L.push("");
   L.push("---");
 
@@ -8149,47 +8156,72 @@ function setView(v){
 
 /* ---------- HUB de grupo de projetos (i-N24) ---------- */
 function nicheLabelById(id){ return (NICHES[id] && NICHES[id].label) || ""; }
+function frenteCode(f){
+  if(f.code && f.code.trim()) return f.code.trim().toUpperCase().replace(/\s+/g,"");
+  const base = (f.name && f.name.trim()) ? f.name.trim() : (nicheLabelById(f.niche) || "AREA");
+  return (base.replace(/[^A-Za-zÀ-ÿ0-9]/g,"").slice(0,4).toUpperCase()) || "AREA";
+}
 function buildHub(){
   const h = STATE.hub || { product:"", frentes:[] };
-  const fr = (h.frentes||[]).filter(f => f.niche || (f.name && f.name.trim()));
+  const fr = (h.frentes||[]).filter(f => f.niche || (f.name && f.name.trim()) || (f.code && f.code.trim()));
   const title = (h.product && h.product.trim()) ? h.product.trim() : "[Nome do grupo/produto]";
   const nm = f => (f.name && f.name.trim()) ? f.name.trim() : (nicheLabelById(f.niche) || "Frente");
+  const resp = f => (f.resp && f.resp.trim()) ? f.resp.trim() : "— a definir (cada conversa pode atualizar)";
   const L = [];
   L.push("# HUB.md — " + title);
   L.push("");
-  L.push("> Arquivo COMPARTILHADO do grupo de projetos (cópia idêntica em cada projeto/frente). O usuário sincroniza as cópias. Cada frente LÊ tudo, mas só ESCREVE onde as diretrizes permitem. Mais novo vence: confira a data abaixo.");
+  L.push("> Arquivo COMPARTILHADO do grupo (cópia idêntica em cada projeto/frente; o usuário sincroniza). Lido no início de toda sessão cuja tarefa possa afetar outra frente ou depender do Cânone Central. Cada frente LÊ tudo, mas só ESCREVE onde as diretrizes permitem. Mais novo vence — confira a data.");
   L.push("> Última sincronização: AAAA-MM-DD · atualizado por: [frente]");
   L.push("");
-  L.push("## 1 · Diretrizes do grupo (estável — só o usuário muda)");
-  L.push("- D1 — Ninguém mexe na casa do outro: nenhuma frente altera ou entrega arquivos de OUTRA frente. Sugestão, crítica ou pedido vai para a Caixa de entrada da frente dona (seção 2), assinada [frente MM-DD]; ela estuda e decide.");
-  L.push("- D2 — Mudança que afeta outra frente vira item na caixa dela (inclui marcar/desmarcar estados de sincronia como \"aguardando <frente>\").");
-  L.push("- D3 — Cada verdade tem UM dono (referência cruzada, não cópia). Quem é dono do quê está na linha **Responsável por** de cada frente (seção 2); na dúvida, pergunte ao usuário — não duplique.");
-  L.push("- D4 — Status relâmpago (seção 3) é ultra-curto (máx. 3 linhas por frente); a própria frente o atualiza ao fim de toda sessão que tocar o HUB. NÃO substitui o STATUS.md da frente.");
-  L.push("- D5 — Tudo assinado e datado. Item processado sai da caixa e vai para Decididos com o veredito (aceito / recusado / em análise) + o motivo em 1 linha. A caixa é rolante; nada some sem registro.");
+  L.push("## Identificadores das áreas");
   L.push("");
-  L.push("## 2 · Frentes — responsabilidade, visão e caixa de entrada");
+  if(fr.length){
+    L.push("| Código | Frente | Nicho | Responsável por |");
+    L.push("|---|---|---|---|");
+    fr.forEach(f => L.push("| `[" + frenteCode(f) + "]` | " + nm(f) + " | " + (nicheLabelById(f.niche)||"—") + " | " + ((f.resp&&f.resp.trim())?f.resp.trim():"— a definir") + " |"));
+  } else {
+    L.push("_(Adicione frentes na página HUB do kit.)_");
+  }
+  L.push("");
+  L.push("## 1 · Diretrizes do grupo (estável — só o usuário muda)");
+  L.push("- **D1 — Nunca editar arquivos de outra frente.** Cada frente tem seus `.md`; nenhuma lê para editar, recriar ou sobrescrever os de outra, mesmo que apareçam no mount. Sugestões cruzadas passam por este arquivo e pelo usuário.");
+  L.push("- **D2 — Mudança que afeta outra frente vira tarefa na caixa dela** (seção 3), no formato `[CÓDIGO-NNN]` — inclui marcar/desmarcar estados de sincronia (ex.: `AGUARDANDO DESIGN`).");
+  L.push("- **D3 — Cada verdade tem UM dono.** Quem é dono do quê está na tabela de identificadores (coluna Responsável por) e na linha de cada frente. Referencie a fonte; não copie o conteúdo para os seus docs.");
+  L.push("- **D4 — Cânone Central tem precedência.** Os fatos da seção 2 são travados: mudá-los exige sinalização explícita aqui e APROVAÇÃO DO USUÁRIO antes de qualquer frente aplicar.");
+  L.push("- **D5 — Atualizar na hora.** Quando uma decisão impacta outra frente, a frente que decide atualiza a seção certa deste arquivo ANTES de fechar a sessão (risco de sobrescrita).");
+  L.push("- **D6 — Tudo assinado e datado.** Tarefa processada sai da caixa e vai para Decididos com o veredito (aceito / recusado via `[REFUTACAO-ID]` / em análise) + o motivo em 1 linha. A caixa é rolante; nada some sem registro.");
+  L.push("");
+  L.push("## 2 · Cânone Central (fatos travados — todas as frentes respeitam)");
+  L.push("");
+  L.push("> Fatos que cruzam frentes e não podem ser contraditos por decisão unilateral (ver D4). Comece pequeno; trave um fato só quando for definitivo. O que costuma entrar aqui:");
+  L.push("- **Nomes / identidade canônica:** [protagonista, lugares, termos do mundo que toda frente escreve igual]");
+  L.push("- **Identidade global:** [paleta ou cor-âncora, tom, regra estética ou sonora que vale em tudo]");
+  L.push("- **Dimensões / regras fixas:** [grade, resolução, formato de entrega, regra de mundo]");
+  L.push("- **Marcos / decisões fundadoras:** [o que já está decidido e não se rediscute sem aprovação]");
+  L.push("");
+  L.push("## 3 · Frentes — caixa de entrada e decididos");
   if(!fr.length){
     L.push("");
-    L.push("_(Adicione frentes na página HUB do kit: nicho + nome + responsável por.)_");
+    L.push("_(Cada frente adicionada na página HUB gera um bloco aqui.)_");
   } else {
     fr.forEach(f => {
       const nl = nicheLabelById(f.niche);
       L.push("");
-      L.push("### " + nm(f) + (nl ? (" · nicho " + nl) : ""));
-      L.push("- Responsável por: " + ((f.resp && f.resp.trim()) ? f.resp.trim() : "— a definir (cada conversa pode atualizar)"));
-      L.push("- Visão: [o que esta frente constrói + o norte atual]");
-      L.push("- Caixa de entrada (as OUTRAS frentes escrevem aqui; a dona faz a triagem):");
-      L.push("  - [ ] [frente MM-DD] [pedido / sugestão / crítica em 1-3 linhas]");
-      L.push("- Decididos:");
-      L.push("  - [veredito] [frente MM-DD] [item] — por quê (1 linha)");
+      L.push("### [" + frenteCode(f) + "] " + nm(f) + (nl ? (" · nicho " + nl) : ""));
+      L.push("- **Responsável por:** " + resp(f));
+      L.push("- **Visão:** [o que esta frente constrói + o norte atual]");
+      L.push("- **Caixa de entrada** (as OUTRAS frentes escrevem aqui, com o código de origem; a dona aplica e remove, ou refuta):");
+      L.push("  - [ ] `[ORIGEM-NNN]` [pedido / sugestão em 1-3 linhas]");
+      L.push("- **Decididos:**");
+      L.push("  - [veredito] `[ORIGEM-NNN]` [item] — por quê (1 linha)");
     });
   }
   L.push("");
-  L.push("## 3 · Status relâmpago (máx. 3 linhas por frente — ver D4)");
+  L.push("## 4 · Status rápido (1 parágrafo por frente — atualize ao fim de sessão com impacto inter-frentes)");
   if(!fr.length){
-    L.push("- [frente]: fazendo [...] · entregou [...]");
+    L.push("- **[CÓDIGO]** [frente] — fase: [...] · feito: [...] · próximo: [...]");
   } else {
-    fr.forEach(f => L.push("- " + nm(f) + ": fazendo [...] · entregou [...] · bloqueado por [frente: o quê]"));
+    fr.forEach(f => L.push("- **[" + frenteCode(f) + "]** " + nm(f) + " — fase: [...] · feito: [...] · próximo: [...] · bloqueado por: [frente: o quê]"));
   }
   return L.join("\n");
 }
@@ -8200,25 +8232,36 @@ function loadHub(){
   if(!Array.isArray(STATE.hub.frentes)) STATE.hub.frentes = [];
 }
 function updateHubPreview(){ const el = $("#hub-preview"); if(el) el.textContent = buildHub(); }
+function renderHubChips(){
+  const host = $("#hub-niche-chips"); if(!host) return;
+  host.innerHTML = contentNiches().map(n => '<button class="chip" type="button" data-hub-addn="' + escAttr(n.id) + '" title="Adicionar uma frente deste nicho">+ ' + escapeHTML(n.label) + '</button>').join("");
+  host.querySelectorAll("[data-hub-addn]").forEach(el => el.addEventListener("click", () => {
+    STATE.hub = STATE.hub || {product:"",frentes:[]}; STATE.hub.frentes = STATE.hub.frentes || [];
+    STATE.hub.frentes.push({ niche: el.dataset.hubAddn, name:"", resp:"", code:"" });
+    persistHub(); renderHubRows(); updateHubPreview();
+  }));
+}
 function renderHubRows(){
   const host = $("#hub-rows"); if(!host) return;
   const fr = STATE.hub.frentes;
-  if(!fr.length){ host.innerHTML = '<div class="callout">Nenhuma frente ainda. Clique em “+ Adicionar frente”.</div>'; return; }
+  if(!fr.length){ host.innerHTML = '<div class="callout">Nenhuma frente ainda. Use os botões acima para adicionar uma frente por nicho (pode repetir o mesmo nicho).</div>'; return; }
   const opts = contentNiches().map(n => '<option value="' + escAttr(n.id) + '">' + escapeHTML(n.label) + '</option>').join("");
   host.innerHTML = fr.map((f,i) =>
     '<div class="hubrow">' +
       '<div class="moves">' +
-        '<button data-hub-up="' + i + '" title="Subir"' + (i===0?" disabled":"") + '>▲</button>' +
-        '<button data-hub-down="' + i + '" title="Descer"' + (i===fr.length-1?" disabled":"") + '>▼</button>' +
+        '<button type="button" data-hub-up="' + i + '" title="Subir"' + (i===0?" disabled":"") + '>▲</button>' +
+        '<button type="button" data-hub-down="' + i + '" title="Descer"' + (i===fr.length-1?" disabled":"") + '>▼</button>' +
       '</div>' +
       '<select data-hub-niche="' + i + '"><option value="">— nicho —</option>' + opts + '</select>' +
+      '<input class="hub-code" type="text" data-hub-code="' + i + '" placeholder="cód." title="Código da área (ex.: GAME, ART). Vazio = derivado do nome." value="' + escAttr(f.code||"") + '"/>' +
       '<input class="hub-name" type="text" data-hub-name="' + i + '" placeholder="nome / cargo / área" value="' + escAttr(f.name||"") + '"/>' +
       '<input class="hub-resp" type="text" data-hub-resp="' + i + '" placeholder="responsável por… (opcional)" value="' + escAttr(f.resp||"") + '"/>' +
-      '<button class="rm" data-hub-rm="' + i + '" title="Remover">✕</button>' +
+      '<button class="rm" type="button" data-hub-rm="' + i + '" title="Remover">✕</button>' +
     '</div>'
   ).join("");
   fr.forEach((f,i) => { const sel = host.querySelector('[data-hub-niche="' + i + '"]'); if(sel) sel.value = f.niche || ""; });
   host.querySelectorAll("[data-hub-niche]").forEach(el => el.addEventListener("change", () => { STATE.hub.frentes[+el.dataset.hubNiche].niche = el.value; persistHub(); updateHubPreview(); }));
+  host.querySelectorAll("[data-hub-code]").forEach(el => el.addEventListener("input", () => { STATE.hub.frentes[+el.dataset.hubCode].code = el.value; persistHub(); updateHubPreview(); }));
   host.querySelectorAll("[data-hub-name]").forEach(el => el.addEventListener("input", () => { STATE.hub.frentes[+el.dataset.hubName].name = el.value; persistHub(); updateHubPreview(); }));
   host.querySelectorAll("[data-hub-resp]").forEach(el => el.addEventListener("input", () => { STATE.hub.frentes[+el.dataset.hubResp].resp = el.value; persistHub(); updateHubPreview(); }));
   host.querySelectorAll("[data-hub-rm]").forEach(el => el.addEventListener("click", () => { STATE.hub.frentes.splice(+el.dataset.hubRm,1); persistHub(); renderHubRows(); updateHubPreview(); }));
@@ -8228,12 +8271,12 @@ function renderHubRows(){
 function renderHub(){
   loadHub();
   const prod = $("#hub-product"); if(prod) prod.value = STATE.hub.product || "";
+  renderHubChips();
   renderHubRows();
   updateHubPreview();
 }
 function wireHub(){
   const prod = $("#hub-product"); if(prod) prod.addEventListener("input", () => { STATE.hub = STATE.hub || {product:"",frentes:[]}; STATE.hub.product = prod.value; persistHub(); updateHubPreview(); });
-  const add = $("#hub-add"); if(add) add.addEventListener("click", () => { STATE.hub = STATE.hub || {product:"",frentes:[]}; STATE.hub.frentes = STATE.hub.frentes || []; STATE.hub.frentes.push({niche:"",name:"",resp:""}); persistHub(); renderHubRows(); updateHubPreview(); });
   const dl = $("#hub-dl"); if(dl) dl.addEventListener("click", () => downloadFile("HUB.md", buildHub()));
 }
 

@@ -1,6 +1,33 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.31.0**.
+> Histórico de versões. Versão atual: **v1.32.0**.
+
+## v1.32.0 — 2026-06-13 — HUB inspirado no CANON.md + construtor por botões + diretriz de Instruções + log técnico
+
+Sessão com 3 insumos do piloto: `erro-260613` (válvula preservou `## Código` num log de game), `ideia-260613_-_2` (botões + estilo + diretriz de Instruções) e o **CANON.md** que o projeto em grupo montou sozinho (versão mais madura do HUB). Ver **D-026**.
+
+### HUB enriquecido com o CANON.md (inspiração do piloto)
+- **Identificadores das áreas:** cada frente ganha um **código** (`[GAME]`, `[ART]`…) — campo opcional na linha; vazio = derivado do nome. Tabela de identificadores no topo do `HUB.md`.
+- **Cânone Central:** nova seção de **fatos travados** que toda frente respeita (nomes, paleta/identidade global, dimensões/regras, marcos fundadores) — a inovação central do CANON.md que faltava no HUB.
+- **Precedência do cânone (D4):** mudar um fato travado exige sinalização + **aprovação do usuário** antes de qualquer frente aplicar.
+- **Tarefas com origem:** caixa de entrada no formato `[ORIGEM-NNN]`, com refutação `[REFUTACAO-ID]` nos Decididos.
+- Estrutura final: Identificadores → Diretrizes (D1–D6) → Cânone Central → Frentes (caixa+decididos) → Status rápido.
+
+### Construtor do HUB: botões + estilo do kit (ideia-260613_-_2)
+- **Adicionar por botões:** uma fileira de chips (os 16 nichos); clicar **adiciona** uma frente daquele nicho (estilo "add", não toggle — clicar 3× adiciona 3). O `<select>` por linha continua para trocar o nicho depois.
+- **Estilo consistente:** o `<select>` e os campos (código, nome, responsabilidade) agora usam o visual padrão do kit (fundo, borda, foco âmbar) — resolve a inconsistência das telas.
+
+### Diretriz: o assistente pode personalizar as próprias Instruções (ideia-260613_-_2)
+- O CLAUDE.md gerado agora autoriza explicitamente: **adaptar as Instruções do Projeto a este projeto** (encurtar, trocar exemplos, remover princípio que não se aplica, acrescentar regra do projeto), respeitando o teto de caracteres e registrando no DECISIONS + «Feedback para o Kit». É a válvula (i-N22) aplicada às Instruções.
+
+### Log técnico para game (erro-260613)
+- O LOG-TEMPLATE do nicho **game** ganhou a seção **`## Código / build`** (some quando o projeto é só design). O log do game era todo voltado a design; um projeto que CONSTRÓI o jogo não tinha onde registrar código — exatamente a customização que o piloto Fando preservou.
+
+### Validação
+Harness +5 checagens (identificadores, Cânone Central, formato de código no `buildHub`; diretriz de Instruções em 17/17; seção Código no LOG do game). **Anti-testes:** sem a diretriz, 17 reprovam; sem a seção Código, o game reprova. **17/17, 0 erros**; `div` 283/283; ~579 KB / 8396 linhas.
+
+---
+
 
 ## v1.31.0 — 2026-06-13 — Página construtora do HUB (ideia-260613)
 
