@@ -1,6 +1,25 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.30.1**.
+> Histórico de versões. Versão atual: **v1.31.0**.
+
+## v1.31.0 — 2026-06-13 — Página construtora do HUB (ideia-260613)
+
+Nova página **06 · HUB** (grupo de projetos) e refino do modelo do HUB. Ver **D-025**.
+
+### Construtor do HUB
+- View dedicada onde o usuário **monta as frentes do grupo**: cada linha = **nicho** (dropdown dos 16) + **nome** (cargo/área) + **responsável por** (1 linha). Botões **+ adicionar**, **✕ remover** e **▲▼ reordenar**; **preview ao vivo** do `HUB.md`; botão **baixar HUB.md**. Campo "nome do grupo/produto" no título.
+- O `HUB.md` sai **populado** com as frentes: seção 1 (diretrizes D1–D5), seção 2 (um bloco por frente: Responsável por → Visão → Caixa de entrada → Decididos) e seção 3 (status relâmpago por frente). Estado próprio (`STATE.hub`), persistido em `localStorage` à parte (independente de nicho).
+- **Responsabilidade** entra no bloco de cada frente (linha "Responsável por"), **não** numa 4ª seção: evita duplicar a Visão e o "dono" (D3, que agora aponta para essa linha). É o campo que cada conversa do projeto atualiza para as outras frentes.
+
+### HUB saiu do download por-nicho
+- `effectiveFiles` **não injeta mais** `HUB.md` nos templates/zip de cada nicho (senão cada nicho carregaria um HUB genérico repetido). O `HUB.md` vem só da página HUB (um por grupo). O switch **"Projeto em grupo?"** continua adicionando a **seção de instruções do HUB** ao CLAUDE.md gerado do projeto (e o texto agora aponta para a página HUB, não para os templates do nicho).
+- Sobre "identificador para limitar tokens" por frente (cogitado na ideia): não existe mecanismo desse tipo no kit e não é necessário — o HUB é um documento, não um orçamento de tokens em runtime; nada foi adicionado.
+
+### Validação
+Harness: round-trip do HUB atualizado (seção no CLAUDE.md quando ligado; `HUB.md` **não** entra no nicho) + **smoke test do `buildHub`** (nome do grupo, frente nomeada, responsabilidade preenchida e vazia→"a definir"). **Anti-teste:** reintroduzir `HUB.md` no nicho reprova. **17/17, 0 erros**; `div` 283/283; ~575 KB / 8353 linhas.
+
+---
+
 
 ## v1.30.1 — 2026-06-13 — Switch de verdade + HUB aparece ao ligar + correção do GitHub Pages
 

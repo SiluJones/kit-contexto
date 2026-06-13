@@ -519,6 +519,21 @@ Pilotos mostraram dois problemas: (a) nichos de produção tratados como "suport
 
 ---
 
+## D-025 — Página construtora do HUB + responsabilidade no bloco da frente (não em 4ª seção)
+
+**Data:** 2026-06-13 · **Status:** aceita; **embutida (v1.31.0)** · Origem: ideia-260613
+
+### Decisões
+1. **Página dedicada "06 · HUB"** (group-level, independente do nicho atual): construtor de frentes (nicho + nome + responsável por), com adicionar/remover/reordenar, preview ao vivo e download. Estado em `STATE.hub`, persistido em chave própria (`LS_HUB`) — o HUB é do GRUPO, não de um projeto. `buildHub()` gera o `HUB.md` populado.
+2. **Responsabilidade fica no bloco da frente (seção 2), não numa 4ª seção.** O usuário cogitou uma seção própria; preferiu-se a linha "Responsável por" dentro de cada frente porque (a) uma seção à parte duplicaria a Visão e o mapa de donos (D3); (b) "uma fonte de verdade" é princípio do kit. D3 passou a **apontar** para essa linha. O comportamento dinâmico que o usuário quer (cada conversa atualiza para as outras frentes) é exatamente o que a linha + o gatilho de atualização do HUB já entregam. Reversível: virar 4ª seção é mudança localizada se ele preferir.
+3. **HUB.md sai do download por-nicho** (`effectiveFiles` deixa de injetá-lo): senão cada nicho geraria um HUB genérico repetido. Vem só da página HUB. O switch "Projeto em grupo?" segue adicionando a seção de instruções do HUB ao CLAUDE.md (texto reaponta para a página).
+4. **Sem "identificador de tokens" por frente:** cogitado na ideia, mas não há mecanismo desse tipo no kit nem necessidade (HUB é documento, não orçamento de runtime). Nada adicionado — registrado para não reabrir.
+
+### Alternativas rejeitadas
+- 4ª seção de responsabilidade (duplicação); HUB.md em cada nicho (repetição); HUB embutido na página de um nicho específico (o HUB é group-level, merece página própria).
+
+---
+
 # FIXES — bugs graves resolvidos (formato sintoma/causa/solução/lição)
 
 > Decisões são "por que as coisas são assim"; FIXES são "o que quebrou feio e como consertamos". Não apagar.

@@ -4,7 +4,9 @@
 
 > **Criado em 2026-06-07.** Primeira versão. Consolida o que já foi feito (Fases 0–2) e organiza o que está por decidir/fazer (Fases 3–5 + Futuro), a partir das discussões desta sessão.
 
-> **Mudanças nesta revisão (v1.30.0):** HUB embutido como switch (i-N24 ✅ D-024) + Instruções enxutas (−27%, teto no harness). Fase 3 ganha bloco ✅ v1.30.0; "reagrupar narrative" adiado (intuito ambíguo). Fase 5: i-N24 marcada EMBUTIDA.
+> **Mudanças nesta revisão (v1.31.0):** página construtora do HUB (06) embutida (D-025); responsabilidade no bloco da frente; HUB.md fora do download por-nicho. Fase 3 ganha bloco ✅ v1.31.0.
+
+> **Mudanças na revisão (v1.30.0):** HUB embutido como switch (i-N24 ✅ D-024) + Instruções enxutas (−27%, teto no harness). Fase 3 ganha bloco ✅ v1.30.0; "reagrupar narrative" adiado (intuito ambíguo). Fase 5: i-N24 marcada EMBUTIDA.
 
 > **Mudanças na revisão (v1.29.0):** "kit desenvolve" fase 1 executada (D-023) — IDEAS universal, narrative escreve, game cria (ROTEIRO.md). Fase 3 ganha bloco ✅ v1.29.0; restante renumerado (HUB i-N24 = refinar/apresentar; estender "desenvolve"; lote pilotos; cosméticos). Fase 5: i-N24 com o desenho do HUB; +i-N25 (música).
 
@@ -34,6 +36,9 @@
 
 ## ▶ Fase 3 — Higiene & consistência (EM ANDAMENTO — barato, alto valor)
 Itens de código pequenos e de doc, sem arquitetura nova.
+
+**✅ Concluído (v1.31.0):**
+- ✅ **Página construtora do HUB** (06 · HUB, D-025) — frentes (nicho+nome+responsável por), add/remover/reordenar, preview, download do `HUB.md` populado; responsabilidade no bloco da frente; HUB.md fora do download por-nicho. Harness +smoke test.
 
 **✅ Concluído (v1.30.0):**
 - ✅ **HUB de grupo como switch** (i-N24, D-024) — toggle "Projeto em grupo?"; ligado adiciona seção ao CLAUDE.md + HUB.md aos templates; round-trip no harness.

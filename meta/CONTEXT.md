@@ -3,7 +3,9 @@
 > O **passaporte** do projeto. Leia primeiro para se ambientar. Estável — muda pouco.
 > Objetivo deste arquivo: uma nova conversa entende o projeto inteiro sem precisar de mais nada.
 
-> **Mudanças nesta revisão (v1.29.0 → v1.30.0):** HUB de grupo como **switch** (`UNIVERSAL_HUB_TPL` + toggle `groupMode` no topbar + `effectiveFiles`/`groupModeOn`; seção HUB no CLAUDE.md gerado quando ligado) e **Instruções enxutas** (os 13 universais viraram 1 linha de nomes em `buildInstr`; −27%; teto de 6500 no harness). Validação 17/17 com +3 checagens. ~563 KB / 8206 linhas. Nota anterior preservada abaixo.
+> **Mudanças nesta revisão (v1.30.x → v1.31.0):** página **06 · HUB** (construtor de frentes do grupo: nicho + nome + responsável por; preview; `buildHub()` gera o `HUB.md` populado; `STATE.hub`/`LS_HUB`). Responsabilidade no bloco da frente (não 4ª seção). `HUB.md` saiu do download por-nicho (`effectiveFiles` não injeta mais); o switch "Projeto em grupo?" segue adicionando a seção do HUB ao CLAUDE.md. 17/17 com round-trip + smoke test. ~575 KB / 8353 linhas. Nota anterior preservada abaixo.
+
+> **Mudanças na revisão (v1.29.0 → v1.30.0):** HUB de grupo como **switch** (`UNIVERSAL_HUB_TPL` + toggle `groupMode` no topbar + `effectiveFiles`/`groupModeOn`; seção HUB no CLAUDE.md gerado quando ligado) e **Instruções enxutas** (os 13 universais viraram 1 linha de nomes em `buildInstr`; −27%; teto de 6500 no harness). Validação 17/17 com +3 checagens. ~563 KB / 8206 linhas. Nota anterior preservada abaixo.
 
 > **Mudanças na revisão (v1.28.0 → v1.29.0):** D-023 fase 1 — nova constante de fundação **`UNIVERSAL_IDEAS_TPL`** (IDEAS injetado via `normNiche` em todo nicho sem o seu) + regra "cria na primeira necessidade" no buildClaudeMd; narrative passa a ESCREVER sob direção (convention reescrita + `writes_prose` + kishōtenketsu + prompt J); game passa a CRIAR (`builds_game` + template `ROTEIRO.md`). Validação 17/17 com +10 checagens. ~559 KB / 8176 linhas. Nota anterior preservada abaixo.
 

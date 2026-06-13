@@ -1,9 +1,11 @@
 # STATUS — Kit de Contexto Universal — 2026-06-12
 
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
-> Versão atual: **v1.30.1**. Índice ~564 KB / 8221 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + integridade dos chips (FIX-004) + **6 (D-022/D-018) + 10 (v1.29.0) + 3 (v1.30.0: compressão dos universais, teto 6500, round-trip HUB)** + suíte de fluxos.
+> Versão atual: **v1.31.0**. Índice ~575 KB / 8353 linhas. Teste: **17/17 nichos, 0 erros JS** + chips (FIX-004) + **6 (D-022/D-018) + 10 (v1.29.0) + 3 (v1.30.0) + round-trip HUB e smoke test do `buildHub` (v1.31.0)** + suíte de fluxos.
 
-> **Mudanças nesta revisão (v1.30.1):** patch de teste real. **GitHub Pages corrigido** (FIX-005): build do Jekyll quebrava em `meta/STATUS.md` ("invalid characters… UTF-8") → o site não atualizava; solução = **`.nojekyll`** na raiz (este repo não precisa de Jekyll). **"Projeto em grupo?" virou switch real** (toggle, não select). **HUB.md aparece ao ligar** o switch (handler do topbar agora chama `renderTemplates`; o download fica na aba Templates). 17/17. (Notas anteriores abaixo.)
+> **Mudanças nesta revisão (v1.31.0):** página **06 · HUB** (ideia-260613) — construtor de frentes (nicho + nome + responsável por; add/remover/reordenar; preview; baixar `HUB.md` populado). Responsabilidade ficou no bloco da frente (não em 4ª seção). `HUB.md` **saiu** do download por-nicho (vinha repetido); o switch "Projeto em grupo?" segue adicionando a seção do HUB ao CLAUDE.md. Sem "identificador de tokens" (não existe/não precisa). D-025. (Notas anteriores abaixo.)
+
+> **Mudanças na revisão (v1.30.1):** patch de teste real. **GitHub Pages corrigido** (FIX-005): build do Jekyll quebrava em `meta/STATUS.md` ("invalid characters… UTF-8") → o site não atualizava; solução = **`.nojekyll`** na raiz (este repo não precisa de Jekyll). **"Projeto em grupo?" virou switch real** (toggle, não select). **HUB.md aparece ao ligar** o switch (handler do topbar agora chama `renderTemplates`; o download fica na aba Templates). 17/17. (Notas anteriores abaixo.)
 
 > **Mudanças na revisão (v1.30.0):** "aceito o HUB, prossiga" + tamanho das Instruções. **HUB virou switch** ("Projeto em grupo?" no topbar; ligado → seção no CLAUDE.md + HUB.md nos templates + linha no ritual; desligado → nada). **Instruções enxutas:** os 13 princípios universais viraram 1 linha de nomes (completos no CLAUDE.md) — média −27% (6193→4503), com teto de 6500 no harness. D-024. Cosmético "reagrupar narrative" **adiado** (campo é tema visual; intuito ambíguo — aguarda esclarecimento). O "PRÓXIMO TRABALHO" foi reordenado. Nada perdido. (Notas anteriores abaixo.)
 
@@ -25,7 +27,7 @@
 São **17 nichos**: 16 de conteúdo + **1 construtor** (`custom`).
 
 ## 🎯 PRÓXIMO TRABALHO (decidir/fazer)
-1. **Validar o HUB e as Instruções enxutas em uso real** — marque "Projeto em grupo? Sim" nos 4 projetos do jogo (ou use o `HUB.md` personalizado já entregue) e veja se a coordenação flui; confira se as Instruções menores não deixaram faltar nada importante. Feedback vira ajuste fino.
+1. **Validar a página HUB (06) em uso real** — monte as frentes do jogo, baixe o `HUB.md`, cole nos 4 projetos (switch "Projeto em grupo?" ligado em cada) e veja se a coordenação flui. Em especial: a linha "Responsável por" no bloco da frente basta, ou ainda quer a 4ª seção separada? Feedback vira ajuste.
 2. **Lote de feedback dos pilotos (i-N23): ⏸ PAUSADO por decisão do usuário (06-12)** — não fecha por ora; itens registrados em IDEIAS; aplicar quando ele sinalizar.
 3. **Estender o padrão "desenvolve" (D-023)** a HQ/RPG/animação — **confirmado pelo usuário: só quando ele iniciar projetos nessas áreas.** i-N25 (música) idem.
 4. **Cosméticos — status:** **MAPA.md** corrigido (16+1, v1.29.0). **Qualidade/tamanho das Instruções: FEITO (v1.30.0)** — compressão dos universais + teto de 6500 no harness. **Reagrupar `narrative`: adiado** — `group:` é tema visual do card; intuito ambíguo, aguarda o usuário esclarecer o que reagrupar. **README/PLANNING:** depois (pitch mudou com "kit desenvolve").
@@ -63,7 +65,8 @@ Harness jsdom **boot limpo por nicho** (o ambiente reseta entre sessões — rec
 - `t-granular.js` — granularidade (desmarcar peça → some do import; "marcar todas" reinclui).
 Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao remover/renomear coisas no código, atualizar os testes (foi o que aconteceu ao remover `customSmart`: trocar `setNiche("customSmart")` → `setNiche("custom")`).
 
-## 🗺 Onde está no código (v1.30.0; números aproximados, mudam ao editar)
+## 🗺 Onde está no código (v1.31.0; números aproximados, mudam ao editar)
+- **v1.31.0 (HUB builder, D-025):** view `#v-hub` (nav `data-view="hub"`); `STATE.hub = {product,frentes:[{niche,name,resp}]}` em `LS_HUB`; `buildHub()` gera o `HUB.md` populado; `renderHub`/`renderHubRows`/`wireHub`/`updateHubPreview`/`persistHub`/`loadHub` (logo após `setView`, que chama `renderHub` ao abrir a aba); boot chama `loadHub()`+`wireHub()`. `effectiveFiles` voltou a NÃO injetar `HUB.md` no nicho.
 - **v1.30.0 (D-024):** `UNIVERSAL_HUB_TPL` é constante de fundação (junto de `UNIVERSAL_IDEAS_TPL`); `groupModeOn()` lê `STATE.topbar.groupMode`; `effectiveFiles(niche)` injeta `HUB.md` quando ligado (usado em `buildInstr`, `renderTemplates`, zip). O toggle "groupMode" é injetado no topbar dentro de `normNiche`. A seção HUB é empurrada no fim do `buildClaudeMd` (antes do rodapé). **Instruções enxutas:** em `buildInstr`, os universais (ids de `BEHAVIORS_BASE`) viram 1 linha de nomes; os de nicho seguem em bullets.
 - **v1.29.0 (D-023):** `UNIVERSAL_IDEAS_TPL` é constante de fundação (logo antes de `HYGIENE_RULES`); a **injeção** acontece em `normNiche` (`_files.some(/^IDE(A|IA)S\.md$/i)`); a regra "cria na primeira necessidade" está no `buildClaudeMd` logo após a tabela de gatilhos. Narrative: convention[0] reescrita + convention kishōtenketsu + behavior `writes_prose` (após `protect_voice`) + prompt `id:"J"`. Game: behavior `builds_game` (após `creator_decides`), template `ROTEIRO.md` (entre NIVEIS e LOG-TEMPLATE), output `key:"roteiro"`, trigger novo, convention "também CONSTRÓI".
 - **Lote D-022 (v1.28.0):** i-N19 = frase final na def de `check_before_ask` (P8, BEHAVIORS_BASE ~845) + bullet na seção «Verifica antes de pedir um arquivo» do buildClaudeMd (~7145); i-N22 = 5ª regra em `HYGIENE_RULES` (~868); i-N21 = 5ª linha em `TRIGGERS_BASE` (~877); i-N20 = `commitIntro` (3 linhas, incondicional) e `commitNota` (só sintaxe por SO); i-N18 = item novo (penúltimo) em `handoffComo`. **D-018:** 3 itens do `handoffComo` reescritos + 2 callouts da tela "Tokens & Fluxos" (~760, ~766).
@@ -87,12 +90,15 @@ Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao rem
 - Commit ao final: comando completo p/ CMD Windows (UMA linha, `-m` repetido), pronto para colar. Mensagem **sem acentos** (CMD corrompe acentos em `-m`).
 - Usuário no CMD do Windows (`C:\Users\alexk\Arquiteturas\kit-contexto`). Repo: `index.html` na raiz, `.md` em `meta\`.
 
-## 💬 Última sessão (2026-06-13 — v1.30.1)
-Patch a partir de teste real:
-- **GitHub Pages voltou a publicar** (FIX-005) — o build do Jekyll falhava ("invalid characters… UTF-8" em `meta/STATUS.md`) e o site ficava parado. Os `.md` estão em UTF-8 válido; o Jekyll é que é dispensável (site = app de página única). Correção: **`.nojekyll`** na raiz do repo → Pages serve estático. **Ação do usuário:** subir o `.nojekyll` na raiz e refazer o commit/push.
-- **Switch de verdade:** "Projeto em grupo?" agora é toggle (tipo de campo `toggle` novo no topbar), não um seletor.
-- **HUB.md visível ao ligar:** o handler do topbar passou a re-renderizar os Templates, então o download do `HUB.md` aparece na hora (antes só ao trocar de nicho). O download fica na aba Templates, com os outros.
-**Próximo de fato:** confirmar que o Pages publicou com o `.nojekyll`; depois, validar HUB + Instruções enxutas nos pilotos.
+## 💬 Última sessão (2026-06-13 — v1.31.0)
+Ideia-260613: página construtora do HUB. Tudo verde:
+- **Página 06 · HUB:** monta as frentes do grupo (nicho + nome + responsável por), com adicionar/remover/reordenar, preview ao vivo e download do `HUB.md` populado. Estado próprio (`STATE.hub`/`LS_HUB`), independente de nicho.
+- **Responsabilidade no bloco da frente** (seção 2), não em 4ª seção — evita duplicar Visão e o mapa de donos (D3 aponta para ela). É o campo que cada conversa atualiza para as outras frentes. Reversível se o usuário preferir a 4ª seção.
+- **HUB.md saiu do download por-nicho** (`effectiveFiles` não injeta mais) — vinha um HUB genérico repetido em cada nicho. O switch "Projeto em grupo?" continua adicionando a seção do HUB ao CLAUDE.md.
+- **"Identificador de tokens" por frente:** não existe no kit nem é necessário (HUB é doc, não orçamento de runtime). Nada feito.
+- Validação: harness com round-trip do HUB atualizado + smoke test do `buildHub`; anti-teste (HUB.md no nicho reprova). 17/17.
+**Próximo de fato:** usar a página HUB no jogo e dizer se a linha "Responsável por" basta ou se quer a 4ª seção.
+
 
 ## 💬 Sessão anterior (2026-06-12 — v1.30.0)
 "Aceito o HUB, prossiga" + a percepção certa de que as Instruções estavam grandes. Sessão de código, tudo verde:

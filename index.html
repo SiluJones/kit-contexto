@@ -218,6 +218,16 @@
   .tsw input:checked + .track{background:var(--amber);border-color:var(--amber)}
   .tsw input:checked + .track::after{transform:translateX(17px);background:#1a160e}
   .tsw input:focus-visible + .track{outline:2px solid var(--amber-soft);outline-offset:2px}
+  /* Construtor do HUB (página de grupo) */
+  .hubrow{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--line-soft);border-radius:10px;background:var(--panel);margin-bottom:8px;flex-wrap:wrap}
+  .hubrow .moves{display:flex;flex-direction:column;gap:2px;flex:0 0 auto}
+  .hubrow .moves button{font-size:10px;line-height:1;padding:2px 5px;border:1px solid var(--line);background:var(--panel2);color:var(--ink-dim);border-radius:5px;cursor:pointer}
+  .hubrow .moves button:hover{color:var(--amber);border-color:var(--amber)}
+  .hubrow select{flex:0 0 auto;min-width:150px}
+  .hubrow .hub-name{flex:1 1 130px;min-width:110px}
+  .hubrow .hub-resp{flex:2 1 220px;min-width:140px}
+  .hubrow .rm{flex:0 0 auto;border:1px solid var(--line);background:transparent;color:var(--ink-faint);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px}
+  .hubrow .rm:hover{color:#f87171;border-color:#f87171}
 
   .radio-row{display:flex;flex-wrap:wrap;gap:6px}
   .rad{
@@ -547,6 +557,7 @@
       <button class="navbtn" data-view="prompts"><span class="ix">03</span> Prompts</button>
       <button class="navbtn" data-view="templates"><span class="ix">04</span> Templates</button>
       <button class="navbtn" data-view="fluxos"><span class="ix">05</span> Tokens &amp; Fluxos</button>
+      <button class="navbtn" data-view="hub"><span class="ix">06</span> HUB <span style="font-size:9px;opacity:.6">grupo</span></button>
     </nav>
 
     <div class="rail-foot">
@@ -710,6 +721,31 @@
         <span class="tag ref" style="display:inline-block">referência</span> = modelo fixo, nunca substituído ·
         <span class="tag opt" style="display:inline-block">opcional</span> = entra conforme a complexidade do projeto.
       </div>
+    </section>
+
+    <!-- ============ VIEW: HUB (grupo de projetos) ============ -->
+    <section class="view" id="v-hub">
+      <p class="kicker">Grupo de projetos</p>
+      <h1 class="page">HUB.</h1>
+      <p class="lede">Para quando vários projetos do kit servem ao MESMO produto (ex.: um jogo com frentes de game design, arte, enredo e música). Monte aqui a lista de frentes do grupo: o kit gera um <code>HUB.md</code> compartilhado — diretrizes do grupo, caixa de entrada por frente e status relâmpago. <b>Um HUB por grupo</b> (não por projeto): em cada projeto, ligue o switch <em>"Projeto em grupo?"</em> para que o CLAUDE.md dele saiba ler o HUB.</p>
+
+      <div class="field" style="max-width:420px;margin-bottom:16px">
+        <span class="tlabel">Nome do grupo / produto</span>
+        <input type="text" id="hub-product" placeholder="ex: O Jardim Cinza (jogo)" />
+      </div>
+
+      <p class="kicker" style="margin-bottom:8px">Frentes do grupo</p>
+      <div id="hub-rows"></div>
+      <div class="btnrow" style="margin:6px 0 20px">
+        <button class="btn" id="hub-add">+ Adicionar frente</button>
+      </div>
+
+      <div class="out-head"><span class="kicker" style="margin:0">Preview — HUB.md</span></div>
+      <pre id="hub-preview" style="margin-top:8px"></pre>
+      <div class="btnrow" style="margin-top:12px">
+        <button class="btn" id="hub-dl">↓ Baixar HUB.md</button>
+      </div>
+      <div class="callout" style="margin-top:18px">A <b>responsabilidade</b> de cada frente entra junto do bloco da frente (seção 2 do HUB), não numa seção à parte — é o que cada conversa atualiza para as outras frentes saberem o que aquela frente faz/possui agora. Cole o <code>HUB.md</code> idêntico em cada projeto do grupo e sincronize quando mudar.</div>
     </section>
 
     <!-- ============ VIEW: TOKENS & FLUXOS ============ -->
@@ -6347,6 +6383,7 @@ const STATE = {
   fillValues: {},
   customPreset: null,
   outTab: "instr",   // qual aba do painel de saída: "instr" | "claude"
+  hub: null,         // { product, frentes:[{niche,name,resp}] } — grupo de projetos (i-N24); persistido à parte
 };
 
 /* ---------- LocalStorage keys ---------- */
@@ -6354,6 +6391,7 @@ const LS_NICHE       = "kit-niche";
 const LS_STATE       = "kit-state-";
 const LS_PRESETS     = "kit-custom-presets";
 const LS_PRESET_CURR = "kit-custom-current";
+const LS_HUB         = "kit-hub-v1";
 
 /* ---------- Language map fix ---------- */
 /* LANGS é [["pt","..."], ["en","..."], ["es","..."], ["other","..."]]
@@ -6974,9 +7012,10 @@ function renderOutputs(niche){
    ========================================================= */
 function groupModeOn(){ return !!(STATE.topbar && STATE.topbar.groupMode === "yes"); }
 function effectiveFiles(niche){
-  const base = (niche && niche.contextFiles) || [];
-  if(groupModeOn() && !base.some(f => f.name === "HUB.md")) return [...base, UNIVERSAL_HUB_TPL];
-  return base;
+  // O HUB.md NÃO entra no download por-nicho (seria um HUB genérico repetido em cada nicho).
+  // Ele é montado e baixado na página HUB (um por grupo). O switch "Projeto em grupo?"
+  // só adiciona a SEÇÃO de instruções do HUB ao CLAUDE.md gerado deste projeto.
+  return (niche && niche.contextFiles) || [];
 }
 function buildInstr(niche){
   if(!niche) return "";
@@ -7005,7 +7044,7 @@ function buildInstr(niche){
   ].filter(Boolean);
   lines.push(`Antes de qualquer ação, leia nesta ordem: ${readOrder.map(f=>`\`${f}\``).join(" → ")}${coreFiles.some(n=>/CHANGELOG/i.test(n))?" → última entrada do `CHANGELOG.md`":""}.`);
   lines.push("Confirme em uma frase o que entendeu da tarefa antes de executar. Se houver ambiguidade real, pergunte antes.");
-  if(groupModeOn()) lines.push("Projeto em grupo: leia também `HUB.md` logo após o STATUS — sua caixa de entrada e o status das outras frentes. Nunca altere arquivos de outra frente; sugestões vão para a caixa dela.");
+  if(groupModeOn()) lines.push("Projeto em grupo: existe um `HUB.md` compartilhado (gerado na página HUB do kit). Leia-o logo após o STATUS — sua caixa de entrada e o status das outras frentes. Nunca altere arquivos de outra frente; sugestões vão para a caixa dela.");
 
   // Princípios essenciais (curtos — versão densa, não a definição longa)
   const bhAll = [...normBehaviors(BEHAVIORS_BASE), ...(niche.behaviors||[])];
@@ -7279,7 +7318,7 @@ function buildClaudeMd(niche){
     L.push("3. **Mudança sua que afete outra frente** gera um item na caixa dela (D2) — inclusive marcar/desmarcar estados de sincronia (ex.: `AGUARDANDO DESIGN`).");
     L.push("4. **Ao encerrar uma sessão que toque o grupo:** processe sua caixa (triagem → Decididos com veredito + motivo), atualize seu status relâmpago (≤3 linhas) e entregue o `HUB.md` COMPLETO, lembrando o usuário de sincronizá-lo nos outros projetos.");
     L.push("");
-    L.push("O modelo do `HUB.md` está nos templates deste nicho (baixe junto). Cada verdade tem UM dono (lore, mecânica, visual, som…): na dúvida, pergunte ao usuário — não duplique.");
+    L.push("O `HUB.md` é gerado na página HUB do kit (um por grupo, não por projeto) e colado idêntico em cada projeto do grupo. Cada verdade tem UM dono (lore, mecânica, visual, som…); a responsabilidade atual de cada frente fica no bloco dela no HUB (seção 2). Na dúvida de quem é dono de um dado, pergunte ao usuário — não duplique.");
   }
   L.push("");
   L.push(`*Gerado pelo Kit de Contexto Universal — nicho ${niche.label}. Edite à vontade: este arquivo é seu.*`);
@@ -8105,7 +8144,99 @@ function closeOverlay(){ $("#niche-overlay").classList.remove("on"); }
 function setView(v){
   $$(".view").forEach(s => s.classList.toggle("on", s.id === "v-" + v));
   $$(".navbtn").forEach(b => b.classList.toggle("on", b.dataset.view === v));
+  if(v === "hub") renderHub();
 }
+
+/* ---------- HUB de grupo de projetos (i-N24) ---------- */
+function nicheLabelById(id){ return (NICHES[id] && NICHES[id].label) || ""; }
+function buildHub(){
+  const h = STATE.hub || { product:"", frentes:[] };
+  const fr = (h.frentes||[]).filter(f => f.niche || (f.name && f.name.trim()));
+  const title = (h.product && h.product.trim()) ? h.product.trim() : "[Nome do grupo/produto]";
+  const nm = f => (f.name && f.name.trim()) ? f.name.trim() : (nicheLabelById(f.niche) || "Frente");
+  const L = [];
+  L.push("# HUB.md — " + title);
+  L.push("");
+  L.push("> Arquivo COMPARTILHADO do grupo de projetos (cópia idêntica em cada projeto/frente). O usuário sincroniza as cópias. Cada frente LÊ tudo, mas só ESCREVE onde as diretrizes permitem. Mais novo vence: confira a data abaixo.");
+  L.push("> Última sincronização: AAAA-MM-DD · atualizado por: [frente]");
+  L.push("");
+  L.push("## 1 · Diretrizes do grupo (estável — só o usuário muda)");
+  L.push("- D1 — Ninguém mexe na casa do outro: nenhuma frente altera ou entrega arquivos de OUTRA frente. Sugestão, crítica ou pedido vai para a Caixa de entrada da frente dona (seção 2), assinada [frente MM-DD]; ela estuda e decide.");
+  L.push("- D2 — Mudança que afeta outra frente vira item na caixa dela (inclui marcar/desmarcar estados de sincronia como \"aguardando <frente>\").");
+  L.push("- D3 — Cada verdade tem UM dono (referência cruzada, não cópia). Quem é dono do quê está na linha **Responsável por** de cada frente (seção 2); na dúvida, pergunte ao usuário — não duplique.");
+  L.push("- D4 — Status relâmpago (seção 3) é ultra-curto (máx. 3 linhas por frente); a própria frente o atualiza ao fim de toda sessão que tocar o HUB. NÃO substitui o STATUS.md da frente.");
+  L.push("- D5 — Tudo assinado e datado. Item processado sai da caixa e vai para Decididos com o veredito (aceito / recusado / em análise) + o motivo em 1 linha. A caixa é rolante; nada some sem registro.");
+  L.push("");
+  L.push("## 2 · Frentes — responsabilidade, visão e caixa de entrada");
+  if(!fr.length){
+    L.push("");
+    L.push("_(Adicione frentes na página HUB do kit: nicho + nome + responsável por.)_");
+  } else {
+    fr.forEach(f => {
+      const nl = nicheLabelById(f.niche);
+      L.push("");
+      L.push("### " + nm(f) + (nl ? (" · nicho " + nl) : ""));
+      L.push("- Responsável por: " + ((f.resp && f.resp.trim()) ? f.resp.trim() : "— a definir (cada conversa pode atualizar)"));
+      L.push("- Visão: [o que esta frente constrói + o norte atual]");
+      L.push("- Caixa de entrada (as OUTRAS frentes escrevem aqui; a dona faz a triagem):");
+      L.push("  - [ ] [frente MM-DD] [pedido / sugestão / crítica em 1-3 linhas]");
+      L.push("- Decididos:");
+      L.push("  - [veredito] [frente MM-DD] [item] — por quê (1 linha)");
+    });
+  }
+  L.push("");
+  L.push("## 3 · Status relâmpago (máx. 3 linhas por frente — ver D4)");
+  if(!fr.length){
+    L.push("- [frente]: fazendo [...] · entregou [...]");
+  } else {
+    fr.forEach(f => L.push("- " + nm(f) + ": fazendo [...] · entregou [...] · bloqueado por [frente: o quê]"));
+  }
+  return L.join("\n");
+}
+function persistHub(){ try{ localStorage.setItem(LS_HUB, JSON.stringify(STATE.hub || {product:"",frentes:[]})); }catch(_){} }
+function loadHub(){
+  try{ const r = localStorage.getItem(LS_HUB); if(r) STATE.hub = JSON.parse(r); }catch(_){}
+  if(!STATE.hub || typeof STATE.hub !== "object") STATE.hub = { product:"", frentes:[] };
+  if(!Array.isArray(STATE.hub.frentes)) STATE.hub.frentes = [];
+}
+function updateHubPreview(){ const el = $("#hub-preview"); if(el) el.textContent = buildHub(); }
+function renderHubRows(){
+  const host = $("#hub-rows"); if(!host) return;
+  const fr = STATE.hub.frentes;
+  if(!fr.length){ host.innerHTML = '<div class="callout">Nenhuma frente ainda. Clique em “+ Adicionar frente”.</div>'; return; }
+  const opts = contentNiches().map(n => '<option value="' + escAttr(n.id) + '">' + escapeHTML(n.label) + '</option>').join("");
+  host.innerHTML = fr.map((f,i) =>
+    '<div class="hubrow">' +
+      '<div class="moves">' +
+        '<button data-hub-up="' + i + '" title="Subir"' + (i===0?" disabled":"") + '>▲</button>' +
+        '<button data-hub-down="' + i + '" title="Descer"' + (i===fr.length-1?" disabled":"") + '>▼</button>' +
+      '</div>' +
+      '<select data-hub-niche="' + i + '"><option value="">— nicho —</option>' + opts + '</select>' +
+      '<input class="hub-name" type="text" data-hub-name="' + i + '" placeholder="nome / cargo / área" value="' + escAttr(f.name||"") + '"/>' +
+      '<input class="hub-resp" type="text" data-hub-resp="' + i + '" placeholder="responsável por… (opcional)" value="' + escAttr(f.resp||"") + '"/>' +
+      '<button class="rm" data-hub-rm="' + i + '" title="Remover">✕</button>' +
+    '</div>'
+  ).join("");
+  fr.forEach((f,i) => { const sel = host.querySelector('[data-hub-niche="' + i + '"]'); if(sel) sel.value = f.niche || ""; });
+  host.querySelectorAll("[data-hub-niche]").forEach(el => el.addEventListener("change", () => { STATE.hub.frentes[+el.dataset.hubNiche].niche = el.value; persistHub(); updateHubPreview(); }));
+  host.querySelectorAll("[data-hub-name]").forEach(el => el.addEventListener("input", () => { STATE.hub.frentes[+el.dataset.hubName].name = el.value; persistHub(); updateHubPreview(); }));
+  host.querySelectorAll("[data-hub-resp]").forEach(el => el.addEventListener("input", () => { STATE.hub.frentes[+el.dataset.hubResp].resp = el.value; persistHub(); updateHubPreview(); }));
+  host.querySelectorAll("[data-hub-rm]").forEach(el => el.addEventListener("click", () => { STATE.hub.frentes.splice(+el.dataset.hubRm,1); persistHub(); renderHubRows(); updateHubPreview(); }));
+  host.querySelectorAll("[data-hub-up]").forEach(el => el.addEventListener("click", () => { const i=+el.dataset.hubUp, a=STATE.hub.frentes; if(i>0){ const t=a[i-1]; a[i-1]=a[i]; a[i]=t; persistHub(); renderHubRows(); updateHubPreview(); } }));
+  host.querySelectorAll("[data-hub-down]").forEach(el => el.addEventListener("click", () => { const i=+el.dataset.hubDown, a=STATE.hub.frentes; if(i<a.length-1){ const t=a[i+1]; a[i+1]=a[i]; a[i]=t; persistHub(); renderHubRows(); updateHubPreview(); } }));
+}
+function renderHub(){
+  loadHub();
+  const prod = $("#hub-product"); if(prod) prod.value = STATE.hub.product || "";
+  renderHubRows();
+  updateHubPreview();
+}
+function wireHub(){
+  const prod = $("#hub-product"); if(prod) prod.addEventListener("input", () => { STATE.hub = STATE.hub || {product:"",frentes:[]}; STATE.hub.product = prod.value; persistHub(); updateHubPreview(); });
+  const add = $("#hub-add"); if(add) add.addEventListener("click", () => { STATE.hub = STATE.hub || {product:"",frentes:[]}; STATE.hub.frentes = STATE.hub.frentes || []; STATE.hub.frentes.push({niche:"",name:"",resp:""}); persistHub(); renderHubRows(); updateHubPreview(); });
+  const dl = $("#hub-dl"); if(dl) dl.addEventListener("click", () => downloadFile("HUB.md", buildHub()));
+}
+
 
 /* =========================================================
    12. BOOT
@@ -8113,6 +8244,7 @@ function setView(v){
 function boot(){
   try {
     renderNicheCards();
+    loadHub(); wireHub();
 
     const saved = localStorage.getItem(LS_NICHE);
     if(saved && NICHES[saved]){
