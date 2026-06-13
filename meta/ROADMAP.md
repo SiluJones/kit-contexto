@@ -4,7 +4,9 @@
 
 > **Criado em 2026-06-07.** Primeira versão. Consolida o que já foi feito (Fases 0–2) e organiza o que está por decidir/fazer (Fases 3–5 + Futuro), a partir das discussões desta sessão.
 
-> **Mudanças nesta revisão (v1.28.0):** os itens 1 e 2 da Fase 3 foram **executados** — lote D-022 embutido + D-018 corrigida — e movidos para o bloco ✅; o restante renumerado (lote dos pilotos = 1, cosméticos = 2). Ver CHANGELOG v1.28.0.
+> **Mudanças nesta revisão (v1.29.0):** "kit desenvolve" fase 1 executada (D-023) — IDEAS universal, narrative escreve, game cria (ROTEIRO.md). Fase 3 ganha bloco ✅ v1.29.0; restante renumerado (HUB i-N24 = refinar/apresentar; estender "desenvolve"; lote pilotos; cosméticos). Fase 5: i-N24 com o desenho do HUB; +i-N25 (música).
+
+> **Mudanças na revisão (v1.28.0):** os itens 1 e 2 da Fase 3 foram **executados** — lote D-022 embutido + D-018 corrigida — e movidos para o bloco ✅; o restante renumerado (lote dos pilotos = 1, cosméticos = 2). Ver CHANGELOG v1.28.0.
 
 > **Mudanças nesta revisão (v1.27.1):** FIX-004 (chips de Cliente/Narrativa) consertado e validado — ver CHANGELOG. A Fase 3 ganhou diretrizes novas a redigir (i-N18/19/20, agora também i-N21/22 com texto proposto) e a Fase 5 ganhou ideias maiores (i-N21 feedback — fluxo desenhado; i-N22 — válvula proposta; **i-N23** melhorias do Pixel vindas do piloto; **i-N24** multi-projeto, 4 frentes do mesmo jogo). **Terceira leva (mesmo dia):** o usuário validou o lote inteiro — **D-022** congela escopo e redação (FlatDrop por detecção automática, não padrão; i-N19 refino de P8; i-N20 `git add` listando; i-N21 escopo ampliado; i-N22 válvula aprovada); **item 1 da Fase 3 liberado**. Itens concluídos seguem visíveis como ✅.
 
@@ -31,6 +33,9 @@
 ## ▶ Fase 3 — Higiene & consistência (EM ANDAMENTO — barato, alto valor)
 Itens de código pequenos e de doc, sem arquitetura nova.
 
+**✅ Concluído (v1.29.0):**
+- ✅ **D-023 fase 1** — IDEAS universal (injeção + "cria na primeira necessidade"); narrative **escreve sob direção** (writes_prose, kishōtenketsu, prompt J); game **cria** (builds_game + ROTEIRO.md com AGUARDANDO DESIGN). Harness +10 checagens + anti-teste; 17/17.
+
 **✅ Concluído (v1.28.0):**
 - ✅ **Lote D-022 embutido** — as 5 diretrizes no conteúdo gerado de todos os nichos: i-N18 manifesto auto-detectado (`handoffComo`), i-N19 refino de P8 ("STATUS é pista, não fato"), i-N20 commit em 3 linhas listando (`commitIntro`), i-N21 gatilho «Feedback para o Kit» (`TRIGGERS_BASE`), i-N22 válvula de desvio (`HYGIENE_RULES`). Harness +6 checagens + anti-teste; 17/17.
 - ✅ **D-018 — orientação mount/RAG corrigida** no CLAUDE.md gerado (3 itens do `handoffComo`) e na tela "Tokens & Fluxos" (2 callouts): só upload direto popula o mount (achatado); conector do GitHub = só busca.
@@ -43,8 +48,10 @@ Itens de código pequenos e de doc, sem arquitetura nova.
 - ✅ **Princípio de rigor em pesquisa + refutação decidido** (i-N17) — criado o princípio próprio **P13** (`research_refute`), 13º item de `BEHAVIORS_BASE`, em vez de reforçar P1/P7. (DEC D-021.)
 
 **Restante:**
-1. **Aplicar o lote de feedback dos pilotos quando fechar** (i-N23: paleta global×bioma no ESTILO, prioridade visual interna no SPRITES, efeitos especiais no ANIMACAO, estado "aguardando design"; mais itens por vir das outras frentes). Gate: decisão do usuário de fechar o lote. Triagem D-022 (base / módulo / específico). Re-validar 17/17.
-2. **Cosméticos:** MAPA.md ("17 prontos" → 16 de conteúdo + 1 construtor); reagrupar `narrative` (group literary → tema criativo); revisar README/PLANNING; revisar qualidade das Instruções geradas.
+1. **Refinar e apresentar o HUB multi-projeto (i-N24)** — template das 3 seções + mecanismo (switch de grupo OU custom de grupo + gatilho no CLAUDE.md). Apresentar ao usuário ANTES de codar.
+2. **Estender o padrão "desenvolve" (D-023)** a HQ/RPG/animação quando os pilotos sinalizarem; avaliar **i-N25** (música).
+3. **Aplicar o lote de feedback dos pilotos quando fechar** (i-N23: paleta global×bioma no ESTILO, prioridade visual interna no SPRITES, efeitos especiais no ANIMACAO, estado "aguardando design"; mais itens por vir das outras frentes; o item 4 — "aguardando design" — entrou via ROTEIRO na v1.29.0). Gate: decisão do usuário de fechar o lote. Triagem D-022 (base / módulo / específico). Re-validar 17/17.
+4. **Cosméticos:** MAPA.md ("17 prontos" → 16 de conteúdo + 1 construtor); reagrupar `narrative` (group literary → tema criativo); revisar README/PLANNING; revisar qualidade das Instruções geradas.
 
 ## ⏸ Fase 4 — Arquitetura (EM AVALIAÇÃO — não mexer sem decisão)
 - **Refator modular** (i-N13): dados de nicho em JSON separados + núcleo central, vs. manter o HTML único (D-001).

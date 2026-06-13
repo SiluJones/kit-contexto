@@ -864,6 +864,31 @@ const FILE_PHILOSOPHY = {
   referencia: "Referência fixa — modelo nunca substituído pelo conteúdo preenchido."
 };
 
+/* Template universal de IDEAS — gatilhos/P9/higiene referenciam IDEAS em TODO nicho;
+   injetado via normNiche quando o nicho não traz o seu (dev e brainstorm trazem). */
+const UNIVERSAL_IDEAS_TPL = { name:"IDEAS.md", cat:"ctx",
+  role:"Segundo cérebro do projeto: captura toda ideia (sua e do assistente) na hora. Ideia muda de status, não some.",
+  content:`# IDEAS.md — Banco de ideias
+
+> Segundo cérebro: captura tudo, nunca perde nada. Ideia muda de status, não some.
+> O assistente registra aqui NA HORA qualquer ideia mencionada (gatilho universal), sem esperar pedido.
+
+## Ativas
+- [AAAA-MM-DD] i-001 — [a ideia em 1-3 linhas + de quem veio + o que destrava]
+
+## Em avaliação
+(precisa de pesquisa/decisão antes de virar trabalho — diga O QUE falta decidir)
+
+## Concluídas
+(implementadas — com a referência: versão, decisão, entrega)
+
+## Descartadas
+(com o MOTIVO — para nunca reabrir discussão já resolvida)
+
+## Feedback para o Kit
+(observações E desvios estruturais sobre a própria estrutura/kit — ver o gatilho no CLAUDE.md; é o que volta para evoluir o kit)
+`};
+
 /* Regras de higiene anti-inchaço — entram nas instruções e no CLAUDE.md */
 const HYGIENE_RULES = [
   "Referência cruzada, não duplicação: um dado tem UMA fonte de verdade. Quando uma ideia vira trabalho, ela aparece também no STATUS — mas continua no IDEAS, só mudando de status. Não copie o conteúdo para dois lugares.",
@@ -2038,6 +2063,7 @@ NICHES.narrative = {
     ["mechanic_vs_judgment","Separa problema mecânico de julgamento subjetivo","A IA é confiável para o MECÂNICO (continuidade, repetição, buraco de lógica, pacing irregular, nome trocado) e NÃO confiável para o SUBJETIVO (se a cena merece seu pagamento emocional, se a metáfora funciona, se a reviravolta parece merecida). Diante de uma questão subjetiva, oferece observação como leitor — não veredito — e devolve a decisão ao autor explicitamente."],
     ["continuity_memory","Continuidade tem memória: consulta antes de inventar","Antes de afirmar qualquer fato da obra (cor de olho, idade, relação, regra do mundo, evento passado), consulta BIBLIA/PERSONAGENS/CONTINUIDADE. Não inventa detalhe que contradiz o estabelecido. Quando nota um conflito (o texto novo bate com o que está registrado?), sinaliza na hora. Quando algo novo é estabelecido, registra para virar cânone."],
     ["protect_voice","Protege a voz do autor","Antes de sugerir frase, descrição ou diálogo, consulta VOZ.md (tom, ritmo, exemplos aprovados, o que evitar). Não 'corrige' a voz do autor em direção a uma prosa genérica. Aponta quando uma sugestão sua se afasta do estilo dele e oferece como alternativa, não como melhoria objetiva."],
+    ["writes_prose","Escreve com o autor, não pelo autor","Quando o autor pede, escreve de verdade — cena, capítulo, diálogo, sinopse — SEMPRE ancorado em VOZ.md, PERSONAGENS.md, ENREDO.md e CONTINUIDADE.md: contexto rico é o que separa prosa com voz de prosa genérica. Entrega como rascunho dirigível: em cena crítica ou de carga emocional alta, oferece 2–3 versões/caminhos em vez de um veredito único; marca o que inventou além do cânone como hipótese a aprovar. Vigia o drift de voz em sessões longas (compara com os exemplos aprovados de VOZ.md) e, após capítulo aprovado, atualiza CONTINUIDADE e STATUS. A voz final é do autor — rascunho é matéria-prima, não texto pronto."],
     ["beats_diagnostic","Beats como diagnóstico, não fórmula","Estruturas (três atos, Save the Cat, jornada) são ferramentas de diagnóstico, não camisas de força. Não força a história num molde nem empurra o autor a escrever 'uma versão burra do próprio estilo'. Usa beats sobretudo na revisão: se um trecho derrapa, costuma faltar limiar, escalada, escolha custosa, ou um protagonista que age — aponta isso, sem prescrever a solução."],
     ["no_overdoc","Não super-documenta a bíblia","A bíblia serve à obra, não o contrário. Mantém o registro no essencial (Tier 1: nomes, descrições-chave, regras centrais, eventos maiores); só aprofunda quando a complexidade pedir. Documentar demais rouba tempo da escrita — escrever o próximo capítulo importa mais que catalogar perfeitamente o anterior."],
   ],
@@ -2055,11 +2081,12 @@ NICHES.narrative = {
     other:false
   },
   conventions:[
-    "A voz é do autor: o assistente explora e sugere, mas não escreve a obra nem padroniza o estilo. Prosa gerada é rascunho para o autor reescrever.",
+    "A voz é do autor — e o assistente também ESCREVE, quando pedido e sob direção: cena, capítulo, diálogo, opções. Sempre como rascunho ancorado em VOZ.md para o autor reescrever; nunca por conta própria, nunca padronizando o estilo.",
     "Antes de afirmar um fato da obra, consultar BIBLIA/PERSONAGENS/CONTINUIDADE — não inventar o que contradiz o cânone.",
     "Grafia canônica de nomes e termos inventados vive em CONTINUIDADE (ou GLOSSARIO): um nome se escreve sempre do mesmo jeito.",
     "Decisões estruturais e de enredo (matar um personagem, mudar um arco, virar reviravolta) vão para ENREDO.md.",
     "Beats e estrutura são diagnóstico na revisão, não molde a priori — a história tem prioridade sobre o outline.",
+    "Para obra de matriz japonesa (LN/WN), o kishōtenketsu (ki-shō-ten-ketsu: apresentação → desenvolvimento → virada → consequência) é repertório de primeira ordem — e é FRACTAL: vale para a obra, o arco, o capítulo e a cena. Em serial, o ketsu pode ser adiado para o capítulo seguinte (vira o gancho). Contraste e surpresa sustentam cena tanto quanto conflito.",
     "Manter a bíblia no essencial (Tier 1); não super-documentar."
   ],
   triggersExtra:[
@@ -2326,6 +2353,10 @@ NICHES.narrative = {
     {key:"log", name:"logs/AAAA-MM-DD.md", role:"log da sessão preenchido (formato em LOG-TEMPLATE.md)", active:true},
   ],
   promptsExtra:[
+    { id:"J", title:"Escrever capítulo/cena (sob direção)", when:"Quero que o assistente ESCREVA — um capítulo, uma cena, um diálogo — na direção que eu der, ancorado na bíblia.",
+      fill:"brief", fillLabel:"O briefing: o que acontece, POV, onde entra na trama, tom (+ formato: capítulo WN/LN? cena? diálogo?)",
+      body:(p,n)=>`Escrita sob direção (rascunho para eu reescrever — a voz final é minha).\n\nBRIEFING:\n${p.brief||"[O que acontece nesta cena/capítulo + POV + onde entra na trama + tom + tamanho alvo]"}\n\nAntes de escrever, consulte VOZ.md (tom, ritmo, exemplos aprovados), PERSONAGENS.md (voz de cada um), ENREDO.md e CONTINUIDADE.md (cânone e grafias).\n\nEscreva o rascunho completo, observando:\n- Ritmo de capítulo serial: HOOK nas primeiras 2 frases → desenvolvimento (plot OU personagem) → um beat emocional → gancho/pergunta aberta no fim. Cada capítulo responde algo do anterior E abre uma pergunta nova.\n- Se a obra é de matriz japonesa, o kishōtenketsu vale aqui dentro (apresentação → desenvolvimento → virada → consequência; em serial, a consequência pode virar o gancho).\n- No ponto mais crítico (decisão, revelação, carga emocional), PARE e ofereça 2-3 versões do trecho em vez de decidir por mim.\n- Marque [HIPÓTESE] em qualquer fato/nome que você inventar além do cânone — eu aprovo ou corto.\n- Ao final: checagem rápida de continuidade (contradiz algo? grafia canônica ok?) e o que registrar em CONTINUIDADE/STATUS se eu aprovar.\n\nNão padronize meu estilo: na dúvida entre "bonito genérico" e a minha voz, escolha a minha voz.`
+    },
     { id:"G", title:"Explorar continuações / possibilidades", when:"Travei numa cena ou quero ver caminhos antes de escrever — sem que a IA escreva por mim.",
       fill:"situation", fillLabel:"Onde a cena está + para onde pode ir (cole o trecho ou descreva)",
       body:(p,n)=>`Exploração de possibilidades (não escreva a versão final — explore para eu desenvolver na minha voz).\n\nONDE ESTOU:\n${p.situation||"[Cole o trecho onde parei ou descreva a cena + a dúvida de para onde ir]"}\n\nConsultando BIBLIA, PERSONAGENS e ENREDO:\n- Proponha 3-5 caminhos possíveis para esta cena/momento, distintos entre si — o que cada um abre e fecha na trama\n- Para cada um, diga como afeta o arco do(s) personagem(ns) e os fios soltos abertos\n- Aponte qual serve melhor ao conflito central (mas a escolha é minha)\n- Cheque se algum caminho contradiz a continuidade estabelecida\n\nNão escreva a cena pronta. Dê as direções como exploração; eu escrevo na minha voz. Se eu pedir um esboço, marque como rascunho para eu reescrever.`
@@ -3615,6 +3646,7 @@ NICHES.game = {
     ["scope_killer","Trata escopo como o assassino que é","Scope creep é a maior causa de jogos indie não terminados. Avalia toda ideia nova contra a visão central: fortalece a experiência ou dilui? Cabe no tempo/equipe? Quando uma ideia é boa mas não cabe, registra para depois (pós-lançamento/DLC/sequência) em vez de embutir agora. Lembra: cada «não» é um «sim» ao jogo que será terminado; terminar algo modesto vale mais que abandonar algo ambicioso."],
     ["playtest_hypothesis","Trata design como hipótese a testar","Toda decisão de design é uma hipótese sobre como o jogador vai reagir — e o jogador real surpreende. Sugere validar barato e cedo (protótipo de papel, vertical slice, playtest) antes de comprometer produção. Distingue o que é fato observado em teste do que é suposição do designer."],
     ["creator_decides","Explora; o designer decide","O assistente explora possibilidades (variações de mecânica, e-se de sistema, opções de lore), mas a visão é do designer. Não impõe «a solução certa»: levanta opções com trade-offs e devolve a escolha. Para julgamento de diversão/feel — subjetivo — dá sua leitura e deixa a decisão com quem cria."],
+    ["builds_game","Cria o jogo, não só o documento","Quando o usuário quiser, o assistente é game designer, desenvolvedor E programador: projeta a mecânica E entrega o artefato — protótipo jogável (código), conteúdo (níveis, diálogos, tabelas de balanceamento), tutorial narrativo. Documento é meio; o fim é coisa testável. Protótipo mínimo antes de sistema completo. Quando a tarefa é código, valem as práticas de dev: arquivo completo e funcional, sem quebrar o que existe — e o design registrado (MECANICAS/ROTEIRO) acompanha o que foi construído."],
   ],
   builderSection:{
     title:"O jogo",
@@ -3634,7 +3666,8 @@ NICHES.game = {
     "Em balanceamento, registrar a INTENÇÃO de design (curva, sensação), não só o número atual — e as premissas de quem vai jogar.",
     "Escopo é o filtro: ideia nova é testada contra a visão e o tempo; o que não cabe vai para 'depois' (IDEIAS de pós-lançamento), não para o projeto atual.",
     "Decisão de design é hipótese: validar barato (protótipo, vertical slice, playtest) antes de comprometer produção.",
-    "Lore e regras vivem coerentes em UNIVERSO/MECANICAS; o assistente consulta antes de inventar fato do mundo ou do sistema."
+    "Lore e regras vivem coerentes em UNIVERSO/MECANICAS; o assistente consulta antes de inventar fato do mundo ou do sistema.",
+    "O assistente também CONSTRÓI: protótipo jogável, código, conteúdo e dados — design vira artefato testável, não só documento. A narrativa cena a cena (missões, diálogos ramificados, lore passivo) vive em ROTEIRO.md."
   ],
   triggersExtra:[
     ["Decisão de mecânica ou sistema", "Entrega MECANICAS.md completo (a regra + a intenção/curva por trás + o efeito sistêmico)."],
@@ -3642,6 +3675,7 @@ NICHES.game = {
     ["Mudança de escopo (corte, adição, fase)", "Entrega PRODUCAO.md completo (o escopo atual + o que foi cortado/adiado e por quê)."],
     ["Resultado de playtest", "Entrega STATUS.md e MECANICAS.md (o que o teste confirmou/refutou; o que ajustar)."],
     ["Ideia que não cabe agora", "Registra em PRODUCAO.md (ou IDEIAS) como pós-lançamento/DLC, sem inflar o escopo atual."],
+    ["Cena, missão ou diálogo ramificado escrito/decidido", "Entrega ROTEIRO.md completo (a cena no formato de jogo: escolhas com consequências, requisitos, lore passivo, estado de sincronia)."],
   ],
   contextFiles:[
     { name:"JOGO.md", cat:"essencial", role:"A visão: pitch, experiência alvo, core loop, pilares, público. O norte. Estável.",
@@ -3864,6 +3898,41 @@ NICHES.game = {
 ## [Próximo nível]
 [...]
 `},
+    { name:"ROTEIRO.md", cat:"opcional", role:"OPCIONAL — a casa da narrativa cena a cena: missões, diálogos ramificados, lore passivo, cutscenes, tutorial narrativo. Use quando o jogo conta história.", content:`# ROTEIRO.md — Narrativa cena a cena
+
+> Aqui vive o que o jogador VIVE, na ordem em que vive. Regras do mundo ficam em UNIVERSO.md; mecânica em MECANICAS.md. Narrativa de jogo é ramificada e interativa — escolha tem consequência.
+
+## Espinha (missões principais) × Opcional (sidequests)
+| # | Cena/Missão | Tipo | Estado | Depende de |
+|---|---|---|---|---|
+| 01 | [nome] | principal | rascunho / escrita / AGUARDANDO DESIGN | [mecânica/ação a confirmar] |
+
+> **AGUARDANDO DESIGN:** cena cuja ação/mecânica ainda não foi confirmada pelo design — registre a intenção em 1 linha e NÃO detalhe até confirmar (evita retrabalho e dessincronia entre frentes/projetos).
+
+## Formato de cena
+CENA: [nome] · LOCAL: [INT/EXT — onde — quando]
+ENTRADA: [por que o jogador está aqui / o que ele quer]
+
+[Ação/descrição curta]
+
+PERSONAGEM: fala
+
+[OPÇÕES DO JOGADOR:]
+[A] "..." → consequência (relação, item, rota, flag)
+[B] "..." → consequência
+[C] [REQUISITO: habilidade/objeto ≥ X] "..." → consequência
+
+SAÍDA: [o que mudou no mundo/estado ao fim da cena]
+
+## Lore passivo
+(worldbuilding que o jogador DESCOBRE: descrição de item, diário, carta, ambiente — 1 linha por peça + onde vive no jogo)
+
+## Cutscenes
+(sequências não-interativas — formato de roteiro de cinema, curtas; marque o gatilho que as dispara)
+
+## Tutorial narrativo
+(que mecânica é ensinada por qual cena — ensinar JOGANDO, dentro da história, não por caixa de texto)
+`},
     { name:"LOG-TEMPLATE.md", cat:"ref", role:"Modelo do log de sessão. Referência fixa — nunca substituído.",
       content:`# LOG-TEMPLATE.md — Formato do Log de Sessão
 
@@ -3904,6 +3973,7 @@ NICHES.game = {
     { key:"mecanicas", name:"MECANICAS.md", role:"completo, se houve decisão de mecânica/sistema/balanceamento", active:true },
     { key:"producao", name:"PRODUCAO.md", role:"completo, se o escopo mudou (corte, adição, marco)", active:true },
     { key:"universo", name:"UNIVERSO.md", role:"completo, se surgiu fato novo de lore/mundo/personagem", active:false },
+    { key:"roteiro", name:"ROTEIRO.md", role:"completo, se cena/missão/diálogo ramificado foi escrito ou alterado", active:false },
     { key:"arte", name:"ARTE-E-SOM.md", role:"completo, se a direção audiovisual mudou", active:false },
     { key:"log", name:"logs/AAAA-MM-DD.md", role:"log da sessão preenchido (formato em LOG-TEMPLATE.md)", active:true },
   ],
@@ -6236,10 +6306,13 @@ const _normCache = {};
 function normNiche(n){
   if(!n) return null;
   if(_normCache[n.id]) return _normCache[n.id];
+  // IDEAS universal: todo nicho referencia IDEAS (P9, gatilhos, higiene) — garante o template
+  let _files = normFiles(n.contextFiles);
+  if(!_files.some(f => /^IDE(A|IA)S\.md$/i.test(f.name||""))) _files = [..._files, UNIVERSAL_IDEAS_TPL];
   const norm = {
     ...n,
     behaviors:      normBehaviors(n.behaviors),
-    contextFiles:   normFiles(n.contextFiles),
+    contextFiles:   _files,
     outputs:        normOutputs(n.outputs),
     topbar:         normTopbar(n.topbar),
     builderSection: normBuilderSection(n.builderSection),
@@ -7115,6 +7188,8 @@ function buildClaudeMd(niche){
   L.push("|---|---|");
   const triggers = [...TRIGGERS_BASE, ...((niche.triggersExtra)||[])];
   triggers.forEach(([ev,ac]) => L.push(`| ${ev} | ${ac} |`));
+  L.push("");
+  L.push("> Se um arquivo referenciado pelas regras acima (IDEAS, DECISIONS, etc.) ainda não existir no projeto, o assistente o CRIA na primeira necessidade — a partir do papel descrito e do modelo do kit — em vez de tratar a ausência como erro ou adiar a captura.");
 
   // Saídas que o assistente ENTREGA como arquivos completos
   const outOn = (niche.outputs||[]).filter(o => STATE.outputs[o.id] !== false);

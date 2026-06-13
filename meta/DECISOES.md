@@ -485,6 +485,24 @@ Pilotos são a **fase de validação**; rigidez agora gera resistência e perda 
 
 ---
 
+## D-023 — O kit DESENVOLVE, não só documenta (fase 1: escritor e game design) + IDEAS universal
+
+**Data:** 2026-06-12 · **Status:** aceita; **embutida (v1.29.0)** · Origem: ideia-260612 + guia do escritor + pesquisa P13
+
+### Contexto
+Pilotos mostraram dois problemas: (a) nichos de produção tratados como "suporte" — o usuário quer que, como no dev, o kit **crie** (escreva capítulos, construa o jogo); (b) inconsistência: todos os nichos referenciam IDEAS (gatilhos/P9/higiene) mas só 2 tinham o template — assistentes reportavam "faltou o IDEIAS.md".
+
+### Decisões
+1. **IDEAS universal por injeção** (`UNIVERSAL_IDEAS_TPL` via `normNiche`, sem duplicar dev/brainstorm) + regra no CLAUDE.md gerado: arquivo referenciado inexistente → **criar na primeira necessidade** (não é erro). O template já nasce com a seção «Feedback para o Kit» (fecha o ciclo da i-N21).
+2. **Narrativa escreve sob direção.** Conciliação explícita: o guia alerta "não deixe a IA escrever por você" e a pesquisa confirma (homogeneização de voz no uso PASSIVO); o pedido do usuário é escrita **dirigida**. A diferença que torna ambos verdadeiros: direção do autor + ancoragem na bíblia (VOZ/PERSONAGENS/CONTINUIDADE) + entrega como rascunho/opções + [HIPÓTESE] no inventado + vigilância de drift. A convention antiga ("não escreve a obra") foi REESCRITA — mantê-la contradiria o behavior novo. Kishōtenketsu entra como repertório de 1ª ordem para LN/WN (fractal; ketsu adiado = gancho serial).
+3. **Game design cria o jogo** (`builds_game`): designer + desenvolvedor + programador; protótipo mínimo antes de sistema; práticas de dev quando é código. **ROTEIRO.md** vira a casa da narrativa cena a cena (feedback literal do piloto), com **AGUARDANDO DESIGN** como estado de sincronia entre frentes (ponte para i-N24).
+4. **Extensão futura:** o mesmo padrão "desenvolve" vale para HQ, RPG de mesa e animação (produção textual) — fica no ROADMAP, aplicado quando os pilotos derem o sinal. Música = i-N25 (avaliar criação completa: letra/estilo/prompts p/ Suno).
+
+### Alternativas rejeitadas
+- Manter narrative só como suporte (contraria o uso real e o pedido); behavior de escrita SEM reescrever a convention (CLAUDE.md autocontraditório); IDEAS por template copiado em cada nicho (15 duplicações para manter — injeção é 1 fonte).
+
+---
+
 # FIXES — bugs graves resolvidos (formato sintoma/causa/solução/lição)
 
 > Decisões são "por que as coisas são assim"; FIXES são "o que quebrou feio e como consertamos". Não apagar.

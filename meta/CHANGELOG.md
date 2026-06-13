@@ -1,6 +1,30 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.28.0**.
+> Histórico de versões. Versão atual: **v1.29.0**.
+
+## v1.29.0 — 2026-06-12 — O kit DESENVOLVE (fase 1: escritor e game design) + IDEAS universal
+
+Sessão guiada pela ideia-260612 + leitura do GUIA_COMPLETO_ESCRITOR_NOVEL + pesquisa (P13: kishōtenketsu e práticas/armadilhas de escrita assistida por IA). Três frentes (ver **D-023**):
+
+### 1. IDEAS universal — fim do "faltou o IDEIAS.md"
+Todos os nichos referenciam IDEAS (P9, gatilhos, higiene), mas só dev e brainstorm tinham o template — pilotos reclamavam da ausência. Agora: **`UNIVERSAL_IDEAS_TPL`** (constante de fundação, com seções Ativas/Em avaliação/Concluídas/Descartadas **e «Feedback para o Kit»**, fechando o ciclo da i-N21) é **injetado via `normNiche`** em todo nicho que não traga o seu; e o CLAUDE.md gerado ganhou a regra: *arquivo referenciado que ainda não existe → o assistente o CRIA na primeira necessidade, sem tratar como erro*.
+
+### 2. Narrativa & Ficção — escreve COM o autor
+- Convention da voz **reescrita** (a antiga "não escreve a obra" contradiria o novo modo): o assistente **escreve quando pedido e sob direção**, sempre como rascunho ancorado em VOZ.md.
+- Behavior novo **`writes_prose`** ("Escreve com o autor, não pelo autor"): ancora em VOZ/PERSONAGENS/ENREDO/CONTINUIDADE (contexto rico = antídoto da prosa genérica), oferece 2–3 opções em cena crítica, marca [HIPÓTESE] no que inventa, vigia drift de voz, atualiza CONTINUIDADE/STATUS após aprovação.
+- Convention nova: **kishōtenketsu** (fractal; em serial o ketsu adiado vira gancho; contraste/surpresa sustentam cena).
+- Prompt novo **J — "Escrever capítulo/cena (sob direção)"** com o ritmo serial (hook → desenvolvimento → beat → gancho; "responde algo E abre pergunta").
+
+### 3. Game design — cria o jogo, não só o documento
+- Behavior novo **`builds_game`**: designer, desenvolvedor E programador — entrega protótipo jogável, conteúdo e dados; documento é meio.
+- Template novo **`ROTEIRO.md`** ("o kit não tinha onde viver a narrativa cena a cena" — feedback literal do piloto): missões×sidequests, formato de cena com escolhas/consequências/requisitos, lore passivo, cutscenes, tutorial narrativo, e o estado **AGUARDANDO DESIGN** (semente da i-N24 multi-projeto).
+- Trigger + output do ROTEIRO; convention "também CONSTRÓI".
+
+### Validação
+Harness +10 checagens (IDEAS pós-norm em 17/17; "primeira necessidade"; writes_prose/kishōtenketsu/anti-contradição no narrative; builds_game/ROTEIRO no game). **Anti-teste:** injeção desativada → 15 nichos reprovam. **17/17, 0 erros**; `div` 273/273; ~559 KB / 8176 linhas.
+
+---
+
 
 ## v1.28.0 — 2026-06-11 — Lote de diretrizes D-022 embutido + orientação mount/RAG corrigida (D-018)
 

@@ -1,9 +1,11 @@
-# STATUS — Kit de Contexto Universal — 2026-06-11
+# STATUS — Kit de Contexto Universal — 2026-06-12
 
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
-> Versão atual: **v1.28.0**. Índice ~551 KB / 8101 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + integridade dos chips (FIX-004) + **6 checagens de conteúdo do lote D-022/D-018** + suíte de fluxos.
+> Versão atual: **v1.29.0**. Índice ~559 KB / 8176 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + integridade dos chips (FIX-004) + **6 checagens D-022/D-018 + 10 checagens v1.29.0 (IDEAS universal, writes_prose, builds_game, ROTEIRO, anti-contradição)** + suíte de fluxos.
 
-> **Mudanças nesta revisão (v1.28.0):** os itens 1 e 2 do "PRÓXIMO TRABALHO" foram **executados** — as 5 diretrizes do lote **D-022 embutidas** na ferramenta (i-N18 manifesto auto-detectado; i-N19 refino de P8; i-N20 commit 3 linhas listando; i-N21 gatilho «Feedback para o Kit»; i-N22 válvula) e a **orientação mount/RAG corrigida** no CLAUDE.md gerado + tela "Tokens & Fluxos" (D-018). Harness ganhou 6 checagens de conteúdo + anti-teste (34 reprovações na cópia sem o lote). O que saiu daqui está no CHANGELOG v1.28.0, em D-022/D-018 e nos títulos de i-N18..22 (✅ EMBUTIDA). Nada perdido. (Notas anteriores preservadas abaixo.)
+> **Mudanças nesta revisão (v1.29.0):** sessão da ideia-260612 + guia do escritor + pesquisa. **IDEAS universal** (injeção via `normNiche` + regra "cria na primeira necessidade") resolve o "faltou o IDEIAS.md" dos pilotos; **narrative agora ESCREVE sob direção** (convention reescrita, behavior `writes_prose`, kishōtenketsu, prompt J); **game agora CRIA** (`builds_game` + ROTEIRO.md com AGUARDANDO DESIGN). Tudo em **D-023**; harness +10 checagens + anti-teste (15 reprovações sem a injeção). i-N24 ganhou o desenho do HUB (3 seções); i-N25 (música) capturada. O "PRÓXIMO TRABALHO" foi reordenado. Nada perdido. (Notas anteriores abaixo.)
+
+> **Mudanças na revisão (v1.28.0):** os itens 1 e 2 do "PRÓXIMO TRABALHO" foram **executados** — as 5 diretrizes do lote **D-022 embutidas** na ferramenta (i-N18 manifesto auto-detectado; i-N19 refino de P8; i-N20 commit 3 linhas listando; i-N21 gatilho «Feedback para o Kit»; i-N22 válvula) e a **orientação mount/RAG corrigida** no CLAUDE.md gerado + tela "Tokens & Fluxos" (D-018). Harness ganhou 6 checagens de conteúdo + anti-teste (34 reprovações na cópia sem o lote). O que saiu daqui está no CHANGELOG v1.28.0, em D-022/D-018 e nos títulos de i-N18..22 (✅ EMBUTIDA). Nada perdido. (Notas anteriores preservadas abaixo.)
 
 > **Mudanças nesta revisão (v1.27.1):** consertado o bug dos chips de Cliente/Narrativa (não selecionáveis) — ver CHANGELOG v1.27.1 e **FIX-004**. O harness ganhou checagem de chips. Cinco ideias novas dos primeiros testes reais foram capturadas (i-N18 a i-N22) e o "PRÓXIMO TRABALHO" foi reordenado. **Segunda leva do mesmo dia (só docs, sem código):** regra do **manifesto FlatDrop** adotada para o nosso projeto (CLAUDE.md — consultar `_MANIFEST.md`, entregar pelo nome real); i-N18/i-N21/i-N22 **alinhadas com o usuário** (manifesto esclarecido; fluxo do feedback desenhado; texto da válvula de desvio proposto); capturadas **i-N23** (4 melhorias do nicho Pixel vindas do piloto) e **i-N24** (protocolo multi-projeto, 4 frentes do mesmo jogo). **Terceira leva (validações do usuário):** FlatDrop definido como **não-padrão** (detecção automática via `_MANIFEST.md`; filtragem anotada); **i-N19, i-N20 e i-N22 validadas** e **i-N21 fechada com escopo ampliado** (desvio estrutural = feedback; autonomia do piloto; triagem em 3 destinos) — lote congelado em **D-022**; **passada de código liberada**. Nada perdido: tudo em IDEIAS/CLAUDE/DECISOES/ROADMAP.
 
@@ -19,13 +21,14 @@
 São **17 nichos**: 16 de conteúdo + **1 construtor** (`custom`).
 
 ## 🎯 PRÓXIMO TRABALHO (decidir/fazer)
-1. **Fechar o lote de feedback dos pilotos e aplicar** (i-N23 já tem 4 itens do pixel: paleta global×bioma no ESTILO, prioridade visual interna no SPRITES, efeitos especiais no ANIMACAO, estado "aguardando design"; mais por vir das outras frentes — game design, enredo, música). Gate: decisão do usuário de fechar o lote. Triagem D-022 (base / módulo de grupo / específico). Re-validar 17/17.
-2. **Avaliar a i-N24** (protocolo multi-projeto, 4 frentes do mesmo jogo) quando a dor concreta aparecer nos pilotos. Sem código até lá.
-3. **Cosméticos** (ver ROADMAP Fase 3): MAPA.md, reagrupar `narrative`, revisar README/PLANNING e a qualidade das Instruções geradas.
+1. **Refinar e APRESENTAR o HUB multi-projeto (i-N24)** — o usuário desenhou as 3 seções (diretrizes do grupo / subseção por área para as outras escreverem / status ultra-curto); falta eu refinar o template + o mecanismo (switch de grupo OU custom de grupo + gatilho) e apresentar ANTES de codar. O estado AGUARDANDO DESIGN já está no ROTEIRO.md.
+2. **Fechar o lote de feedback dos pilotos e aplicar** (i-N23: itens 1–3 do pixel pendentes — paleta global×bioma, prioridade visual interna, efeitos especiais; o item 4 entrou via ROTEIRO. Mais por vir das outras frentes). Gate: o usuário fecha o lote. Triagem D-022. Re-validar 17/17.
+3. **Estender o padrão "desenvolve" (D-023)** a HQ, RPG de mesa e animação quando os pilotos sinalizarem; **avaliar i-N25** (música: criação completa) — espelho do narrative.
+4. **Cosméticos** (ver ROADMAP Fase 3): MAPA.md, reagrupar `narrative`, revisar README/PLANNING e a qualidade das Instruções geradas.
 
-✅ **Concluído nesta sessão (v1.28.0):** lote **D-022 embutido** (5 diretrizes em `BEHAVIORS_BASE`/P8, `HYGIENE_RULES`, `TRIGGERS_BASE`, `UPDATE_PROTOCOL`) + **D-018 corrigida** no conteúdo gerado e na tela. Harness com 6 checagens novas + anti-teste. 17/17, 0 erros.
+✅ **Concluído nesta sessão (v1.29.0):** IDEAS universal + "cria na primeira necessidade"; narrative escreve sob direção (kishōtenketsu incluso); game cria (builds_game + ROTEIRO.md). D-023. Harness +10 checagens + anti-teste. 17/17, 0 erros.
 
-✅ **Concluído antes (v1.27.x):** FIX-004 (chips de Cliente/Narrativa) + teste de regressão; P12/P13 propagados (D-020/D-021); D-022 decidido.
+✅ **Concluído antes (v1.28.0 / v1.27.x):** lote D-022 embutido + D-018 corrigida; FIX-004; P12/P13 (D-020/D-021).
 
 ## 🧭 Decisões maiores em avaliação (ver ROADMAP / IDEIAS)
 - **Refator modular do kit (i-N13):** migrar dados de nicho para JSON separados + núcleo central, vs. manter o HTML único. Prós (edição/auditoria por nicho, criar nicho mais fácil) × contras (perde o "1 arquivo via `file://` sem build"; precisa loader/embed). **Não mexer sem decisão.**
@@ -56,7 +59,8 @@ Harness jsdom **boot limpo por nicho** (o ambiente reseta entre sessões — rec
 - `t-granular.js` — granularidade (desmarcar peça → some do import; "marcar todas" reinclui).
 Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao remover/renomear coisas no código, atualizar os testes (foi o que aconteceu ao remover `customSmart`: trocar `setNiche("customSmart")` → `setNiche("custom")`).
 
-## 🗺 Onde está no código (v1.28.0; números aproximados, mudam ao editar)
+## 🗺 Onde está no código (v1.29.0; números aproximados, mudam ao editar)
+- **v1.29.0 (D-023):** `UNIVERSAL_IDEAS_TPL` é constante de fundação (logo antes de `HYGIENE_RULES`); a **injeção** acontece em `normNiche` (`_files.some(/^IDE(A|IA)S\.md$/i)`); a regra "cria na primeira necessidade" está no `buildClaudeMd` logo após a tabela de gatilhos. Narrative: convention[0] reescrita + convention kishōtenketsu + behavior `writes_prose` (após `protect_voice`) + prompt `id:"J"`. Game: behavior `builds_game` (após `creator_decides`), template `ROTEIRO.md` (entre NIVEIS e LOG-TEMPLATE), output `key:"roteiro"`, trigger novo, convention "também CONSTRÓI".
 - **Lote D-022 (v1.28.0):** i-N19 = frase final na def de `check_before_ask` (P8, BEHAVIORS_BASE ~845) + bullet na seção «Verifica antes de pedir um arquivo» do buildClaudeMd (~7145); i-N22 = 5ª regra em `HYGIENE_RULES` (~868); i-N21 = 5ª linha em `TRIGGERS_BASE` (~877); i-N20 = `commitIntro` (3 linhas, incondicional) e `commitNota` (só sintaxe por SO); i-N18 = item novo (penúltimo) em `handoffComo`. **D-018:** 3 itens do `handoffComo` reescritos + 2 callouts da tela "Tokens & Fluxos" (~760, ~766).
 - **`normBuilderSection`** (≈linha 6200) converte `builderSection.groups → items`. **FIX-004:** `opts: g.items.map(it => Array.isArray(it) ? it : [it,it])` — aceita item **string** OU **par `[código,rótulo]`**. Os chips renderizam em `renderBuilderSection` (≈6788) e a escolha entra na saída via finder `o[0]===val` (≈6924). Só `client` e `narrative` usam o formato par.
 - **`BEHAVIORS_BASE` com 13 itens**: +`shrink_hygiene` (P12) +`research_refute` (P13) no fim. Renderizam em `buildInstr` (curto, via `shortDef`) e `buildClaudeMd` (`### N.` + def longa). Behaviors de nicho entram depois, via `normBehaviors`. Sem count hardcoded.
@@ -78,10 +82,11 @@ Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao rem
 - Commit ao final: comando completo p/ CMD Windows (UMA linha, `-m` repetido), pronto para colar. Mensagem **sem acentos** (CMD corrompe acentos em `-m`).
 - Usuário no CMD do Windows (`C:\Users\alexk\Arquiteturas\kit-contexto`). Repo: `index.html` na raiz, `.md` em `meta\`.
 
-## 💬 Última sessão (2026-06-11 — v1.28.0)
-Passada de código única, liberada pelo D-022. Tudo verde:
-- **Lote D-022 embutido** no conteúdo gerado de todos os nichos: **i-N18** manifesto de achatamento com detecção automática (item novo no `handoffComo` — se há `_MANIFEST.md`, rigor de nomes e entrega pelo nome real; sem ele, fluxo normal; ausência pode ser filtragem); **i-N19** "STATUS é pista, não fato" (def do P8 + bullet na seção dedicada); **i-N20** commit em 3 linhas listando arquivos (movido do `commitNota` condicional para o `commitIntro` incondicional — a regra é universal, não detalhe de shell); **i-N21** gatilho «Feedback para o Kit» em `TRIGGERS_BASE` (dito OU desvio estrutural); **i-N22** válvula de desvio registrado em `HYGIENE_RULES`.
-- **D-018 corrigida** onde o kit ensina errado: `handoffComo` (3 itens) e tela "Tokens & Fluxos" (2 callouts) — só upload direto popula o mount (achatado); conector do GitHub = só busca.
-- **Validação:** 17/17, 0 erros; harness com 6 checagens de conteúdo novas; **anti-teste** com 34 reprovações na cópia sem o lote; `div` 273/273; ~551 KB / 8101 linhas.
-- As sessões v1.27.x (FIX-004, decisões) estão no CHANGELOG; saíram daqui.
-**Próximo de fato:** acumular os pilotos — item 1 do "PRÓXIMO TRABALHO" (fechar o lote i-N23 e aplicar com triagem).
+## 💬 Última sessão (2026-06-12 — v1.29.0)
+Sessão da **ideia-260612** + leitura do GUIA_COMPLETO_ESCRITOR_NOVEL (+ versão txt) + pesquisa P13 (kishōtenketsu; práticas e armadilhas de escrita assistida por IA — voz genérica vem de contexto genérico; uso passivo homogeneíza, colaborativo fortalece). Três frentes, tudo em **D-023**:
+- **IDEAS universal:** o "faltou o IDEIAS.md" dos pilotos morreu — template injetado via `normNiche` em 15 nichos (dev/brainstorm mantêm os seus), já com a seção «Feedback para o Kit»; e o CLAUDE.md gerado agora manda **criar na primeira necessidade** qualquer doc referenciado que não exista.
+- **Narrative escreve:** convention da voz reescrita (escreve **sob direção**, rascunho ancorado em VOZ.md), behavior `writes_prose` (opções em cena crítica, [HIPÓTESE] no inventado, vigia drift), kishōtenketsu como repertório fractal para LN/WN, prompt J com o ritmo serial (hook → beat → gancho).
+- **Game cria:** behavior `builds_game` (designer+dev+programador; protótipo antes de sistema) e **ROTEIRO.md** — a casa da narrativa cena a cena que o piloto pediu, com o estado **AGUARDANDO DESIGN** (ponte para i-N24).
+- **Capturado sem codar:** i-N24 ganhou o desenho do HUB de 3 seções (refinar e APRESENTAR antes de codar — pedido do usuário); i-N25 (música) registrada para depois.
+**Próximo de fato:** item 1 — refinar e apresentar o HUB (i-N24).
+.
