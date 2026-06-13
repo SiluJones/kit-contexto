@@ -889,6 +889,11 @@ const UNIVERSAL_IDEAS_TPL = { name:"IDEAS.md", cat:"ctx",
 (observações E desvios estruturais sobre a própria estrutura/kit — ver o gatilho no CLAUDE.md; é o que volta para evoluir o kit)
 `};
 
+/* Template do HUB de grupo de projetos (i-N24): injetado quando o projeto marca "em grupo". */
+const UNIVERSAL_HUB_TPL = { name:"HUB.md", cat:"ctx",
+  role:"Arquivo COMPARTILHADO do grupo: diretrizes do grupo, caixa de entrada por frente e status relâmpago. Cópia idêntica em cada projeto; o usuário sincroniza.",
+  content:'# HUB.md — [Nome do grupo/produto]\n\n> Arquivo COMPARTILHADO do grupo de projetos (cópia idêntica em cada Projeto/frente). O usuário sincroniza as cópias. Cada frente LÊ tudo, mas só ESCREVE onde as diretrizes permitem. Mais novo vence: confira a data abaixo.\n> Última sincronização: AAAA-MM-DD · atualizado por: [frente]\n\n## 1 · Diretrizes do grupo (estável — só o usuário muda)\n- D1 — Ninguém mexe na casa do outro: nenhuma frente altera ou entrega arquivos de OUTRA frente. Sugestão, crítica ou pedido vai para a Caixa de entrada da frente dona (seção 2), assinada [frente MM-DD]; ela estuda e decide.\n- D2 — Mudança que afeta outra frente vira item na caixa dela (inclui marcar/desmarcar estados de sincronia como "aguardando <frente>", ex.: AGUARDANDO DESIGN em catálogos de arte/roteiro).\n- D3 — Cada verdade tem UM dono (referência cruzada, não cópia). Na dúvida de quem é o dono de um dado, pergunte ao usuário; não decida nem duplique.\n- D4 — Status relâmpago é ultra-curto (máx. 3 linhas por frente, seção 3); a própria frente o atualiza ao fim de toda sessão que tocar o HUB. NÃO substitui o STATUS.md da frente — é só para as outras saberem o essencial sem abrir os arquivos dela.\n- D5 — Tudo assinado e datado. Item processado sai da caixa e vai para Decididos com o veredito (aceito / recusado / em análise) + o motivo em 1 linha. A caixa é rolante; nada some sem registro.\n\n## 2 · Frentes — visão e caixa de entrada\n(repita o bloco abaixo para cada frente do seu grupo)\n\n### [Frente A]\n- Visão: [o que esta frente constrói + o norte atual]\n- Caixa de entrada (as OUTRAS frentes escrevem aqui; a dona faz a triagem):\n  - [ ] [frente MM-DD] [pedido / sugestão / crítica em 1-3 linhas]\n- Decididos:\n  - [veredito] [frente MM-DD] [item] — por quê (1 linha)\n\n### [Frente B]\n- Visão:\n- Caixa de entrada:\n- Decididos:\n\n## 3 · Status relâmpago (máx. 3 linhas por frente — ver D4)\n- [Frente A]: fazendo [...] · entregou [...] · bloqueado por [frente: o quê]\n- [Frente B]: fazendo [...] · entregou [...]\n'};
+
 /* Regras de higiene anti-inchaço — entram nas instruções e no CLAUDE.md */
 const HYGIENE_RULES = [
   "Referência cruzada, não duplicação: um dado tem UMA fonte de verdade. Quando uma ideia vira trabalho, ela aparece também no STATUS — mas continua no IDEAS, só mudando de status. Não copie o conteúdo para dois lugares.",
@@ -6314,7 +6319,7 @@ function normNiche(n){
     behaviors:      normBehaviors(n.behaviors),
     contextFiles:   _files,
     outputs:        normOutputs(n.outputs),
-    topbar:         normTopbar(n.topbar),
+    topbar:         [...normTopbar(n.topbar), { id:"groupMode", label:"Projeto em grupo?", type:"select", opts:[["no","Não"],["yes","Sim — HUB.md"]], default:"no" }],
     builderSection: normBuilderSection(n.builderSection),
     conventions:    normConventions(n.conventions),
     promptsExtra:   n.promptsExtra || []
@@ -6952,6 +6957,12 @@ function renderOutputs(niche){
    - buildClaudeMd(): VERSÃO COMPLETA para subir como arquivo CLAUDE.md.
      Consultado quando relevante, fácil de atualizar e versionar.
    ========================================================= */
+function groupModeOn(){ return !!(STATE.topbar && STATE.topbar.groupMode === "yes"); }
+function effectiveFiles(niche){
+  const base = (niche && niche.contextFiles) || [];
+  if(groupModeOn() && !base.some(f => f.name === "HUB.md")) return [...base, UNIVERSAL_HUB_TPL];
+  return base;
+}
 function buildInstr(niche){
   if(!niche) return "";
   const tb = STATE.topbar || {};
@@ -6979,6 +6990,7 @@ function buildInstr(niche){
   ].filter(Boolean);
   lines.push(`Antes de qualquer ação, leia nesta ordem: ${readOrder.map(f=>`\`${f}\``).join(" → ")}${coreFiles.some(n=>/CHANGELOG/i.test(n))?" → última entrada do `CHANGELOG.md`":""}.`);
   lines.push("Confirme em uma frase o que entendeu da tarefa antes de executar. Se houver ambiguidade real, pergunte antes.");
+  if(groupModeOn()) lines.push("Projeto em grupo: leia também `HUB.md` logo após o STATUS — sua caixa de entrada e o status das outras frentes. Nunca altere arquivos de outra frente; sugestões vão para a caixa dela.");
 
   // Princípios essenciais (curtos — versão densa, não a definição longa)
   const bhAll = [...normBehaviors(BEHAVIORS_BASE), ...(niche.behaviors||[])];
@@ -6986,7 +6998,11 @@ function buildInstr(niche){
   if(bhOn.length){
     lines.push("");
     lines.push("## Como trabalhar comigo");
-    bhOn.forEach(b => lines.push(`- **${b.label}.** ${shortDef(b.def)}`));
+    const baseIds = new Set(normBehaviors(BEHAVIORS_BASE).map(b => b.id));
+    const uni = bhOn.filter(b => baseIds.has(b.id));
+    const own = bhOn.filter(b => !baseIds.has(b.id));
+    if(uni.length) lines.push(`Princípios universais (definição completa no CLAUDE.md): ${uni.map(b => b.label.toLowerCase()).join(" · ")}.`);
+    own.forEach(b => lines.push(`- **${b.label}.** ${shortDef(b.def)}`));
   }
 
   // Builder (stack/tom/etc) — escolhas concretas
@@ -7019,11 +7035,12 @@ function buildInstr(niche){
   }
 
   // Arquivos + saídas — compacto
-  if(niche.contextFiles && niche.contextFiles.length){
+  const _instrFiles = effectiveFiles(niche);
+  if(_instrFiles.length){
     lines.push("");
     lines.push("## Arquivos de contexto (no Projeto)");
     lines.push("- **CLAUDE.md** — comportamento do assistente (este conjunto de regras, em versão completa).");
-    niche.contextFiles.forEach(f => lines.push(`- **${f.name}** — ${f.role}`));
+    _instrFiles.forEach(f => lines.push(`- **${f.name}** — ${f.role}`));
     lines.push("- Logs detalhados de sessão NÃO ficam no Projeto: vivem em `logs/` no Git e são lidos sob demanda.");
   }
 
@@ -7031,7 +7048,7 @@ function buildInstr(niche){
   if(outOn.length){
     lines.push("");
     lines.push("## Ao final de cada sessão, entregue arquivos completos");
-    lines.push("Entregue cada documento afetado INTEIRO e atualizado, como arquivo novo pronto para baixar e substituir o antigo — nunca blocos soltos para colar à mão. (Os arquivos já no Projeto são somente-leitura, mas isso não impede gerar versões novas completas. Sem ferramenta de download, entregue o conteúdo completo de cada arquivo no chat, um por bloco.) Aplicar é decisão do usuário.");
+    lines.push("Entregue cada documento afetado INTEIRO e atualizado (arquivo novo para baixar e substituir o antigo), nunca blocos soltos para colar à mão. Aplicar é decisão do usuário. Detalhes e exceções no CLAUDE.md.");
     outOn.forEach(o => lines.push(`- ${o.label}`));
     lines.push("- Higiene no CLAUDE.md (resumo: STATUS só o agora; IDEAS nunca perde; uma fonte de verdade por dado).");
   }
@@ -7236,6 +7253,19 @@ function buildClaudeMd(niche){
   L.push("");
   L.push(`Respostas em ${langTxt}, incluindo comentários quando houver código.`);
 
+  if(groupModeOn()){
+    L.push("");
+    L.push("## Projeto em grupo (HUB compartilhado)");
+    L.push("");
+    L.push("Este projeto faz parte de um GRUPO de projetos que dividem um `HUB.md` (cópia idêntica em cada projeto; o usuário sincroniza). Regras:");
+    L.push("");
+    L.push("1. **No ritual de início**, leia o `HUB.md` logo após o `STATUS.md` — em especial a SUA caixa de entrada e o status relâmpago das outras frentes.");
+    L.push("2. **Respeite as diretrizes do HUB (seção 1):** nunca altere nem entregue arquivos de outra frente; toda sugestão/crítica/pedido vai para a Caixa de entrada da frente dona, assinada `[frente MM-DD]`.");
+    L.push("3. **Mudança sua que afete outra frente** gera um item na caixa dela (D2) — inclusive marcar/desmarcar estados de sincronia (ex.: `AGUARDANDO DESIGN`).");
+    L.push("4. **Ao encerrar uma sessão que toque o grupo:** processe sua caixa (triagem → Decididos com veredito + motivo), atualize seu status relâmpago (≤3 linhas) e entregue o `HUB.md` COMPLETO, lembrando o usuário de sincronizá-lo nos outros projetos.");
+    L.push("");
+    L.push("O modelo do `HUB.md` está nos templates deste nicho (baixe junto). Cada verdade tem UM dono (lore, mecânica, visual, som…): na dúvida, pergunte ao usuário — não duplique.");
+  }
   L.push("");
   L.push(`*Gerado pelo Kit de Contexto Universal — nicho ${niche.label}. Edite à vontade: este arquivo é seu.*`);
 
@@ -7345,7 +7375,7 @@ function renderPrompts(niche){
 function renderTemplates(niche){
   const host = $("#tpl-list");
   if(!host) return;
-  const files = niche.contextFiles || [];
+  const files = effectiveFiles(niche);
   if(!files.length){
     host.innerHTML = `<div class="callout">Nenhum template para este nicho. Use o construtor do Custom para adicionar arquivos.</div>`;
     return;
@@ -7419,7 +7449,7 @@ async function downloadZIP(){
     await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
   }
   const zip = new JSZip();
-  niche.contextFiles.forEach(f => zip.file(applyAffix(f.name), f.content||""));
+  effectiveFiles(niche).forEach(f => zip.file(applyAffix(f.name), f.content||""));
   zip.file("README.md", `# Templates — ${niche.label}\n\nNicho: ${niche.label}\nGerado por: Kit de Contexto Universal\nData: ${today}\n\nArquivos:\n${niche.contextFiles.map(f=>`- **${applyAffix(f.name)}** — ${f.role}`).join("\n")}\n`);
   const blob = await zip.generateAsync({type:"blob"});
   const url = URL.createObjectURL(blob);

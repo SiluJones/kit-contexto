@@ -503,6 +503,22 @@ Pilotos mostraram dois problemas: (a) nichos de produção tratados como "suport
 
 ---
 
+## D-024 — HUB de grupo como switch (i-N24) + Instruções enxutas
+
+**Data:** 2026-06-12 · **Status:** aceita; **embutida (v1.30.0)** · Origem: usuário aceitou a estrutura do HUB e levantou o tamanho das Instruções
+
+### Decisões
+1. **HUB vira switch, não custom de grupo.** Toggle universal "Projeto em grupo?" (injetado via `normNiche`, igual ao IDEAS): ligado, adiciona a seção HUB ao CLAUDE.md gerado + 1 linha no ritual das Instruções + o `HUB.md` (`UNIVERSAL_HUB_TPL`, genérico) aos templates/zip (via `effectiveFiles`). Desligado: opt-in puro, nada aparece (round-trip no harness). O "custom de grupo" foi **descartado** (faria o mesmo que canal de atualização + a seção embutida, com mais código).
+2. **Instruções enxutas.** As Instruções são lidas em TODA mensagem; o CLAUDE.md é a versão completa. Os 13 princípios universais (genéricos, idênticos em todo nicho) eram 13 bullets repetidos — agora são **uma linha de nomes** ("definição completa no CLAUDE.md"). Os behaviors de nicho seguem em bullets (diferenciam o projeto). Redução medida: −27% (6193→4503 média). Trava nova: **teto de 6500 caracteres** por Instrução no harness, para não re-inchar quando vierem novos princípios.
+
+### Alternativas rejeitadas
+- HUB como nicho/custom separado (redundante); manter os 13 universais por extenso nas Instruções (contraria o design "Instruções = essencial; CLAUDE.md = completo" e o peso por mensagem); cortar princípios de verdade (perde-se conteúdo — a compressão preserva tudo, só muda a forma).
+
+### Nota — cosmético adiado
+**Reagrupar `narrative`** (Fase 3) NÃO foi feito: o campo `group:` é tema visual do card (serif/literary/digital → branding), não categoria de exibição; o intuito do item ("group literary → tema criativo") está ambíguo. Aguarda o usuário esclarecer o que quer reagrupar antes de qualquer mudança cosmética. README/PLANNING seguem para depois (pitch mudou com "kit desenvolve").
+
+---
+
 # FIXES — bugs graves resolvidos (formato sintoma/causa/solução/lição)
 
 > Decisões são "por que as coisas são assim"; FIXES são "o que quebrou feio e como consertamos". Não apagar.

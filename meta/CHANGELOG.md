@@ -1,6 +1,27 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.29.0**.
+> Histórico de versões. Versão atual: **v1.30.0**.
+
+## v1.30.0 — 2026-06-12 — HUB multi-projeto (switch) + Instruções enxutas (−27%)
+
+Sessão de código guiada por: "aceito o HUB, prossiga" + "as Instruções podem estar grandes — dá para refinar?". Duas frentes, ver **D-024**.
+
+### 1. HUB de grupo de projetos (i-N24) — virou switch na ferramenta
+- Toggle universal **"Projeto em grupo?"** no topbar (injetado via `normNiche`, aparece em todos os nichos; padrão Não).
+- Ligado: o CLAUDE.md gerado ganha a seção **"Projeto em grupo (HUB compartilhado)"** (ler HUB no ritual; nunca mexer na casa do outro; mudança que afeta outra frente vira item na caixa dela — inclui `AGUARDANDO DESIGN`; ao encerrar, processar caixa + status relâmpago + entregar HUB completo); as Instruções ganham 1 linha no ritual; e o **`HUB.md`** (constante `UNIVERSAL_HUB_TPL`, genérico) entra nos templates/zip via `effectiveFiles`.
+- Desligado: nada disso aparece — opt-in puro, confirmado por round-trip no harness.
+- Mecanismo confirmado: switch embutido agora; o "custom de grupo" foi descartado (redundante com canal de atualização). O `HUB.md` personalizado das 4 frentes do jogo segue como entrega à parte.
+
+### 2. Instruções do Projeto enxutas (lidas em toda mensagem)
+- Os **13 princípios universais** (idênticos em todo nicho, completos no CLAUDE.md) deixaram de ser 13 bullets e viraram **uma linha densa só com os nomes** ("Princípios universais (definição completa no CLAUDE.md): …"). Os behaviors ESPECÍFICOS do nicho seguem como bullets — são o que diferencia o projeto.
+- Parágrafo de saídas encurtado (detalhes ficam no CLAUDE.md).
+- Resultado medido: média por nicho **6193 → 4503 caracteres (−27%)**, máx **7193 → 5503**, bullets ~48 → ~29. CLAUDE.md (a versão completa) inalterado.
+
+### Validação
+Harness +3 checagens: compressão dos universais presente em 17/17; **teto de 6500 caracteres** por Instrução (trava contra re-inchaço futuro); round-trip do switch HUB (ligado×desligado). Checagem de P12/P13 nas Instruções adaptada à forma comprimida. **Anti-teste:** compressão desativada → 17 reprovam. **17/17, 0 erros**; `div` 273/273; ~563 KB / 8206 linhas.
+
+---
+
 
 ## v1.29.0 — 2026-06-12 — O kit DESENVOLVE (fase 1: escritor e game design) + IDEAS universal
 

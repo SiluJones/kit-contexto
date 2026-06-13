@@ -1,9 +1,11 @@
 # STATUS — Kit de Contexto Universal — 2026-06-12
 
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
-> Versão atual: **v1.29.0**. Índice ~559 KB / 8176 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + integridade dos chips (FIX-004) + **6 checagens D-022/D-018 + 10 checagens v1.29.0 (IDEAS universal, writes_prose, builds_game, ROTEIRO, anti-contradição)** + suíte de fluxos.
+> Versão atual: **v1.30.0**. Índice ~563 KB / 8206 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + integridade dos chips (FIX-004) + **6 (D-022/D-018) + 10 (v1.29.0) + 3 (v1.30.0: compressão dos universais, teto 6500, round-trip HUB)** + suíte de fluxos.
 
-> **Mudanças nesta revisão (v1.29.0):** sessão da ideia-260612 + guia do escritor + pesquisa. **IDEAS universal** (injeção via `normNiche` + regra "cria na primeira necessidade") resolve o "faltou o IDEIAS.md" dos pilotos; **narrative agora ESCREVE sob direção** (convention reescrita, behavior `writes_prose`, kishōtenketsu, prompt J); **game agora CRIA** (`builds_game` + ROTEIRO.md com AGUARDANDO DESIGN). Tudo em **D-023**; harness +10 checagens + anti-teste (15 reprovações sem a injeção). i-N24 ganhou o desenho do HUB (3 seções); i-N25 (música) capturada. O "PRÓXIMO TRABALHO" foi reordenado. Nada perdido. (Notas anteriores abaixo.)
+> **Mudanças nesta revisão (v1.30.0):** "aceito o HUB, prossiga" + tamanho das Instruções. **HUB virou switch** ("Projeto em grupo?" no topbar; ligado → seção no CLAUDE.md + HUB.md nos templates + linha no ritual; desligado → nada). **Instruções enxutas:** os 13 princípios universais viraram 1 linha de nomes (completos no CLAUDE.md) — média −27% (6193→4503), com teto de 6500 no harness. D-024. Cosmético "reagrupar narrative" **adiado** (campo é tema visual; intuito ambíguo — aguarda esclarecimento). O "PRÓXIMO TRABALHO" foi reordenado. Nada perdido. (Notas anteriores abaixo.)
+
+> **Mudanças na revisão (v1.29.0):** sessão da ideia-260612 + guia do escritor + pesquisa. **IDEAS universal** (injeção via `normNiche` + regra "cria na primeira necessidade") resolve o "faltou o IDEIAS.md" dos pilotos; **narrative agora ESCREVE sob direção** (convention reescrita, behavior `writes_prose`, kishōtenketsu, prompt J); **game agora CRIA** (`builds_game` + ROTEIRO.md com AGUARDANDO DESIGN). Tudo em **D-023**; harness +10 checagens + anti-teste (15 reprovações sem a injeção). i-N24 ganhou o desenho do HUB (3 seções); i-N25 (música) capturada. O "PRÓXIMO TRABALHO" foi reordenado. Nada perdido. (Notas anteriores abaixo.)
 
 > **Mudanças na revisão (v1.28.0):** os itens 1 e 2 do "PRÓXIMO TRABALHO" foram **executados** — as 5 diretrizes do lote **D-022 embutidas** na ferramenta (i-N18 manifesto auto-detectado; i-N19 refino de P8; i-N20 commit 3 linhas listando; i-N21 gatilho «Feedback para o Kit»; i-N22 válvula) e a **orientação mount/RAG corrigida** no CLAUDE.md gerado + tela "Tokens & Fluxos" (D-018). Harness ganhou 6 checagens de conteúdo + anti-teste (34 reprovações na cópia sem o lote). O que saiu daqui está no CHANGELOG v1.28.0, em D-022/D-018 e nos títulos de i-N18..22 (✅ EMBUTIDA). Nada perdido. (Notas anteriores preservadas abaixo.)
 
@@ -21,10 +23,10 @@
 São **17 nichos**: 16 de conteúdo + **1 construtor** (`custom`).
 
 ## 🎯 PRÓXIMO TRABALHO (decidir/fazer)
-1. **HUB multi-projeto (i-N24): APRESENTADO — aguarda decisão do usuário.** Template `HUB.md` entregue (3 seções + diretrizes D1–D5 + apêndice com o gatilho p/ os CLAUDE.md). Recomendação: usar JÁ via gatilho (zero código; pilotos validam) e embutir o **switch "grupo de projetos"** na ferramenta numa próxima passada. **Falta o usuário:** aprovar/ajustar o template + dizer quando embutir o switch.
+1. **Validar o HUB e as Instruções enxutas em uso real** — marque "Projeto em grupo? Sim" nos 4 projetos do jogo (ou use o `HUB.md` personalizado já entregue) e veja se a coordenação flui; confira se as Instruções menores não deixaram faltar nada importante. Feedback vira ajuste fino.
 2. **Lote de feedback dos pilotos (i-N23): ⏸ PAUSADO por decisão do usuário (06-12)** — não fecha por ora; itens registrados em IDEIAS; aplicar quando ele sinalizar.
 3. **Estender o padrão "desenvolve" (D-023)** a HQ/RPG/animação — **confirmado pelo usuário: só quando ele iniciar projetos nessas áreas.** i-N25 (música) idem.
-4. **Cosméticos — analisados (06-12):** **MAPA.md corrigido e entregue** (16+1). **Reagrupar `narrative`:** NÃO é 1 linha cega — os `group:` visíveis são de tema/fonte; mapear o campo real de agrupamento dos cards e mudar na MESMA passada do switch do HUB (1 validação só). **README/PLANNING:** reescrever DEPOIS da decisão do HUB (o pitch do produto mudou com o "kit desenvolve" — reescrever antes geraria retrabalho). **Qualidade das Instruções:** com 13 princípios + extras de nicho, o risco agora é TAMANHO (instruções são lidas em toda mensagem); recomendação: adicionar ao harness um teto de caracteres por nicho e medir antes de cortar — entra na próxima passada de código.
+4. **Cosméticos — status:** **MAPA.md** corrigido (16+1, v1.29.0). **Qualidade/tamanho das Instruções: FEITO (v1.30.0)** — compressão dos universais + teto de 6500 no harness. **Reagrupar `narrative`: adiado** — `group:` é tema visual do card; intuito ambíguo, aguarda o usuário esclarecer o que reagrupar. **README/PLANNING:** depois (pitch mudou com "kit desenvolve").
 
 ✅ **Concluído nesta sessão (v1.29.0):** IDEAS universal + "cria na primeira necessidade"; narrative escreve sob direção (kishōtenketsu incluso); game cria (builds_game + ROTEIRO.md). D-023. Harness +10 checagens + anti-teste. 17/17, 0 erros.
 
@@ -59,7 +61,8 @@ Harness jsdom **boot limpo por nicho** (o ambiente reseta entre sessões — rec
 - `t-granular.js` — granularidade (desmarcar peça → some do import; "marcar todas" reinclui).
 Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao remover/renomear coisas no código, atualizar os testes (foi o que aconteceu ao remover `customSmart`: trocar `setNiche("customSmart")` → `setNiche("custom")`).
 
-## 🗺 Onde está no código (v1.29.0; números aproximados, mudam ao editar)
+## 🗺 Onde está no código (v1.30.0; números aproximados, mudam ao editar)
+- **v1.30.0 (D-024):** `UNIVERSAL_HUB_TPL` é constante de fundação (junto de `UNIVERSAL_IDEAS_TPL`); `groupModeOn()` lê `STATE.topbar.groupMode`; `effectiveFiles(niche)` injeta `HUB.md` quando ligado (usado em `buildInstr`, `renderTemplates`, zip). O toggle "groupMode" é injetado no topbar dentro de `normNiche`. A seção HUB é empurrada no fim do `buildClaudeMd` (antes do rodapé). **Instruções enxutas:** em `buildInstr`, os universais (ids de `BEHAVIORS_BASE`) viram 1 linha de nomes; os de nicho seguem em bullets.
 - **v1.29.0 (D-023):** `UNIVERSAL_IDEAS_TPL` é constante de fundação (logo antes de `HYGIENE_RULES`); a **injeção** acontece em `normNiche` (`_files.some(/^IDE(A|IA)S\.md$/i)`); a regra "cria na primeira necessidade" está no `buildClaudeMd` logo após a tabela de gatilhos. Narrative: convention[0] reescrita + convention kishōtenketsu + behavior `writes_prose` (após `protect_voice`) + prompt `id:"J"`. Game: behavior `builds_game` (após `creator_decides`), template `ROTEIRO.md` (entre NIVEIS e LOG-TEMPLATE), output `key:"roteiro"`, trigger novo, convention "também CONSTRÓI".
 - **Lote D-022 (v1.28.0):** i-N19 = frase final na def de `check_before_ask` (P8, BEHAVIORS_BASE ~845) + bullet na seção «Verifica antes de pedir um arquivo» do buildClaudeMd (~7145); i-N22 = 5ª regra em `HYGIENE_RULES` (~868); i-N21 = 5ª linha em `TRIGGERS_BASE` (~877); i-N20 = `commitIntro` (3 linhas, incondicional) e `commitNota` (só sintaxe por SO); i-N18 = item novo (penúltimo) em `handoffComo`. **D-018:** 3 itens do `handoffComo` reescritos + 2 callouts da tela "Tokens & Fluxos" (~760, ~766).
 - **`normBuilderSection`** (≈linha 6200) converte `builderSection.groups → items`. **FIX-004:** `opts: g.items.map(it => Array.isArray(it) ? it : [it,it])` — aceita item **string** OU **par `[código,rótulo]`**. Os chips renderizam em `renderBuilderSection` (≈6788) e a escolha entra na saída via finder `o[0]===val` (≈6924). Só `client` e `narrative` usam o formato par.
@@ -82,11 +85,12 @@ Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao rem
 - Commit ao final: comando completo p/ CMD Windows (UMA linha, `-m` repetido), pronto para colar. Mensagem **sem acentos** (CMD corrompe acentos em `-m`).
 - Usuário no CMD do Windows (`C:\Users\alexk\Arquiteturas\kit-contexto`). Repo: `index.html` na raiz, `.md` em `meta\`.
 
-## 💬 Última sessão (2026-06-12 — v1.29.0)
-Sessão da **ideia-260612** + leitura do GUIA_COMPLETO_ESCRITOR_NOVEL (+ versão txt) + pesquisa P13 (kishōtenketsu; práticas e armadilhas de escrita assistida por IA — voz genérica vem de contexto genérico; uso passivo homogeneíza, colaborativo fortalece). Três frentes, tudo em **D-023**:
-- **IDEAS universal:** o "faltou o IDEIAS.md" dos pilotos morreu — template injetado via `normNiche` em 15 nichos (dev/brainstorm mantêm os seus), já com a seção «Feedback para o Kit»; e o CLAUDE.md gerado agora manda **criar na primeira necessidade** qualquer doc referenciado que não exista.
-- **Narrative escreve:** convention da voz reescrita (escreve **sob direção**, rascunho ancorado em VOZ.md), behavior `writes_prose` (opções em cena crítica, [HIPÓTESE] no inventado, vigia drift), kishōtenketsu como repertório fractal para LN/WN, prompt J com o ritmo serial (hook → beat → gancho).
-- **Game cria:** behavior `builds_game` (designer+dev+programador; protótipo antes de sistema) e **ROTEIRO.md** — a casa da narrativa cena a cena que o piloto pediu, com o estado **AGUARDANDO DESIGN** (ponte para i-N24).
-- **Capturado sem codar:** i-N24 ganhou o desenho do HUB de 3 seções (refinar e APRESENTAR antes de codar — pedido do usuário); i-N25 (música) registrada para depois.
-**Próximo de fato:** decisões do usuário sobre o item 1 (HUB: template ok? quando embutir o switch?) — aí vem a passada de código única: switch do HUB + regroup narrative + teto de instruções no harness.
+## 💬 Última sessão (2026-06-12 — v1.30.0)
+"Aceito o HUB, prossiga" + a percepção certa de que as Instruções estavam grandes. Sessão de código, tudo verde:
+- **HUB virou switch** "Projeto em grupo?" (toggle universal no topbar). Ligado: seção "Projeto em grupo (HUB compartilhado)" no CLAUDE.md gerado + linha no ritual das Instruções + `HUB.md` genérico nos templates/zip. Desligado: nada (opt-in puro, round-trip no harness). Custom-de-grupo descartado.
+- **Instruções −27%:** os 13 princípios universais (genéricos, completos no CLAUDE.md) viraram 1 linha de nomes; os behaviors do nicho seguem em bullets. Medido: 6193→4503 média, 7193→5503 máx. Teto de 6500 no harness trava o re-inchaço.
+- **Custom:** confirmado completo (composeFromNiches, Nichos salvos, granularidade, FIX-003 — nada pendente da lista do usuário).
+- **Cosmético adiado:** "reagrupar narrative" — `group` é tema visual; intuito ambíguo, aguarda esclarecimento.
+**Próximo de fato:** usar HUB + Instruções enxutas nos pilotos; depois README/PLANNING.
+
 .
