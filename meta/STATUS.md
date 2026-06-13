@@ -1,9 +1,11 @@
 # STATUS — Kit de Contexto Universal — 2026-06-12
 
 > Rolante: só o agora + próximos passos. Item resolvido sai daqui (vai pro CHANGELOG).
-> Versão atual: **v1.30.0**. Índice ~563 KB / 8206 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + integridade dos chips (FIX-004) + **6 (D-022/D-018) + 10 (v1.29.0) + 3 (v1.30.0: compressão dos universais, teto 6500, round-trip HUB)** + suíte de fluxos.
+> Versão atual: **v1.30.1**. Índice ~564 KB / 8221 linhas. Teste: **17/17 nichos, 0 erros JS** (build por nicho via `normNiche`) + integridade dos chips (FIX-004) + **6 (D-022/D-018) + 10 (v1.29.0) + 3 (v1.30.0: compressão dos universais, teto 6500, round-trip HUB)** + suíte de fluxos.
 
-> **Mudanças nesta revisão (v1.30.0):** "aceito o HUB, prossiga" + tamanho das Instruções. **HUB virou switch** ("Projeto em grupo?" no topbar; ligado → seção no CLAUDE.md + HUB.md nos templates + linha no ritual; desligado → nada). **Instruções enxutas:** os 13 princípios universais viraram 1 linha de nomes (completos no CLAUDE.md) — média −27% (6193→4503), com teto de 6500 no harness. D-024. Cosmético "reagrupar narrative" **adiado** (campo é tema visual; intuito ambíguo — aguarda esclarecimento). O "PRÓXIMO TRABALHO" foi reordenado. Nada perdido. (Notas anteriores abaixo.)
+> **Mudanças nesta revisão (v1.30.1):** patch de teste real. **GitHub Pages corrigido** (FIX-005): build do Jekyll quebrava em `meta/STATUS.md` ("invalid characters… UTF-8") → o site não atualizava; solução = **`.nojekyll`** na raiz (este repo não precisa de Jekyll). **"Projeto em grupo?" virou switch real** (toggle, não select). **HUB.md aparece ao ligar** o switch (handler do topbar agora chama `renderTemplates`; o download fica na aba Templates). 17/17. (Notas anteriores abaixo.)
+
+> **Mudanças na revisão (v1.30.0):** "aceito o HUB, prossiga" + tamanho das Instruções. **HUB virou switch** ("Projeto em grupo?" no topbar; ligado → seção no CLAUDE.md + HUB.md nos templates + linha no ritual; desligado → nada). **Instruções enxutas:** os 13 princípios universais viraram 1 linha de nomes (completos no CLAUDE.md) — média −27% (6193→4503), com teto de 6500 no harness. D-024. Cosmético "reagrupar narrative" **adiado** (campo é tema visual; intuito ambíguo — aguarda esclarecimento). O "PRÓXIMO TRABALHO" foi reordenado. Nada perdido. (Notas anteriores abaixo.)
 
 > **Mudanças na revisão (v1.29.0):** sessão da ideia-260612 + guia do escritor + pesquisa. **IDEAS universal** (injeção via `normNiche` + regra "cria na primeira necessidade") resolve o "faltou o IDEIAS.md" dos pilotos; **narrative agora ESCREVE sob direção** (convention reescrita, behavior `writes_prose`, kishōtenketsu, prompt J); **game agora CRIA** (`builds_game` + ROTEIRO.md com AGUARDANDO DESIGN). Tudo em **D-023**; harness +10 checagens + anti-teste (15 reprovações sem a injeção). i-N24 ganhou o desenho do HUB (3 seções); i-N25 (música) capturada. O "PRÓXIMO TRABALHO" foi reordenado. Nada perdido. (Notas anteriores abaixo.)
 
@@ -85,7 +87,14 @@ Mais `node --check` no `<script>` e balanceamento de tags. **Atenção:** ao rem
 - Commit ao final: comando completo p/ CMD Windows (UMA linha, `-m` repetido), pronto para colar. Mensagem **sem acentos** (CMD corrompe acentos em `-m`).
 - Usuário no CMD do Windows (`C:\Users\alexk\Arquiteturas\kit-contexto`). Repo: `index.html` na raiz, `.md` em `meta\`.
 
-## 💬 Última sessão (2026-06-12 — v1.30.0)
+## 💬 Última sessão (2026-06-13 — v1.30.1)
+Patch a partir de teste real:
+- **GitHub Pages voltou a publicar** (FIX-005) — o build do Jekyll falhava ("invalid characters… UTF-8" em `meta/STATUS.md`) e o site ficava parado. Os `.md` estão em UTF-8 válido; o Jekyll é que é dispensável (site = app de página única). Correção: **`.nojekyll`** na raiz do repo → Pages serve estático. **Ação do usuário:** subir o `.nojekyll` na raiz e refazer o commit/push.
+- **Switch de verdade:** "Projeto em grupo?" agora é toggle (tipo de campo `toggle` novo no topbar), não um seletor.
+- **HUB.md visível ao ligar:** o handler do topbar passou a re-renderizar os Templates, então o download do `HUB.md` aparece na hora (antes só ao trocar de nicho). O download fica na aba Templates, com os outros.
+**Próximo de fato:** confirmar que o Pages publicou com o `.nojekyll`; depois, validar HUB + Instruções enxutas nos pilotos.
+
+## 💬 Sessão anterior (2026-06-12 — v1.30.0)
 "Aceito o HUB, prossiga" + a percepção certa de que as Instruções estavam grandes. Sessão de código, tudo verde:
 - **HUB virou switch** "Projeto em grupo?" (toggle universal no topbar). Ligado: seção "Projeto em grupo (HUB compartilhado)" no CLAUDE.md gerado + linha no ritual das Instruções + `HUB.md` genérico nos templates/zip. Desligado: nada (opt-in puro, round-trip no harness). Custom-de-grupo descartado.
 - **Instruções −27%:** os 13 princípios universais (genéricos, completos no CLAUDE.md) viraram 1 linha de nomes; os behaviors do nicho seguem em bullets. Medido: 6193→4503 média, 7193→5503 máx. Teto de 6500 no harness trava o re-inchaço.

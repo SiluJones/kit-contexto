@@ -210,6 +210,14 @@
   }
   .chip:hover{border-color:var(--amber-soft);color:var(--ink)}
   .chip.on{background:var(--amber);color:#1a160e;border-color:var(--amber);font-weight:500}
+  /* Switch (toggle) — usado no topbar para opções liga/desliga */
+  .tsw{display:inline-flex;align-items:center;cursor:pointer}
+  .tsw input{position:absolute;opacity:0;width:0;height:0}
+  .tsw .track{position:relative;width:38px;height:21px;border-radius:999px;background:var(--line-soft);border:1px solid var(--line);transition:background .15s}
+  .tsw .track::after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:var(--ink-dim);transition:transform .15s,background .15s}
+  .tsw input:checked + .track{background:var(--amber);border-color:var(--amber)}
+  .tsw input:checked + .track::after{transform:translateX(17px);background:#1a160e}
+  .tsw input:focus-visible + .track{outline:2px solid var(--amber-soft);outline-offset:2px}
 
   .radio-row{display:flex;flex-wrap:wrap;gap:6px}
   .rad{
@@ -6319,7 +6327,7 @@ function normNiche(n){
     behaviors:      normBehaviors(n.behaviors),
     contextFiles:   _files,
     outputs:        normOutputs(n.outputs),
-    topbar:         [...normTopbar(n.topbar), { id:"groupMode", label:"Projeto em grupo?", type:"select", opts:[["no","Não"],["yes","Sim — HUB.md"]], default:"no" }],
+    topbar:         [...normTopbar(n.topbar), { id:"groupMode", label:"Projeto em grupo? (gera HUB.md)", type:"toggle", default:"no" }],
     builderSection: normBuilderSection(n.builderSection),
     conventions:    normConventions(n.conventions),
     promptsExtra:   n.promptsExtra || []
@@ -6763,11 +6771,18 @@ function renderTopbar(niche){
       const opts = head + pairs.map(([v,l]) => `<option value="${escAttr(v)}"${v===val?" selected":""}>${escapeHTML(l)}</option>`).join("");
       return `<div class="field"><span class="tlabel">${escapeHTML(f.label)}</span><select data-tb="${f.id}">${opts}</select></div>`;
     }
+    if(f.type === "toggle"){
+      const on = (val === "yes" || val === true || val === "true");
+      return `<div class="field"><span class="tlabel">${escapeHTML(f.label)}</span><label class="tsw"><input type="checkbox" data-tb="${f.id}"${on?" checked":""}/><span class="track"></span></label></div>`;
+    }
     return `<div class="field"><span class="tlabel">${escapeHTML(f.label)}</span><input type="text" data-tb="${f.id}" value="${escAttr(val)}" placeholder="${escAttr(f.placeholder||"")}"/></div>`;
   }).join("") + _saved + `<div class="sync-note"><i class="dot"></i> ${niche.label}</div>`;
 
   host.querySelectorAll("[data-tb]").forEach(el => {
-    const handler = () => { STATE.topbar[el.dataset.tb] = el.value; persistState(); updatePreview(); renderPrompts(getCurrentNiche()); };
+    const handler = () => {
+      STATE.topbar[el.dataset.tb] = (el.type === "checkbox") ? (el.checked ? "yes" : "no") : el.value;
+      persistState(); updatePreview(); renderPrompts(getCurrentNiche()); renderTemplates(getCurrentNiche());
+    };
     el.addEventListener("input", handler);
     el.addEventListener("change", handler);
   });

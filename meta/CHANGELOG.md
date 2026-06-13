@@ -1,6 +1,20 @@
 # CHANGELOG — Kit de Contexto Universal
 
-> Histórico de versões. Versão atual: **v1.30.0**.
+> Histórico de versões. Versão atual: **v1.30.1**.
+
+## v1.30.1 — 2026-06-13 — Switch de verdade + HUB aparece ao ligar + correção do GitHub Pages
+
+Patch a partir de teste real (o site não atualizava no Pages; o switch era um seletor; o HUB.md não dava para baixar).
+
+- **GitHub Pages corrigido (FIX-005):** o build do Jekyll falhava com "invalid characters for the used encoding UTF-8" ao renderizar `meta/STATUS.md`, então o site parava de atualizar (o HTML local abria normal). Os `.md` gerados estão em UTF-8 válido — o Jekyll é que não é necessário aqui (o site é um app de página única; os `.md` são docs de projeto). Solução: arquivo **`.nojekyll`** na raiz do repo → o Pages serve estático, sem build, sem o erro e sem os avisos de Node 20.
+- **"Projeto em grupo?" virou switch real** (toggle), não mais um `<select>` de Sim/Não. Novo tipo de campo `toggle` no topbar (CSS de switch com o âmbar do tema), guarda "yes"/"no".
+- **HUB.md agora aparece ao ligar o switch:** o handler do topbar passou a chamar `renderTemplates`, então a aba Templates (e o zip) mostram/escondem o `HUB.md` na hora — antes só atualizavam o preview, e o download só surgia ao trocar de nicho. Sem botão extra: o download fica na aba Templates, junto dos demais.
+
+### Validação
+**17/17, 0 erros**; `div` 274/274; ~564 KB / 8221 linhas. (Harness inalterado: o round-trip do HUB lê `STATE.topbar.groupMode`, que o toggle continua alimentando com "yes"/"no".)
+
+---
+
 
 ## v1.30.0 — 2026-06-12 — HUB multi-projeto (switch) + Instruções enxutas (−27%)
 
