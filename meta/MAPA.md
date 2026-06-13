@@ -1,5 +1,7 @@
 # MAPA — Clusters do Kit
 
+> **Mudanças nesta revisão (2026-06-12):** corrigida a contagem — "17 prontos" → 16 de conteúdo + 1 construtor (cosmético da Fase 3). Nada mais mudou.
+
 > Como as ideias e os nichos se organizam. Útil para enxergar o todo em vez do amontoado.
 
 ---
@@ -25,7 +27,7 @@
 ### Cluster C — Extensibilidade
 **Ideias:** i6, i11, i20, i21, i22
 **O que une:** o Custom como construtor real, com promessas de evolução (export/import, drag-drop, validação).
-**Promessa:** o kit serve quem está fora dos 17 prontos.
+**Promessa:** o kit serve quem está fora dos **16 nichos de conteúdo** prontos (o 17º é o construtor `custom`, que existe justamente para compor o que falta).
 **Risco:** se complicar demais, vira ferramenta de autoria que poucos vão usar.
 
 ---

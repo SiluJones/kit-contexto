@@ -21,10 +21,10 @@
 São **17 nichos**: 16 de conteúdo + **1 construtor** (`custom`).
 
 ## 🎯 PRÓXIMO TRABALHO (decidir/fazer)
-1. **Refinar e APRESENTAR o HUB multi-projeto (i-N24)** — o usuário desenhou as 3 seções (diretrizes do grupo / subseção por área para as outras escreverem / status ultra-curto); falta eu refinar o template + o mecanismo (switch de grupo OU custom de grupo + gatilho) e apresentar ANTES de codar. O estado AGUARDANDO DESIGN já está no ROTEIRO.md.
-2. **Fechar o lote de feedback dos pilotos e aplicar** (i-N23: itens 1–3 do pixel pendentes — paleta global×bioma, prioridade visual interna, efeitos especiais; o item 4 entrou via ROTEIRO. Mais por vir das outras frentes). Gate: o usuário fecha o lote. Triagem D-022. Re-validar 17/17.
-3. **Estender o padrão "desenvolve" (D-023)** a HQ, RPG de mesa e animação quando os pilotos sinalizarem; **avaliar i-N25** (música: criação completa) — espelho do narrative.
-4. **Cosméticos** (ver ROADMAP Fase 3): MAPA.md, reagrupar `narrative`, revisar README/PLANNING e a qualidade das Instruções geradas.
+1. **HUB multi-projeto (i-N24): APRESENTADO — aguarda decisão do usuário.** Template `HUB.md` entregue (3 seções + diretrizes D1–D5 + apêndice com o gatilho p/ os CLAUDE.md). Recomendação: usar JÁ via gatilho (zero código; pilotos validam) e embutir o **switch "grupo de projetos"** na ferramenta numa próxima passada. **Falta o usuário:** aprovar/ajustar o template + dizer quando embutir o switch.
+2. **Lote de feedback dos pilotos (i-N23): ⏸ PAUSADO por decisão do usuário (06-12)** — não fecha por ora; itens registrados em IDEIAS; aplicar quando ele sinalizar.
+3. **Estender o padrão "desenvolve" (D-023)** a HQ/RPG/animação — **confirmado pelo usuário: só quando ele iniciar projetos nessas áreas.** i-N25 (música) idem.
+4. **Cosméticos — analisados (06-12):** **MAPA.md corrigido e entregue** (16+1). **Reagrupar `narrative`:** NÃO é 1 linha cega — os `group:` visíveis são de tema/fonte; mapear o campo real de agrupamento dos cards e mudar na MESMA passada do switch do HUB (1 validação só). **README/PLANNING:** reescrever DEPOIS da decisão do HUB (o pitch do produto mudou com o "kit desenvolve" — reescrever antes geraria retrabalho). **Qualidade das Instruções:** com 13 princípios + extras de nicho, o risco agora é TAMANHO (instruções são lidas em toda mensagem); recomendação: adicionar ao harness um teto de caracteres por nicho e medir antes de cortar — entra na próxima passada de código.
 
 ✅ **Concluído nesta sessão (v1.29.0):** IDEAS universal + "cria na primeira necessidade"; narrative escreve sob direção (kishōtenketsu incluso); game cria (builds_game + ROTEIRO.md). D-023. Harness +10 checagens + anti-teste. 17/17, 0 erros.
 
@@ -88,5 +88,5 @@ Sessão da **ideia-260612** + leitura do GUIA_COMPLETO_ESCRITOR_NOVEL (+ versão
 - **Narrative escreve:** convention da voz reescrita (escreve **sob direção**, rascunho ancorado em VOZ.md), behavior `writes_prose` (opções em cena crítica, [HIPÓTESE] no inventado, vigia drift), kishōtenketsu como repertório fractal para LN/WN, prompt J com o ritmo serial (hook → beat → gancho).
 - **Game cria:** behavior `builds_game` (designer+dev+programador; protótipo antes de sistema) e **ROTEIRO.md** — a casa da narrativa cena a cena que o piloto pediu, com o estado **AGUARDANDO DESIGN** (ponte para i-N24).
 - **Capturado sem codar:** i-N24 ganhou o desenho do HUB de 3 seções (refinar e APRESENTAR antes de codar — pedido do usuário); i-N25 (música) registrada para depois.
-**Próximo de fato:** item 1 — refinar e apresentar o HUB (i-N24).
+**Próximo de fato:** decisões do usuário sobre o item 1 (HUB: template ok? quando embutir o switch?) — aí vem a passada de código única: switch do HUB + regroup narrative + teto de instruções no harness.
 .
